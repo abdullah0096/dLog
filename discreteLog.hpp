@@ -12,12 +12,15 @@
 #include <time.h>
 #include <cstdlib>
 #include <stdio.h>
+#include <NTL/ZZXFactoring.h>
 
 #include "multiplier.hpp"
 #include "constants.hpp"
 #include "tableCell.hpp"
 
-typedef long long int NTL;
+using namespace NTL;
+
+typedef long long int my_NTL;
 
 class discreteLog {
 private:
@@ -28,8 +31,8 @@ private:
     long long int r; // value of r in r-adding walk and other methods    
     long long int l; // number of rows in pre-computed table for CHEON DLP method
     long long int t; // size of tage vector for CHEON
-    NTL h; // element of the Group such that g^x = h
-    NTL g; // Generator of the Group
+    ZZX h; // element of the Group such that g^x = h
+    ZZX g; // Generator of the Group
 
     multiplier *M;
     tableCell **cellData;
@@ -37,7 +40,7 @@ private:
     long double tableGenerationTime;
 
 public:
-    discreteLog(long long int, long long int, long long int, long long int, NTL, NTL, long long int);
+    discreteLog(long long int, long long int, long long int, long long int, ZZX, ZZX, long long int);
     void printParameters();
     void generateMultipliers();
     void printMultipliers();

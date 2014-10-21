@@ -18,7 +18,7 @@ long long int factorial(long long int f) {
  * @param h element of the Group such that g^x = h
  * @param orderOfG Order of the Group
  */
-discreteLog::discreteLog(long long int q, long long int n, long long int r, long long int l, NTL g, NTL h, long long int orderOfG) {
+discreteLog::discreteLog(long long int q, long long int n, long long int r, long long int l, ZZX g, ZZX h, long long int orderOfG) {
     this->p = q;
     this->n = n;
     this->g = g;
@@ -56,11 +56,15 @@ void discreteLog::generateMultipliers() {
 
         this->M[i].alpha = rand() % this->orderOfG + 1;
         usleep(constants::waitTimeTwoSecond);
-
+        
         this->M[i].beta = rand() % this->orderOfG + 1;
         usleep(constants::waitTimeOneSecond);
 
         this->M[i].i = i;
+        
+        for(int ii=0; i < this->M[i].alpha; ++i){
+            
+        }
 
         //        std::cout << "\n alpha ::" << this->M[i].alpha << "\t beta :: " << this->M[i].beta << "\t i :: " << i << std::endl;
     }
