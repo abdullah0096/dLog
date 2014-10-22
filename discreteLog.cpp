@@ -31,7 +31,7 @@ discreteLog::discreteLog(long long int q, long long int n, long long int r, long
     M = new multiplier[r];
     generateMultipliers();
 
-    
+
     x = -1;
     tableGenerationTime = -1;
 }
