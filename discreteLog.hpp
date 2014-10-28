@@ -12,7 +12,10 @@
 #include <time.h>
 #include <cstdlib>
 #include <stdio.h>
-#include <NTL/ZZXFactoring.h>
+
+#include <NTL/ZZ.h>
+#include <NTL/ZZ_pX.h>
+#include <NTL/ZZ_pXFactoring.h>
 
 #include "multiplier.hpp"
 #include "constants.hpp"
@@ -24,15 +27,17 @@ typedef long long int my_NTL;
 
 class discreteLog {
 private:
-    long long int p; //  Characterstics
+    ZZ p; //  Characterstics
     long long int n; //  Extension
     long long int x; //  Solution for the DLP
     long long int orderOfG; // Order of the Group
     long long int r; // value of r in r-adding walk and other methods    
     long long int l; // number of rows in pre-computed table for CHEON DLP method
     long long int t; // size of tage vector for CHEON
-    ZZX h; // element of the Group such that g^x = h
-    ZZX g; // Generator of the Group
+
+    ZZ_pX h; // element of the Group such that g^x = h
+    ZZ_pX g; // Generator of the Group
+    ZZ_pX irredPoly; //Irreducible Polynomial 
 
     multiplier *M;
     tableCell **cellData;
@@ -40,14 +45,13 @@ private:
     long double tableGenerationTime;
 
 public:
-    discreteLog(long long int, long long int, long long int, long long int, ZZX, ZZX, long long int);
+    discreteLog(long, long long int, long long int, long long int, ZZ_pX, ZZ_pX, long long int);
     void printParameters();
     void generateMultipliers();
     void printMultipliers();
     void printTable();
     void cheonDL();
     void generateTableElements();
-
 };
 
 #endif	/* DISCRETELOG_HPP */

@@ -18,8 +18,9 @@ long long int factorial(long long int f) {
  * @param h element of the Group such that g^x = h
  * @param orderOfG Order of the Group
  */
-discreteLog::discreteLog(long long int q, long long int n, long long int r, long long int l, ZZX g, ZZX h, long long int orderOfG) {
-    this->p = q;
+discreteLog::discreteLog(long p, long long int n, long long int r, long long int l, ZZ_pX g, ZZ_pX h, long long int orderOfG) {
+    //    this->p = p;
+    this->p = conv<ZZ>(p);
     this->n = n;
     this->g = g;
     this->h = h;
@@ -31,6 +32,8 @@ discreteLog::discreteLog(long long int q, long long int n, long long int r, long
     M = new multiplier[r];
     generateMultipliers();
 
+    ZZ_p::init(this->p);
+    BuildIrred(this->irredPoly, this->n);
 
     x = -1;
     tableGenerationTime = -1;
@@ -56,14 +59,14 @@ void discreteLog::generateMultipliers() {
 
         this->M[i].alpha = rand() % this->orderOfG + 1;
         usleep(constants::waitTimeTwoSecond);
-        
+
         this->M[i].beta = rand() % this->orderOfG + 1;
         usleep(constants::waitTimeOneSecond);
 
         this->M[i].i = i;
-        
-        for(int ii=0; i < this->M[i].alpha; ++i){
-            
+
+        for (int ii = 0; i < this->M[i].alpha; ++i) {
+
         }
 
         //        std::cout << "\n alpha ::" << this->M[i].alpha << "\t beta :: " << this->M[i].beta << "\t i :: " << i << std::endl;
