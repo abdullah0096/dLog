@@ -1,3 +1,5 @@
+#include <NTL/GF2.h>
+
 #include "discreteLog.hpp"
 #include "utility.hpp"
 
@@ -18,9 +20,8 @@ long long int factorial(long long int f) {
  * @param h element of the Group such that g^x = h
  * @param orderOfG Order of the Group
  */
-discreteLog::discreteLog(long p, long long int n, long long int r, long long int l, ZZ_pX g, ZZ_pX h, long long int orderOfG) {
-    //    this->p = p;
-    this->p = conv<ZZ>(p);
+discreteLog::discreteLog(ZZ p, long n, long r, long l, ZZ_pX g, ZZ_pX h, long orderOfG) {
+    this->p = p;
     this->n = n;
     this->g = g;
     this->h = h;
@@ -28,12 +29,13 @@ discreteLog::discreteLog(long p, long long int n, long long int r, long long int
     this->r = r;
     this->l = l;
 
-    //Allocationg Memory for the set of Multipliers and generating them
-    M = new multiplier[r];
-    generateMultipliers();
-
     ZZ_p::init(this->p);
-    BuildIrred(this->irredPoly, this->n);
+    BuildIrred(irredPoly, this->n);
+
+    //Allocationg Memory for the set of Multipliers and generating them
+    M = new multiplier(r, p);
+    generateMultipliers();
+    std::cout << "discreteLog::discreteLog :- Assuming Multipliers are generated correctly. Should be Tested :-(\n";
 
     x = -1;
     tableGenerationTime = -1;
@@ -52,33 +54,35 @@ void discreteLog::printParameters() {
  */
 void discreteLog::generateMultipliers() {
 
-    std::cout << " Generating Multipilers (" << r << ")....";
+    std::cout << " Generating Multipliers (" << r << ")....";
     fflush(stdout);
     for (int i = 0; i < r; i++) {
         srand(time(NULL));
 
-        this->M[i].alpha = rand() % this->orderOfG + 1;
+        M->alpha[i] = rand() % this->orderOfG + 1;
         usleep(constants::waitTimeTwoSecond);
-
-        this->M[i].beta = rand() % this->orderOfG + 1;
+        M->beta[i] = rand() % this->orderOfG + 1;
         usleep(constants::waitTimeOneSecond);
+        M->i[i] = i;
 
-        this->M[i].i = i;
+        /*
+         * Remove comment after testing this piece of code works properly
+        std::cout << "\n **temp1 :: " << power(g, M->alpha[i]) << "\t **temp2 :: " << power(h, M->beta[i]) << "\n";
+        std::cout << "\n Mul :: " << power(g, M->alpha[i]) * power(h, M->beta[i]) << "\n";
+        std::cout << "\n ans :: " << power(g, M->alpha[i]) * power(h, M->beta[i]) % irredPoly << "\n";
+         */
+        M->groupElement[i] = (power(g, M->alpha[i]) * power(h, M->beta[i])) % irredPoly;
 
-        for (int ii = 0; i < this->M[i].alpha; ++i) {
-
-        }
-
-        //        std::cout << "\n alpha ::" << this->M[i].alpha << "\t beta :: " << this->M[i].beta << "\t i :: " << i << std::endl;
+        //        cout << "\n one :: " << temp1 << "\t two :: " << temp2 << "\t ans :: " << temp3 << std::endl;
+        //        M->groupElement[i] = power(g, M->alpha[i]) * power(h, M->beta[i]);
+        //        std::cout << "\n alpha ::" << this->M->alpha[i] << "\t beta :: " << this->M->beta[i] << "\t i :: " << i << "\t element :: " << this->M->groupElement[i] << std::endl;
     }
     std::cout << "[DONE]\n";
     usleep(constants::waitTimeHalfSecond);
 }
 
 void discreteLog::printMultipliers() {
-    for (int i = 0; i < r; i++) {
-        this->M[i].printMultiplier();
-    }
+    this->M->printMultiplier();
 }
 
 void discreteLog::printTable() {
@@ -102,6 +106,9 @@ void discreteLog::printTable() {
 
 void discreteLog::generateTableElements() {
 
+
+
+
 }
 
 void discreteLog::cheonDL() {
@@ -118,7 +125,7 @@ void discreteLog::cheonDL() {
 
         long long int numberOfRow = numertor / denominator;
         cellData[i] = new tableCell[numberOfRow];
-
+        cellData[i]->setValues(this->t, this->p);
         //        std::cout << "\ni::" z<< i + 1 << "\t top :: " << topVal << "\t botVal :: " << bottomVal << "\t ans ::" << numberOfRow << std::endl;
     }
 
@@ -130,4 +137,12 @@ void discreteLog::cheonDL() {
 
     cout << "\n Time for generation of Table :: " << tableGenerationTime;
 
+}
+
+/**
+ * This function returns the modulus p of type ZZ
+ * @return : p i.e the modulus of type ZZ
+ */
+ZZ discreteLog::getP() {
+    return this->p;
 }

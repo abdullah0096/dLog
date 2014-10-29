@@ -11,22 +11,26 @@ using namespace std;
 
 int main(int argc, char** argv) {
 
-    long p, n, r, orderOfG;
+    long n, r, orderOfG;
+    ZZ p;
     ZZ_pX g, h, irrdPoly;
 
     cout << "\n Enter p, n, r, orderOfG :: ";
     cin >> p >> n >> r>>orderOfG;
 
-    ZZ_p::init(conv<ZZ>(p));
+    ZZ_p::init(p);
     BuildIrred(irrdPoly, n);
-    
+
     cout << "\n Enter g ,h ";
     cin >> g>>h;
 
     discreteLog DLP(p, n, r, 5, g, h, orderOfG);
 
+    DLP.cheonDL();
+    
     DLP.printParameters();
-    DLP.printMultipliers();
+
+    //    DLP.printMultipliers();
     //    DLP.printTable();
 
     return 0;
