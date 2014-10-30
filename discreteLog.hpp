@@ -41,6 +41,7 @@ private:
 
     multiplier *M;
     tableCell **cellData;
+    long *numberOfElementsInTableRow;
 
     //Temporary variables to hold polynomials
     ZZ_pX temp1, temp2, temp3, temp4, temp5;
@@ -54,6 +55,10 @@ public:
     void printTable();
     void cheonDL();
     void generateTableElements();
+    void allocateTableMemory();
+    void printNumberOfRowsInTable();
+
+    //setters and getters...
     ZZ getP();
     long getT();
 };

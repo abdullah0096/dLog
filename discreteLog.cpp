@@ -28,6 +28,7 @@ discreteLog::discreteLog(ZZ p, long n, long r, long l, ZZ_pX g, ZZ_pX h, long or
     this->orderOfG = orderOfG;
     this->r = r;
     this->l = l;
+    numberOfElementsInTableRow = new long[l];
 
     ZZ_p::init(this->p);
     BuildIrred(irredPoly, this->n);
@@ -106,12 +107,20 @@ void discreteLog::printTable() {
 
 void discreteLog::generateTableElements() {
 
+    for (long row = 0; row < l; ++row) {
+        for (long col = 0; col < numberOfElementsInTableRow[row]; ++col) {
+            
+        }
+    }
+
+
+
 
 
 
 }
 
-void discreteLog::cheonDL() {
+void discreteLog::allocateTableMemory() {
 
     // Allocating a 2D array for holding table data. Used for CHEON
     // Each cell of the table has a object of type tableCell
@@ -125,7 +134,7 @@ void discreteLog::cheonDL() {
 
         long long int numberOfRow = numertor / denominator;
         cellData[i] = new tableCell[numberOfRow];
-        cellData[i]->setValues(this->t, this->p);
+        numberOfElementsInTableRow[i] = numberOfRow;
         //        std::cout << "\ni::" z<< i + 1 << "\t top :: " << topVal << "\t botVal :: " << bottomVal << "\t ans ::" << numberOfRow << std::endl;
     }
 
@@ -135,8 +144,13 @@ void discreteLog::cheonDL() {
 
     tableGenerationTime = utility::getTimeInSeconds(endTimeTableGeneration, startTimeTableGeneration);
 
-    cout << "\n Time for generation of Table :: " << tableGenerationTime;
+    cout << "\ndiscreteLog::allocateTableMemory() :- Time for generation of Table :: " << tableGenerationTime;
+}
 
+void discreteLog::cheonDL() {
+    allocateTableMemory();
+    printNumberOfRowsInTable();
+    generateTableElements();
 }
 
 /**
@@ -145,4 +159,14 @@ void discreteLog::cheonDL() {
  */
 ZZ discreteLog::getP() {
     return this->p;
+}
+
+/**
+ * Function prints the number of elements in each row in the table Ml
+ * the array numberOfElementsInTableRow is filled in the function allocateTableMemory()
+ */
+void discreteLog::printNumberOfRowsInTable() {
+    for (long j = 0; j < l; ++j) {
+        std::cout << this->numberOfElementsInTableRow[j] << "\t";
+    }
 }
