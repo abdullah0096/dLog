@@ -9,4 +9,3 @@ timestamp_t utility::get_timestamp() {
 double utility::getTimeInSeconds(timestamp_t T1, timestamp_t T0) {
     return ( (T1 - T0) / 1000000.0L);
 }
-
