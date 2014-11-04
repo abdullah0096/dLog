@@ -29,5 +29,11 @@ public:
     void printMultiplier();
     void setAlpha(long i, long value);
 
+    ~multiplier() {
+        delete alpha;
+        delete beta;
+        delete i;
+    }
+
 };
 #endif	/* MULTIPLIER_HPP */

@@ -11,24 +11,32 @@ using namespace std;
 
 int main(int argc, char** argv) {
 
-    long n, r, orderOfG;
+    long n, r, orderOfG, l, t;
     ZZ p;
     ZZ_pX g, h, irrdPoly;
 
-    cout << "\n Enter p, n, r, orderOfG :: ";
-    cin >> p >> n >> r>>orderOfG;
+    ifstream fin("in.txt");
+    if (!fin) {
+        cout << "\n ERROR in Main reading File in.txt...\n";
+        exit(1);
+    }
+
+    cout << "\n Reading Input from in.txt\n";
+    fin >> p >> n >> r >> orderOfG >> l>>t;
 
     ZZ_p::init(p);
     BuildIrred(irrdPoly, n);
+    fin >> g>>h;
+    cout << "\n p :: " << p << "\t n :: " << n << "\t r :: " << r << "\t orderOfG :: " << orderOfG
+            << "\t l :: " << l << "\t t ::" << t << "\t";
+    cout << "\n g :: " << g << "\t h :: " << h << "\n\n\n";
 
-    cout << "\n Enter g ,h ";
-    cin >> g>>h;
-
-    discreteLog DLP(p, n, r, 5, g, h, orderOfG);
-
-    DLP.cheonDL();
-    
+    discreteLog DLP(p, n, r, l, g, h, t, orderOfG);
     DLP.printParameters();
+
+    if (DLP.cheonDL() == 0) {
+        cout << "\n Something Went Wrong.....\n";
+    }
 
     //    DLP.printMultipliers();
     //    DLP.printTable();

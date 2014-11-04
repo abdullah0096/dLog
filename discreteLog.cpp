@@ -2,6 +2,7 @@
 
 #include "discreteLog.hpp"
 #include "utility.hpp"
+#include <cstring>
 
 /**
  *  function to calculate factorial
@@ -20,7 +21,7 @@ long long int factorial(long long int f) {
  * @param h element of the Group such that g^x = h
  * @param orderOfG Order of the Group
  */
-discreteLog::discreteLog(ZZ p, long n, long r, long l, ZZ_pX g, ZZ_pX h, long orderOfG) {
+discreteLog::discreteLog(ZZ p, long n, long r, long l, ZZ_pX g, ZZ_pX h, long t, long orderOfG) {
     this->p = p;
     this->n = n;
     this->g = g;
@@ -36,7 +37,7 @@ discreteLog::discreteLog(ZZ p, long n, long r, long l, ZZ_pX g, ZZ_pX h, long or
     //Allocationg Memory for the set of Multipliers and generating them
     M = new multiplier(r, p);
     generateMultipliers();
-    std::cout << "discreteLog::discreteLog :- Assuming Multipliers are generated correctly. Should be Tested :-(\n";
+    std::cout << " discreteLog::discreteLog :- Assuming Multipliers are generated correctly. Should be Tested :-(\n";
 
     x = -1;
     tableGenerationTime = -1;
@@ -44,9 +45,9 @@ discreteLog::discreteLog(ZZ p, long n, long r, long l, ZZ_pX g, ZZ_pX h, long or
 
 void discreteLog::printParameters() {
     if (x == -1) {
-        std::cout << " GF(" << p << "^" << n << ")\t such that g :: " << g << "\t h ::" << h << "\t |G| :: " << orderOfG << "\tr ::" << r << "\t l :: " << l << std::endl;
+        std::cout << "\n GF(" << p << "^" << n << ")\t such that g :: " << g << "\t h ::" << h << "\t |G| :: " << orderOfG << "\tr ::" << r << "\t l :: " << l << std::endl;
     } else {
-        std::cout << " GF(" << p << "^" << n << ")\t such that g :: " << g << "\t h ::" << h << "\t |G| :: " << orderOfG << "\tr ::" << r << "\t l :: " << l << std::endl;
+        std::cout << "\n GF(" << p << "^" << n << ")\t such that g :: " << g << "\t h ::" << h << "\t |G| :: " << orderOfG << "\tr ::" << r << "\t l :: " << l << std::endl;
     }
 }
 
@@ -55,15 +56,23 @@ void discreteLog::printParameters() {
  */
 void discreteLog::generateMultipliers() {
 
+    long long int alphaTmp[] = {4, 5, 6, 7, 1, 2, 7, 5};
+    long long int betaTmp[] = {5, 6, 7, 8, 6, 7, 1, 9};
+
+
     std::cout << " Generating Multipliers (" << r << ")....";
     fflush(stdout);
     for (int i = 0; i < r; i++) {
         srand(time(NULL));
 
-        M->alpha[i] = rand() % this->orderOfG + 1;
-        usleep(constants::waitTimeTwoSecond);
-        M->beta[i] = rand() % this->orderOfG + 1;
-        usleep(constants::waitTimeOneSecond);
+        //        M->alpha[i] = rand() % this->orderOfG + 1;
+        //        usleep(constants::waitTimeTwoSecond);
+        //        M->beta[i] = rand() % this->orderOfG + 1;
+        //        usleep(constants::waitTimeOneSecond);
+
+        M->alpha[i] = alphaTmp[i];
+        M->beta[i] = betaTmp[i];
+
         M->i[i] = i;
 
         /*
@@ -105,25 +114,60 @@ void discreteLog::printTable() {
     }
 }
 
-void discreteLog::generateTableElements() {
+/**
+ * This function reads multiplier Information from files 
+ * File names are made using values of r and 0...l-1
+ * @return return -1 in case of some error like not being able to
+ * read files or etc
+ */
+int discreteLog::readMultiplierInformation() {
 
-    for (long row = 0; row < l; ++row) {
-        for (long col = 0; col < numberOfElementsInTableRow[row]; ++col) {
-            
+    char fileName[50];
+
+    for (long long int i = 0; i < this->l; ++i) {
+        if (i == 2)
+            break;
+
+        sprintf(fileName, "%ld_%ld.txt", r, (i + 1));
+        ifstream fin(fileName);
+
+        if (!fin) {
+            std::cerr << "\n discreteLog::readMultiplierInformation : - ERROR !!!\t Unable to open file " << fileName << "\n EXITING Program.....\n";
+            return -1;
         }
-    }
+        for (long long int j = 0; j < numberOfElementsInTableRow[i]; ++j) {
+            cellData[i][j].setValues(this->t, this->p, this->numberOfElementsInTableRow[i]);
 
+            long int multiplierCnt(0);
+            while (!fin.eof()) {
 
-
-
-
-
+                char *data = new char[30];
+                fin>>data;
+                if (strcmp(data, ",") == 0) {
+                    continue;
+                } else if (strcmp(data, ";") == 0) {
+                    cout << "\n multilierCnt :: " << multiplierCnt << endl;
+                    multiplierCnt = 0;
+                } else {
+                    int tmp = atoi(data);
+                    cellData[i][j].multiplierInformation[multiplierCnt] = tmp;
+                    cout << " \n ======> " << cellData[i][j].multiplierInformation[multiplierCnt] << "\n";
+                    ++multiplierCnt;
+                }
+            }//END:while that reads data from file
+        }
+        fin.close();
+        cout << "\n===========================================================\n";
+        for (long long int k = 0; k < 50; ++k)
+            fileName[k] = '\0';
+    }//END:mainFor loop
 }
 
-void discreteLog::allocateTableMemory() {
+int discreteLog::allocateTableMemory() {
 
     // Allocating a 2D array for holding table data. Used for CHEON
-    // Each cell of the table has a object of type tableCell
+    // Each cell Allocating a 2D array for holding table data. 
+    // Used for CHEON of the table has a object of type tableCell
     cellData = new tableCell*[l];
     for (int i = 0; i < l; i++) {
         long int topVal = (i + 1) + r - 1;
@@ -135,11 +179,19 @@ void discreteLog::allocateTableMemory() {
         long long int numberOfRow = numertor / denominator;
         cellData[i] = new tableCell[numberOfRow];
         numberOfElementsInTableRow[i] = numberOfRow;
-        //        std::cout << "\ni::" z<< i + 1 << "\t top :: " << topVal << "\t botVal :: " << bottomVal << "\t ans ::" << numberOfRow << std::endl;
     }
 
     timestamp_t startTimeTableGeneration = utility::get_timestamp();
-    generateTableElements();
+    if (readMultiplierInformation() == -1) {
+        return -1;
+    } else {
+        for (long long int i = 0; i < this->l; ++i) {
+            if (i == 2)break;
+            for (long long int j = 0; j < numberOfElementsInTableRow[i]; ++j) {
+                cellData[i][j].printCellData();
+            }
+        }
+    }
     timestamp_t endTimeTableGeneration = utility::get_timestamp();
 
     tableGenerationTime = utility::getTimeInSeconds(endTimeTableGeneration, startTimeTableGeneration);
@@ -147,10 +199,11 @@ void discreteLog::allocateTableMemory() {
     cout << "\ndiscreteLog::allocateTableMemory() :- Time for generation of Table :: " << tableGenerationTime;
 }
 
-void discreteLog::cheonDL() {
-    allocateTableMemory();
-    printNumberOfRowsInTable();
-    generateTableElements();
+int discreteLog::cheonDL() {
+    if (allocateTableMemory() == -1) {
+        return 0;
+    }
+    //    printNumberOfRowsInTable();
 }
 
 /**
@@ -166,6 +219,7 @@ ZZ discreteLog::getP() {
  * the array numberOfElementsInTableRow is filled in the function allocateTableMemory()
  */
 void discreteLog::printNumberOfRowsInTable() {
+    std::cout << "\n discreteLog::printNumberOfRowsInTable :- \n";
     for (long j = 0; j < l; ++j) {
         std::cout << this->numberOfElementsInTableRow[j] << "\t";
     }

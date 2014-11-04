@@ -9,6 +9,7 @@
 #define	DISCRETELOG_HPP
 
 #include <iostream>
+#include <fstream>
 #include <time.h>
 #include <cstdlib>
 #include <stdio.h>
@@ -48,19 +49,31 @@ private:
     long double tableGenerationTime;
 
 public:
-    discreteLog(ZZ, long, long, long, ZZ_pX, ZZ_pX, long);
+    discreteLog(ZZ, long, long, long, ZZ_pX, ZZ_pX,long, long);
     void printParameters();
     void generateMultipliers();
     void printMultipliers();
     void printTable();
-    void cheonDL();
-    void generateTableElements();
-    void allocateTableMemory();
+    int cheonDL();
+    int readMultiplierInformation();
+    int allocateTableMemory();
     void printNumberOfRowsInTable();
 
     //setters and getters...
     ZZ getP();
     long getT();
+    
+    ~discreteLog() {
+        std::cout << "\n Destructor DiscreteLog : Cleaning Up Memory...\n";
+
+        //        delete []M;
+        delete []numberOfElementsInTableRow;
+
+        for (long long int i = 0; i < this->l; ++i) {
+            delete [] cellData[i];
+        }
+        //        delete [] cellData[this->l];
+    }//End::~discreteLog
 };
 
 #endif	/* DISCRETELOG_HPP */
