@@ -95,19 +95,11 @@ void discreteLog::printMultipliers() {
     this->M->printMultiplier();
 }
 
-void discreteLog::printTable() {
+void discreteLog::printTableMl() {
 
-    for (int i = 0; i < l; i++) {
-        long int topVal = (i + 1) + r - 1;
-        long int bottomVal = (i + 1);
-
-        long long int numertor = factorial(topVal);
-        long long int denominator = factorial(bottomVal) * factorial(topVal - bottomVal);
-
-        long long int numberOfRow = numertor / denominator;
-        for (int j = 0; j < numberOfRow; j++) {
+    for (int i = 0; i < this->l; ++i) {
+        for (int j = 0; j < this->numberOfElementsInTableRow[i]; j++) {
             this->cellData[i][j].printCellData();
-            std::cout << "\t";
         }
         std::cout << std::endl;
         std::cout << "============================================================================\n";
@@ -125,8 +117,6 @@ int discreteLog::readMultiplierInformation() {
     char fileName[50];
 
     for (long long int i = 0; i < this->l; ++i) {
-        if (i == 2)
-            break;
 
         sprintf(fileName, "%ld_%ld.txt", r, (i + 1));
         ifstream fin(fileName);
@@ -136,7 +126,7 @@ int discreteLog::readMultiplierInformation() {
             return -1;
         }
         for (long long int j = 0; j < numberOfElementsInTableRow[i]; ++j) {
-            cellData[i][j].setValues(this->t, this->p, this->numberOfElementsInTableRow[i]);
+            cellData[i][j].setValues(this->t, this->p, i + 1);
 
             long int multiplierCnt(0);
             while (!fin.eof()) {
@@ -146,18 +136,17 @@ int discreteLog::readMultiplierInformation() {
                 if (strcmp(data, ",") == 0) {
                     continue;
                 } else if (strcmp(data, ";") == 0) {
-                    cout << "\n multilierCnt :: " << multiplierCnt << endl;
                     multiplierCnt = 0;
+                    ++j;
+                    cellData[i][j].setValues(this->t, this->p, i + 1);
                 } else {
                     int tmp = atoi(data);
                     cellData[i][j].multiplierInformation[multiplierCnt] = tmp;
-                    cout << " \n ======> " << cellData[i][j].multiplierInformation[multiplierCnt] << "\n";
                     ++multiplierCnt;
                 }
             }//END:while that reads data from file
         }
         fin.close();
-        cout << "\n===========================================================\n";
         for (long long int k = 0; k < 50; ++k)
             fileName[k] = '\0';
     }//END:mainFor loop
@@ -185,12 +174,7 @@ int discreteLog::allocateTableMemory() {
     if (readMultiplierInformation() == -1) {
         return -1;
     } else {
-        for (long long int i = 0; i < this->l; ++i) {
-            if (i == 2)break;
-            for (long long int j = 0; j < numberOfElementsInTableRow[i]; ++j) {
-                cellData[i][j].printCellData();
-            }
-        }
+        printTableMl();
     }
     timestamp_t endTimeTableGeneration = utility::get_timestamp();
 

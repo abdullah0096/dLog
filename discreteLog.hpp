@@ -53,7 +53,7 @@ public:
     void printParameters();
     void generateMultipliers();
     void printMultipliers();
-    void printTable();
+    void printTableMl();
     int cheonDL();
     int readMultiplierInformation();
     int allocateTableMemory();
