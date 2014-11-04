@@ -20,22 +20,20 @@ using namespace std;
 class tableCell {
 public:
     int *multiplierInformation; // Vector to store multiplier information
-    ZZ_pX groupElement;        // 
-    long int summationAlpha;  // summation of all alph's 
-    long int summationBeta;  // summation of all beta's 
-    int *tag;               // 
-    long t;                // size of tag
-    ZZ p;                 // 
-    long long int l;     // 
+    ZZ_pX groupElement; // 
+    long int summationAlpha; // summation of all alph's 
+    long int summationBeta; // summation of all beta's 
+    int *tag; // 
+    long t; // size of tag
+    ZZ p; // 
+    long long int numberOfElementsInMultiplierInformation; // 
 
 
 public:
 
     tableCell();
     void setValues(long t, ZZ p, long long int l);
-
     void printCellData();
-
 };
 
 #endif	/* TABLECELL_HPP */

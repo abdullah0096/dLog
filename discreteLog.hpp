@@ -49,7 +49,7 @@ private:
     long double tableGenerationTime;
 
 public:
-    discreteLog(ZZ, long, long, long, ZZ_pX, ZZ_pX,long, long);
+    discreteLog(ZZ, long, long, long, ZZ_pX, ZZ_pX, long, long);
     void printParameters();
     void generateMultipliers();
     void printMultipliers();
@@ -58,11 +58,13 @@ public:
     int readMultiplierInformation();
     int allocateTableMemory();
     void printNumberOfRowsInTable();
+    void computeGroupElementExponentAndTag();
+    ZZ_pX getTag(ZZ_pX);
 
     //setters and getters...
     ZZ getP();
     long getT();
-    
+
     ~discreteLog() {
         std::cout << "\n Destructor DiscreteLog : Cleaning Up Memory...\n";
 
@@ -77,4 +79,3 @@ public:
 };
 
 #endif	/* DISCRETELOG_HPP */
-

@@ -22,13 +22,20 @@ long long int factorial(long long int f) {
  * @param orderOfG Order of the Group
  */
 discreteLog::discreteLog(ZZ p, long n, long r, long l, ZZ_pX g, ZZ_pX h, long t, long orderOfG) {
-    this->p = p;
     this->n = n;
+    this->t = t;
+    if (this->t >= this->n) {
+        std::cerr << "\n n :: " << n << " should be greater than size of tag i.e t :: " << t << endl;
+        exit(1);
+    }
+
+    this->p = p;
     this->g = g;
     this->h = h;
     this->orderOfG = orderOfG;
     this->r = r;
     this->l = l;
+
     numberOfElementsInTableRow = new long[l];
 
     ZZ_p::init(this->p);
@@ -37,6 +44,7 @@ discreteLog::discreteLog(ZZ p, long n, long r, long l, ZZ_pX g, ZZ_pX h, long t,
     //Allocationg Memory for the set of Multipliers and generating them
     M = new multiplier(r, p);
     generateMultipliers();
+    printMultipliers();
     std::cout << " discreteLog::discreteLog :- Assuming Multipliers are generated correctly. Should be Tested :-(\n";
 
     x = -1;
@@ -46,8 +54,10 @@ discreteLog::discreteLog(ZZ p, long n, long r, long l, ZZ_pX g, ZZ_pX h, long t,
 void discreteLog::printParameters() {
     if (x == -1) {
         std::cout << "\n GF(" << p << "^" << n << ")\t such that g :: " << g << "\t h ::" << h << "\t |G| :: " << orderOfG << "\tr ::" << r << "\t l :: " << l << std::endl;
+        std::cout << " Irred poly :: " << this->irredPoly << endl;
     } else {
         std::cout << "\n GF(" << p << "^" << n << ")\t such that g :: " << g << "\t h ::" << h << "\t |G| :: " << orderOfG << "\tr ::" << r << "\t l :: " << l << std::endl;
+        std::cout << " Irred poly :: " << this->irredPoly << endl;
     }
 }
 
@@ -130,7 +140,6 @@ int discreteLog::readMultiplierInformation() {
 
             long int multiplierCnt(0);
             while (!fin.eof()) {
-
                 char *data = new char[30];
                 fin>>data;
                 if (strcmp(data, ",") == 0) {
@@ -150,6 +159,46 @@ int discreteLog::readMultiplierInformation() {
         for (long long int k = 0; k < 50; ++k)
             fileName[k] = '\0';
     }//END:mainFor loop
+}
+
+void discreteLog::computeGroupElementExponentAndTag() {
+
+    for (long long int i = 0; i < this->l; ++i) {
+        for (long long int j = 0; j < this->numberOfElementsInTableRow[i]; ++j) {
+            long int miCnt = 0;
+
+            for (int k = 0; k < i + 1; ++k) {
+                if (k == 0) {
+                    this->temp1 = this->M->groupElement[this->cellData[i][j].multiplierInformation[miCnt]];
+                    this->cellData[i][j].summationAlpha = this->M->alpha[miCnt];
+                    this->cellData[i][j].summationBeta = this->M->beta[miCnt];
+                } else {
+                    this->temp1 *= this->M->groupElement[this->cellData[i][j].multiplierInformation[miCnt]];
+                    this->cellData[i][j].summationAlpha += this->M->alpha[miCnt];
+                    this->cellData[i][j].summationBeta += this->M->beta[miCnt];
+                }
+                miCnt++;
+            }//end::for k
+            this->temp1 = temp1 % irredPoly;
+            this->cellData[i][j].groupElement = this->temp1;
+
+            //Modify this for all values of the tag...
+            //            this->cellData[i][j] = getTag(this->cellData[i][j].groupElement);
+        }
+    }
+}
+
+ZZ_pX discreteLog::getTag(ZZ_pX element) {
+
+    ZZ_pX tmp;
+    ZZ_p::init(this->p);
+
+    int start = this->n - this->t;
+    for (int i = start; i < this->n; ++i) {
+        cout << element[i];
+    }
+
+
 }
 
 int discreteLog::allocateTableMemory() {
@@ -174,6 +223,8 @@ int discreteLog::allocateTableMemory() {
     if (readMultiplierInformation() == -1) {
         return -1;
     } else {
+        printNumberOfRowsInTable();
+        computeGroupElementExponentAndTag();
         printTableMl();
     }
     timestamp_t endTimeTableGeneration = utility::get_timestamp();

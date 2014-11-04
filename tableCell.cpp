@@ -2,9 +2,10 @@
 
 void tableCell::printCellData() {
     cout << " Multiplier information ::";
-    for (long int i = 0; i< this->l; ++i) {
+    for (long int i = 0; i< this->numberOfElementsInMultiplierInformation; ++i) {
         cout << multiplierInformation[i] << " ";
     }
+    cout << "\n groupElement :: " << this->groupElement;
     cout << "\n";
 }
 
@@ -17,9 +18,9 @@ tableCell::tableCell() {
 void tableCell::setValues(long t, ZZ p, long long int l) {
     this->t = t;
     this->p = p;
-    this->l = l;
+    this->numberOfElementsInMultiplierInformation = l;
 
-    multiplierInformation = new int[this->l];
+    multiplierInformation = new int[this->numberOfElementsInMultiplierInformation];
     tag = new int[this->t];
     ZZ_p::init(this->p);
 }

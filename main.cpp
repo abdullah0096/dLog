@@ -29,14 +29,18 @@ int main(int argc, char** argv) {
     fin >> g>>h;
     cout << "\n p :: " << p << "\t n :: " << n << "\t r :: " << r << "\t orderOfG :: " << orderOfG
             << "\t l :: " << l << "\t t ::" << t << "\t";
-    cout << "\n g :: " << g << "\t h :: " << h << "\n\n\n";
+    cout << "\n g :: " << g << "\t h :: " << h << "\n\n";
 
     discreteLog DLP(p, n, r, l, g, h, t, orderOfG);
     DLP.printParameters();
 
-    if (DLP.cheonDL() == 0) {
-        cout << "\n Something Went Wrong.....\n";
-    }
+    DLP.getTag(g);
+
+
+    //    if (DLP.cheonDL() == 0) {
+    //        cout << "\n Something Went Wrong.....\n";
+    //    }
+    ;
 
     //    DLP.printMultipliers();
     //    DLP.printTable();
