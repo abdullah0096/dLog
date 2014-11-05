@@ -265,6 +265,7 @@ int discreteLog::cheonDL() {
     if (allocateTableMemory() == -1) {
         return 0;
     }
+    //this is it
     //    printNumberOfRowsInTable();
 }
 
