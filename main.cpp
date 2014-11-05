@@ -34,9 +34,11 @@ int main(int argc, char** argv) {
     discreteLog DLP(p, n, r, l, g, h, t, orderOfG);
     DLP.printParameters();
 
-    if (DLP.cheonDL() == 0) {
-        cout << "\n Something Went Wrong.....\n";
-    }
+    DLP.getTag(h);
+
+    //    if (DLP.cheonDL() == 0) {
+    //        cout << "\n Something Went Wrong.....\n";
+    //    }
     ;
     //    DLP.printMultipliers();
     //    DLP.printTable();

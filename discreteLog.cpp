@@ -236,7 +236,7 @@ int discreteLog::allocateTableMemory() {
     cellData = new tableCell*[l];
     for (int i = 0; i < l; i++) {
         long int topVal = (i + 1) + r - 1;
-        long int bottomVal = (i + 1); 
+        long int bottomVal = (i + 1);
 
         long long int numertor = factorial(topVal);
         long long int denominator = factorial(bottomVal) * factorial(topVal - bottomVal);
@@ -265,7 +265,6 @@ int discreteLog::cheonDL() {
     if (allocateTableMemory() == -1) {
         return 0;
     }
-    //this is it
     //    printNumberOfRowsInTable();
 }
 
