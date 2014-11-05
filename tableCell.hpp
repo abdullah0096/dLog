@@ -17,7 +17,7 @@
 using namespace NTL;
 using namespace std;
 
-class tableCell {
+class tableCell { 
 public:
     int *multiplierInformation; // Vector to store multiplier information
     ZZ_pX groupElement; // 
