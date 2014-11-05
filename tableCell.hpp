@@ -23,7 +23,8 @@ public:
     ZZ_pX groupElement; // 
     long int summationAlpha; // summation of all alph's 
     long int summationBeta; // summation of all beta's 
-    int *tag; // 
+    int **tag; // 
+    long long int n;
     long t; // size of tag
     ZZ p; // 
     long long int numberOfElementsInMultiplierInformation; // 
@@ -32,7 +33,7 @@ public:
 public:
 
     tableCell();
-    void setValues(long t, ZZ p, long long int l);
+    void setValues(long t, ZZ p, long long int l, long long int n);
     void printCellData();
 };
 
