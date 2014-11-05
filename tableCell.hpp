@@ -7,28 +7,34 @@
 
 #ifndef TABLECELL_HPP
 #define	TABLECELL_HPP
+
 #include <iostream>
 
+#include <NTL/ZZ.h>
+#include <NTL/ZZ_pX.h>
+#include <NTL/ZZ_pXFactoring.h>
+
+using namespace NTL;
 using namespace std;
 
-class tableCell {
+class tableCell { 
 public:
     int *multiplierInformation; // Vector to store multiplier information
-    //    NTL groupElement;
+    ZZ_pX groupElement; // 
     long int summationAlpha; // summation of all alph's 
     long int summationBeta; // summation of all beta's 
-    //    NTL tag;
+    int **tag; // 
+    long long int n;
+    long t; // size of tag
+    ZZ p; // 
+    long long int numberOfElementsInMultiplierInformation; // 
+
 
 public:
 
-    tableCell() {
-
-        std::cout << "\n in here.,,,\n";
-    }
-
+    tableCell();
+    void setValues(long t, ZZ p, long long int l, long long int n);
     void printCellData();
-
-
 };
 
 #endif	/* TABLECELL_HPP */
