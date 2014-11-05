@@ -59,21 +59,27 @@ public:
     int allocateTableMemory();
     void printNumberOfRowsInTable();
     void computeGroupElementExponentAndTag();
-    ZZ_pX getTag(ZZ_pX);
+    ZZ_pX getTag(const ZZ_pX&);
 
     //setters and getters...
     ZZ getP();
     long getT();
 
     ~discreteLog() {
-        std::cout << "\n Destructor DiscreteLog : Cleaning Up Memory...\n";
+        std::cout << "\n Destructor DiscreteLog : Cleaning Up Memory...\tNot completely implemented...\n";
 
         //        delete []M;
         delete []numberOfElementsInTableRow;
-
-        for (long long int i = 0; i < this->l; ++i) {
-            delete [] cellData[i];
-        }
+        ;
+        // Deleting 2D array..
+        //        for (int i = 0; i < NUM; i++) {
+        //            delete[] p[i];
+        //        }
+        //        delete []p;
+        ;
+        //        for (long long int i = 0; i < this->l; ++i) {
+        //            delete [] cellData[i];
+        //        }
         //        delete [] cellData[this->l];
     }//End::~discreteLog
 };

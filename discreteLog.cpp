@@ -3,6 +3,7 @@
 #include "discreteLog.hpp"
 #include "utility.hpp"
 #include <cstring>
+#include <NTL/ZZX.h>
 
 /**
  *  function to calculate factorial
@@ -136,7 +137,7 @@ int discreteLog::readMultiplierInformation() {
             return -1;
         }
         for (long long int j = 0; j < numberOfElementsInTableRow[i]; ++j) {
-            cellData[i][j].setValues(this->t, this->p, i + 1);
+            cellData[i][j].setValues(this->t, this->p, i + 1, this->n);
 
             long int multiplierCnt(0);
             while (!fin.eof()) {
@@ -147,7 +148,7 @@ int discreteLog::readMultiplierInformation() {
                 } else if (strcmp(data, ";") == 0) {
                     multiplierCnt = 0;
                     ++j;
-                    cellData[i][j].setValues(this->t, this->p, i + 1);
+                    cellData[i][j].setValues(this->t, this->p, i + 1, this->n);
                 } else {
                     int tmp = atoi(data);
                     cellData[i][j].multiplierInformation[multiplierCnt] = tmp;
@@ -163,48 +164,74 @@ int discreteLog::readMultiplierInformation() {
 
 void discreteLog::computeGroupElementExponentAndTag() {
 
-    for (long long int i = 0; i < this->l; ++i) {
-        for (long long int j = 0; j < this->numberOfElementsInTableRow[i]; ++j) {
-            long int miCnt = 0;
+    try {
+        for (long long int i = 0; i < this->l; ++i) {
+            for (long long int j = 0; j < this->numberOfElementsInTableRow[i]; ++j) {
+                long int miCnt = 0;
 
-            for (int k = 0; k < i + 1; ++k) {
-                if (k == 0) {
-                    this->temp1 = this->M->groupElement[this->cellData[i][j].multiplierInformation[miCnt]];
-                    this->cellData[i][j].summationAlpha = this->M->alpha[miCnt];
-                    this->cellData[i][j].summationBeta = this->M->beta[miCnt];
-                } else {
-                    this->temp1 *= this->M->groupElement[this->cellData[i][j].multiplierInformation[miCnt]];
-                    this->cellData[i][j].summationAlpha += this->M->alpha[miCnt];
-                    this->cellData[i][j].summationBeta += this->M->beta[miCnt];
+                for (int k = 0; k < i + 1; ++k) {
+                    if (k == 0) {
+                        this->temp1 = this->M->groupElement[this->cellData[i][j].multiplierInformation[miCnt]];
+                        this->cellData[i][j].summationAlpha = this->M->alpha[miCnt];
+                        this->cellData[i][j].summationBeta = this->M->beta[miCnt];
+                    } else {
+                        this->temp1 *= this->M->groupElement[this->cellData[i][j].multiplierInformation[miCnt]];
+                        this->cellData[i][j].summationAlpha += this->M->alpha[miCnt];
+                        this->cellData[i][j].summationBeta += this->M->beta[miCnt];
+                    }
+                    miCnt++;
+                }//end::for k
+                this->temp1 = temp1 % irredPoly;
+                this->cellData[i][j].groupElement = this->temp1;
+
+                //calculating tag for 1,x,x^2,...,x^(n-1)
+
+                cout << "\n______________________[Start]__________________________\n";
+                for (long long int i1 = 0; i1 < n; ++i1) {
+                    ZZ_p::init(this->p);
+                    ZZ_pX tmp, tmp2, tmp3;
+                    SetCoeff(tmp, i1, 1);
+
+                    tmp2 = (tmp * cellData[i][j].groupElement) % this->irredPoly;
+                    tmp3 = getTag(tmp2);
+                    cout << "\n tmp :: " << tmp << "\t tmp2 :: " << tmp2 << "\t tag :: " << tmp3 << endl;
                 }
-                miCnt++;
-            }//end::for k
-            this->temp1 = temp1 % irredPoly;
-            this->cellData[i][j].groupElement = this->temp1;
-
-            //Modify this for all values of the tag...
-            //            this->cellData[i][j] = getTag(this->cellData[i][j].groupElement);
+                cout << "\n_______________________[END]____________________________\n";
+            }
         }
+    } catch (...) {
+        cerr << "\n Exception ::discreteLog::computeGroupElementExponentAndTag\n ";
     }
 }
 
-ZZ_pX discreteLog::getTag(ZZ_pX element) {
+/**
+ * This function computes the tag of a given element of GF(p^n)
+ * A tag is the highest 't' bits of the given element
+ * @param element : The element whose tag is to be computed
+ * @return : Tag for element
+ */
+ZZ_pX discreteLog::getTag(const ZZ_pX& element) {
 
-    ZZ_pX tmp;
-    ZZ_p::init(this->p);
-
-    int start = this->n - this->t;
-    for (int i = start; i < this->n; ++i) {
-        cout << element[i];
+    try {
+        cout << "\n element :: " << element << endl;
+        ZZ_p::init(this->p);
+        ZZ_pX tmp;
+        long tmpCnt(0);
+        int start = this->n - this->t;
+        for (int i = start; i < this->n; ++i) {
+            SetCoeff(tmp, tmpCnt, element[i]);
+            tmpCnt++;
+        }
+        return tmp;
+    } catch (...) {
+        cout << "\n Exception :: ZZ_pX discreteLog::getTag\n";
     }
-
-
 }
 
 int discreteLog::allocateTableMemory() {
 
     // Allocating a 2D array for holding table data. Used for CHEON
-    // Each cell Allocating a 2D array for holding table data. 
+    // Each cell Allocating a 2D array for holding table data.
     // Used for CHEON of the table has a object of type tableCell
     cellData = new tableCell*[l];
     for (int i = 0; i < l; i++) {
@@ -225,7 +252,7 @@ int discreteLog::allocateTableMemory() {
     } else {
         printNumberOfRowsInTable();
         computeGroupElementExponentAndTag();
-        printTableMl();
+        //        printTableMl();
     }
     timestamp_t endTimeTableGeneration = utility::get_timestamp();
 

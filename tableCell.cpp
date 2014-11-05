@@ -15,12 +15,16 @@ tableCell::tableCell() {
     //std::cout << "\n in here....\n";
 }
 
-void tableCell::setValues(long t, ZZ p, long long int l) {
+void tableCell::setValues(long t, ZZ p, long long int l, long long int n) {
     this->t = t;
     this->p = p;
     this->numberOfElementsInMultiplierInformation = l;
+    this->n = n;
 
     multiplierInformation = new int[this->numberOfElementsInMultiplierInformation];
-    tag = new int[this->t];
     ZZ_p::init(this->p);
+
+    tag = new int*[this->n - 1];
+    for (int i = 0; i<this->n - 1; ++i)
+        tag[i] = new int[this->t];
 }

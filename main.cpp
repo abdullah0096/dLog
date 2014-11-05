@@ -25,7 +25,7 @@ int main(int argc, char** argv) {
     fin >> p >> n >> r >> orderOfG >> l>>t;
 
     ZZ_p::init(p);
-    BuildIrred(irrdPoly, n);
+
     fin >> g>>h;
     cout << "\n p :: " << p << "\t n :: " << n << "\t r :: " << r << "\t orderOfG :: " << orderOfG
             << "\t l :: " << l << "\t t ::" << t << "\t";
@@ -34,16 +34,13 @@ int main(int argc, char** argv) {
     discreteLog DLP(p, n, r, l, g, h, t, orderOfG);
     DLP.printParameters();
 
-    DLP.getTag(g);
-
-
-    //    if (DLP.cheonDL() == 0) {
-    //        cout << "\n Something Went Wrong.....\n";
-    //    }
+    if (DLP.cheonDL() == 0) {
+        cout << "\n Something Went Wrong.....\n";
+    }
     ;
-
     //    DLP.printMultipliers();
     //    DLP.printTable();
 
+    fin.close();
     return 0;
 }
