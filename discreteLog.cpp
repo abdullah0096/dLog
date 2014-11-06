@@ -186,17 +186,25 @@ void discreteLog::computeGroupElementExponentAndTag() {
 
                 //calculating tag for 1,x,x^2,...,x^(n-1)
 
-                cout << "\n______________________[Start]__________________________\n";
+                cout << "\n______________________[Start]________________________________________________________________________\n";
                 for (long long int i1 = 0; i1 < n; ++i1) {
+                    cellData[i][j].printCellData();
                     ZZ_p::init(this->p);
                     ZZ_pX tmp, tmp2, tmp3;
+                    cout << "\n tmp :: " << tmp << "\t tmp2 :: " << tmp2 << "\t tmp3 :: " << tmp3 << endl;
+
                     SetCoeff(tmp, i1, 1);
+                    cout << "\n tmp :: " << tmp << "\t cellData[i][j].groupElement :: " << cellData[i][j].groupElement << endl;
 
                     tmp2 = (tmp * cellData[i][j].groupElement) % this->irredPoly;
+                    cout << "\n tmp :: " << tmp << "\t tmp2 :: " << tmp2 << endl;
+
+                    cout << "\n i :: " << i << "\t j :: " << j << "\t i1 :: " << i1 << endl;
                     tmp3 = getTag(tmp2);
                     cout << "\n tmp :: " << tmp << "\t tmp2 :: " << tmp2 << "\t tag :: " << tmp3 << endl;
+                    cout << "================================================================================\n";
                 }
-                cout << "\n_______________________[END]____________________________\n";
+                cout << "\n_______________________[END]_________________________________________________________________________\n";
             }
         }
     } catch (...) {
@@ -211,7 +219,7 @@ void discreteLog::computeGroupElementExponentAndTag() {
  * @return : Tag for element
  */
 ZZ_pX discreteLog::getTag(const ZZ_pX& element) {
-
+    cout << "\n*******************************************************************************\n";
     try {
         cout << "\n element :: " << element << endl;
         ZZ_p::init(this->p);
@@ -219,13 +227,16 @@ ZZ_pX discreteLog::getTag(const ZZ_pX& element) {
         long tmpCnt(0);
         int start = this->n - this->t;
         for (int i = start; i < this->n; ++i) {
+            cout << "\n before tmp :: " << tmp << "\t tmpCnt :: " << tmpCnt << "\t element[i] :: " << element[i] << "\t i :: " << i << endl;
             SetCoeff(tmp, tmpCnt, element[i]);
+            cout << "\n after tmp :: " << tmp << "\t tmpCnt :: " << tmpCnt << "\t element[i] :: " << element[i] << "\t i :: " << i << endl;
             tmpCnt++;
         }
         return tmp;
     } catch (...) {
         cout << "\n Exception :: ZZ_pX discreteLog::getTag\n";
     }
+    cout << "\n*******************************************************************************\n";
 }
 
 int discreteLog::allocateTableMemory() {

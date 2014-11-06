@@ -22,7 +22,7 @@ int main(int argc, char** argv) {
     }
 
     cout << "\n Reading Input from in.txt\n";
-    fin >> p >> n >> r >> orderOfG >> l>>t;
+    fin >> p >> n >> r >> orderOfG >> l >>t;
 
     ZZ_p::init(p);
 
@@ -34,11 +34,12 @@ int main(int argc, char** argv) {
     discreteLog DLP(p, n, r, l, g, h, t, orderOfG);
     DLP.printParameters();
 
-    DLP.getTag(h);
+    if (DLP.cheonDL() == 0) {
+        cout << "\n Something Went Wrong.....\n";
+    }
 
-    //    if (DLP.cheonDL() == 0) {
-    //        cout << "\n Something Went Wrong.....\n";
-    //    }
+    //    cout << "\n tag :: " << DLP.getTag(g);
+
     ;
     //    DLP.printMultipliers();
     //    DLP.printTable();
