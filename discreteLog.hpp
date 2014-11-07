@@ -35,20 +35,23 @@ private:
     long r; // value of r in r-adding walk and other methods    
     long l; // number of rows in pre-computed table for CHEON DLP method
     long t; // size of tage vector for CHEON
+    int tagStartPosition; //starting point in a vector repenstation of a poly to compute the tag.
 
     ZZ_pX h; // element of the Group such that g^x = h
     ZZ_pX g; // Generator of the Group
     ZZ_pX irredPoly; //Irreducible Polynomial
 
     multiplier *M;
-    tableCell **cellData;
+
     long *numberOfElementsInTableRow;
 
     //Temporary variables to hold polynomials
     ZZ_pX temp1, temp2, temp3, temp4, temp5;
-    long double tableGenerationTime;
+
 
 public:
+    long double tableGenerationTime;
+    tableCell **cellData;
     discreteLog(ZZ, long, long, long, ZZ_pX, ZZ_pX, long, long);
     void printParameters();
     void generateMultipliers();

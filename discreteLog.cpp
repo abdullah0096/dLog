@@ -36,7 +36,7 @@ discreteLog::discreteLog(ZZ p, long n, long r, long l, ZZ_pX g, ZZ_pX h, long t,
     this->orderOfG = orderOfG;
     this->r = r;
     this->l = l;
-
+    this->tagStartPosition = this->n - this->t;
     numberOfElementsInTableRow = new long[l];
 
     ZZ_p::init(this->p);
@@ -45,7 +45,7 @@ discreteLog::discreteLog(ZZ p, long n, long r, long l, ZZ_pX g, ZZ_pX h, long t,
     //Allocationg Memory for the set of Multipliers and generating them
     M = new multiplier(r, p);
     generateMultipliers();
-    printMultipliers();
+    //    printMultipliers();
     std::cout << " discreteLog::discreteLog :- Assuming Multipliers are generated correctly. Should be Tested :-(\n";
 
     x = -1;
@@ -168,44 +168,35 @@ void discreteLog::computeGroupElementExponentAndTag() {
         for (long long int i = 0; i < this->l; ++i) {
             for (long long int j = 0; j < this->numberOfElementsInTableRow[i]; ++j) {
                 long int miCnt = 0;
-
                 for (int k = 0; k < i + 1; ++k) {
                     if (k == 0) {
                         this->temp1 = this->M->groupElement[this->cellData[i][j].multiplierInformation[miCnt]];
-                        this->cellData[i][j].summationAlpha = this->M->alpha[miCnt];
-                        this->cellData[i][j].summationBeta = this->M->beta[miCnt];
+                        this->cellData[i][j].summationAlpha = this->M->alpha[this->cellData[i][j].multiplierInformation[miCnt]];
+                        this->cellData[i][j].summationBeta = this->M->beta[this->cellData[i][j].multiplierInformation[miCnt]];
                     } else {
                         this->temp1 *= this->M->groupElement[this->cellData[i][j].multiplierInformation[miCnt]];
-                        this->cellData[i][j].summationAlpha += this->M->alpha[miCnt];
-                        this->cellData[i][j].summationBeta += this->M->beta[miCnt];
+                        this->cellData[i][j].summationAlpha += this->M->alpha[this->cellData[i][j].multiplierInformation[miCnt]];
+                        this->cellData[i][j].summationBeta += this->M->beta[this->cellData[i][j].multiplierInformation[miCnt]];
                     }
                     miCnt++;
                 }//end::for k
-                this->temp1 = temp1 % irredPoly;
-                this->cellData[i][j].groupElement = this->temp1;
+                //                this->temp1 = temp1 % irredPoly;
+                this->cellData[i][j].groupElement = this->temp1 % irredPoly;
 
                 //calculating tag for 1,x,x^2,...,x^(n-1)
-
-                cout << "\n______________________[Start]________________________________________________________________________\n";
                 for (long long int i1 = 0; i1 < n; ++i1) {
-                    cellData[i][j].printCellData();
                     ZZ_p::init(this->p);
-                    ZZ_pX tmp, tmp2, tmp3;
-                    cout << "\n tmp :: " << tmp << "\t tmp2 :: " << tmp2 << "\t tmp3 :: " << tmp3 << endl;
+                    ZZ_pX tmp, tmp2;
+                    tmp.SetMaxLength(this->n);
+                    tmp2.SetMaxLength(this->n);
 
                     SetCoeff(tmp, i1, 1);
-                    cout << "\n tmp :: " << tmp << "\t cellData[i][j].groupElement :: " << cellData[i][j].groupElement << endl;
-
                     tmp2 = (tmp * cellData[i][j].groupElement) % this->irredPoly;
-                    cout << "\n tmp :: " << tmp << "\t tmp2 :: " << tmp2 << endl;
-
-                    cout << "\n i :: " << i << "\t j :: " << j << "\t i1 :: " << i1 << endl;
-                    tmp3 = getTag(tmp2);
-                    cout << "\n tmp :: " << tmp << "\t tmp2 :: " << tmp2 << "\t tag :: " << tmp3 << endl;
-                    cout << "================================================================================\n";
+                    //                    tmp3 = getTag(tmp2);
+                    this->cellData[i][j].tag[i1] = getTag(tmp2);
                 }
-                cout << "\n_______________________[END]_________________________________________________________________________\n";
             }
+            clear(temp1);
         }
     } catch (...) {
         cerr << "\n Exception ::discreteLog::computeGroupElementExponentAndTag\n ";
@@ -219,24 +210,20 @@ void discreteLog::computeGroupElementExponentAndTag() {
  * @return : Tag for element
  */
 ZZ_pX discreteLog::getTag(const ZZ_pX& element) {
-    cout << "\n*******************************************************************************\n";
     try {
-        cout << "\n element :: " << element << endl;
         ZZ_p::init(this->p);
         ZZ_pX tmp;
+        tmp.SetMaxLength(this->t);
         long tmpCnt(0);
-        int start = this->n - this->t;
-        for (int i = start; i < this->n; ++i) {
-            cout << "\n before tmp :: " << tmp << "\t tmpCnt :: " << tmpCnt << "\t element[i] :: " << element[i] << "\t i :: " << i << endl;
+
+        for (int i = tagStartPosition; i < this->n; ++i) {
             SetCoeff(tmp, tmpCnt, element[i]);
-            cout << "\n after tmp :: " << tmp << "\t tmpCnt :: " << tmpCnt << "\t element[i] :: " << element[i] << "\t i :: " << i << endl;
             tmpCnt++;
         }
         return tmp;
     } catch (...) {
         cout << "\n Exception :: ZZ_pX discreteLog::getTag\n";
     }
-    cout << "\n*******************************************************************************\n";
 }
 
 int discreteLog::allocateTableMemory() {
@@ -261,7 +248,7 @@ int discreteLog::allocateTableMemory() {
     if (readMultiplierInformation() == -1) {
         return -1;
     } else {
-        printNumberOfRowsInTable();
+        //        printNumberOfRowsInTable();
         computeGroupElementExponentAndTag();
         //        printTableMl();
     }

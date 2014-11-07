@@ -17,13 +17,13 @@
 using namespace NTL;
 using namespace std;
 
-class tableCell { 
+class tableCell {
 public:
     int *multiplierInformation; // Vector to store multiplier information
     ZZ_pX groupElement; // 
     long int summationAlpha; // summation of all alph's 
     long int summationBeta; // summation of all beta's 
-    int **tag; // 
+    ZZ_pX *tag; // 
     long long int n;
     long t; // size of tag
     ZZ p; // 

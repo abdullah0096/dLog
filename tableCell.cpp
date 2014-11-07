@@ -1,12 +1,18 @@
 #include "tableCell.hpp"
 
 void tableCell::printCellData() {
+    cout << "\n__________________________\n";
     cout << " Multiplier information ::";
     for (long int i = 0; i< this->numberOfElementsInMultiplierInformation; ++i) {
         cout << multiplierInformation[i] << " ";
     }
-    cout << "\n groupElement :: " << this->groupElement;
-    cout << "\n";
+    cout << "\n groupElement :: " << this->groupElement << endl;
+    cout << " Summation ALPHA :: " << this->summationAlpha << endl;
+    cout << " Summation BETA :: " << this->summationBeta << endl;
+    cout << " tag ::";
+    for (int i = 0; i< this->n; ++i)
+        cout << tag[i] << "\t";
+    cout << "\n__________________________\n";
 }
 
 tableCell::tableCell() {
@@ -24,7 +30,7 @@ void tableCell::setValues(long t, ZZ p, long long int l, long long int n) {
     multiplierInformation = new int[this->numberOfElementsInMultiplierInformation];
     ZZ_p::init(this->p);
 
-    tag = new int*[this->n - 1];
-    for (int i = 0; i<this->n - 1; ++i)
-        tag[i] = new int[this->t];
+    tag = new ZZ_pX[this->n];
+    for (int i = 0; i < this->n; ++i)
+        tag[i].SetMaxLength(this->t);
 }
