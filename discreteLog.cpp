@@ -23,6 +23,7 @@ long long int factorial(long long int f) {
  * @param orderOfG Order of the Group
  */
 discreteLog::discreteLog(ZZ p, long n, long r, long l, ZZ_pX g, ZZ_pX h, long t, long orderOfG) {
+    this->toDO();
     this->n = n;
     this->t = t;
     if (this->t >= this->n) {
@@ -226,6 +227,13 @@ ZZ_pX discreteLog::getTag(const ZZ_pX& element) {
     }
 }
 
+void discreteLog::toDO() {
+    cout << "\n &*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*\n ";
+            cout << "\n \t\t\tTo-DO List....\n";
+    cout << "\n Implement t = log2 (r) now reading from file...\n";
+    cout << "\n &*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*\n\n ";
+}
+
 int discreteLog::allocateTableMemory() {
 
     // Allocating a 2D array for holding table data. Used for CHEON
@@ -262,8 +270,19 @@ int discreteLog::allocateTableMemory() {
 int discreteLog::cheonDL() {
     if (allocateTableMemory() == -1) {
         return 0;
+    } else {
+        //    printNumberOfRowsInTable();
+        ZZ_pX Y;
+        Y.SetMaxLength(this->n);
+        ZZ_p::init(this->p);
+        Y = g;
+        cout << "\n Y :: " << Y << endl;
+        cout << "\n tag(Y) :: " << getTag(Y) << endl;
+        
+        
+        
+        
     }
-    //    printNumberOfRowsInTable();
 }
 
 /**

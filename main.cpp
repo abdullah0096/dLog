@@ -42,10 +42,9 @@ int main(int argc, char** argv) {
             cout << "\n Something Went Wrong.....\n";
         } else {
             time += DLP.tableGenerationTime;
-            cout << "\n iteration # " << i << endl;
+            cout << "\n in Main :: Iteration # " << i << endl;
         }
         //    cout << "\n tag :: " << DLP.getTag(g);
-
         ;
         //    DLP.printMultipliers();
         //    DLP.printTable();

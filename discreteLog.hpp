@@ -67,6 +67,7 @@ public:
     //setters and getters...
     ZZ getP();
     long getT();
+    void toDO();
 
     ~discreteLog() {
         std::cout << "\n Destructor DiscreteLog : Cleaning Up Memory...\tNot completely implemented...\n";
