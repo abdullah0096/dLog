@@ -7,6 +7,8 @@
 
 #include "discreteLog.hpp"
 
+#include <NTL/vec_ZZ.h>
+
 using namespace std;
 
 int main(int argc, char** argv) {
@@ -35,19 +37,17 @@ int main(int argc, char** argv) {
                 << "\t l :: " << l << "\t t ::" << t << "\t";
         cout << "\n g :: " << g << "\t h :: " << h << "\n\n";
 
+        //        ZZ tmp2;
+        //        tmp2 = rep(h[0]);
+        //        a = conv<int>(h[0]);
+        ;
         discreteLog DLP(p, n, r, l, g, h, t, orderOfG);
-        //        DLP.printParameters();
-
         if (DLP.cheonDL() == 0) {
             cout << "\n Something Went Wrong.....\n";
         } else {
             time += DLP.tableGenerationTime;
             cout << "\n in Main :: Iteration # " << i << endl;
         }
-        //    cout << "\n tag :: " << DLP.getTag(g);
-        ;
-        //    DLP.printMultipliers();
-        //    DLP.printTable();
         fin.close();
     }
     cout << "\n TOTAL time :: " << time / end << endl;

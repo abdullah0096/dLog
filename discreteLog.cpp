@@ -229,7 +229,7 @@ ZZ_pX discreteLog::getTag(const ZZ_pX& element) {
 
 void discreteLog::toDO() {
     cout << "\n &*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*\n ";
-            cout << "\n \t\t\tTo-DO List....\n";
+    cout << "\n \t\t\tTo-DO List....\n";
     cout << "\n Implement t = log2 (r) now reading from file...\n";
     cout << "\n &*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*\n\n ";
 }
@@ -263,7 +263,6 @@ int discreteLog::allocateTableMemory() {
     timestamp_t endTimeTableGeneration = utility::get_timestamp();
 
     tableGenerationTime = utility::getTimeInSeconds(endTimeTableGeneration, startTimeTableGeneration);
-
     cout << "\ndiscreteLog::allocateTableMemory() :- Time for generation of Table :: " << tableGenerationTime;
 }
 
@@ -272,16 +271,23 @@ int discreteLog::cheonDL() {
         return 0;
     } else {
         //    printNumberOfRowsInTable();
-        ZZ_pX Y;
+        ZZ_pX Y, tmp1, tagOfY;
+        long int ans(0);
         Y.SetMaxLength(this->n);
+        tagOfY.SetMaxLength(this->t);
         ZZ_p::init(this->p);
-        Y = g;
+        Y = h;
         cout << "\n Y :: " << Y << endl;
-        cout << "\n tag(Y) :: " << getTag(Y) << endl;
-        
-        
-        
-        
+        tagOfY = getTag(Y);
+        cout << "\n tag(Y) :: " << tagOfY << endl;
+
+        ZZ_p product;
+        ZZ_p::init(conv<ZZ>(this->r));
+        for (int i = 0; i < t; ++i) {
+            product += pow(2, i) * conv<int>(tagOfY[i]);
+            cout << "\n pow(2,i) :: " << pow(2, i) << "\t  conv<int>(tagOfY[i]) :: " << conv<int>(tagOfY[i]) << endl;
+            cout << "\n product :: " << product << endl;
+        }
     }
 }
 

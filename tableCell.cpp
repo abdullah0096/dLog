@@ -6,9 +6,9 @@ void tableCell::printCellData() {
     for (long int i = 0; i< this->numberOfElementsInMultiplierInformation; ++i) {
         cout << multiplierInformation[i] << " ";
     }
-    cout << "\n groupElement :: " << this->groupElement << endl;
+    cout << "\n groupElement  :: " << this->groupElement << endl;
     cout << " Summation ALPHA :: " << this->summationAlpha << endl;
-    cout << " Summation BETA :: " << this->summationBeta << endl;
+    cout << " Summation BETA  :: " << this->summationBeta << endl;
     cout << " tag ::";
     for (int i = 0; i< this->n; ++i)
         cout << tag[i] << "\t";
