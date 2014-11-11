@@ -36,7 +36,7 @@ int main(int argc, char** argv) {
         cout << "\n p :: " << p << "\t n :: " << n << "\t r :: " << r << "\t orderOfG :: " << orderOfG
                 << "\t l :: " << l << "\t t ::" << t << "\t";
         cout << "\n g :: " << g << "\t h :: " << h << "\n\n";
-
+        ;
         //        ZZ tmp2;
         //        tmp2 = rep(h[0]);
         //        a = conv<int>(h[0]);

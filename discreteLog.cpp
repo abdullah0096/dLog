@@ -271,23 +271,32 @@ int discreteLog::cheonDL() {
         return 0;
     } else {
         //    printNumberOfRowsInTable();
-        ZZ_pX Y, tmp1, tagOfY;
+        ZZ_pX Y0, tmp1, tagOfY0, tagOfY1, Y1;
         long int ans(0);
-        Y.SetMaxLength(this->n);
-        tagOfY.SetMaxLength(this->t);
-        ZZ_p::init(this->p);
-        Y = h;
-        cout << "\n Y :: " << Y << endl;
-        tagOfY = getTag(Y);
-        cout << "\n tag(Y) :: " << tagOfY << endl;
+        Y0.SetMaxLength(this->n);
+        Y1.SetMaxLength(this->n);
 
-        ZZ_p product;
+        tagOfY0.SetMaxLength(this->t);
+        ZZ_p::init(this->p);
+        Y0 = g;
+        cout << "\n Y0 = g =  " << Y0 << endl;
+        tagOfY0 = getTag(Y0);
+        cout << "\n tag(Y0) :: " << tagOfY0 << endl;
+
+        ZZ_p index;
         ZZ_p::init(conv<ZZ>(this->r));
         for (int i = 0; i < t; ++i) {
-            product += pow(2, i) * conv<int>(tagOfY[i]);
-            cout << "\n pow(2,i) :: " << pow(2, i) << "\t  conv<int>(tagOfY[i]) :: " << conv<int>(tagOfY[i]) << endl;
-            cout << "\n product :: " << product << endl;
+            index += pow(2, i) * conv<int>(tagOfY0[i]);
+            cout << " " << tagOfY0[i] << "(" << pow(2, i) << ") +    ";
+            cout.flush();
         }
+        cout << "\n Gama(Y0) :: " << index << endl;
+
+        cout << "\n Y1 :: Y0.m" << index << "\n";
+        cellData[0][conv<int>(index)].printCellData();
+        
+
+
     }
 }
 
