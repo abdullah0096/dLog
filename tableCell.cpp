@@ -34,3 +34,7 @@ void tableCell::setValues(long t, ZZ p, long long int l, long long int n) {
     for (int i = 0; i < this->n; ++i)
         tag[i].SetMaxLength(this->t);
 }
+
+ZZ_pX* tableCell::getTagFor(){
+    return this->tag;
+}

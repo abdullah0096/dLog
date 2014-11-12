@@ -35,6 +35,7 @@ public:
     tableCell();
     void setValues(long t, ZZ p, long long int l, long long int n);
     void printCellData();
+    ZZ_pX* getTagFor();
 };
 
 #endif	/* TABLECELL_HPP */

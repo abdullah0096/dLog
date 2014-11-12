@@ -42,6 +42,7 @@ int main(int argc, char** argv) {
         //        a = conv<int>(h[0]);
         ;
         discreteLog DLP(p, n, r, l, g, h, t, orderOfG);
+        DLP.printParameters();
         if (DLP.cheonDL() == 0) {
             cout << "\n Something Went Wrong.....\n";
         } else {

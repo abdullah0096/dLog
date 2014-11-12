@@ -54,6 +54,7 @@ discreteLog::discreteLog(ZZ p, long n, long r, long l, ZZ_pX g, ZZ_pX h, long t,
 }
 
 void discreteLog::printParameters() {
+    cout << "\n*******************************************************************************************\n";
     if (x == -1) {
         std::cout << "\n GF(" << p << "^" << n << ")\t such that g :: " << g << "\t h ::" << h << "\t |G| :: " << orderOfG << "\tr ::" << r << "\t l :: " << l << std::endl;
         std::cout << " Irred poly :: " << this->irredPoly << endl;
@@ -61,6 +62,7 @@ void discreteLog::printParameters() {
         std::cout << "\n GF(" << p << "^" << n << ")\t such that g :: " << g << "\t h ::" << h << "\t |G| :: " << orderOfG << "\tr ::" << r << "\t l :: " << l << std::endl;
         std::cout << " Irred poly :: " << this->irredPoly << endl;
     }
+    cout << "\n*******************************************************************************************\n";
 }
 
 /**
@@ -271,7 +273,7 @@ int discreteLog::cheonDL() {
         return 0;
     } else {
         //    printNumberOfRowsInTable();
-        ZZ_pX Y0, tmp1, tagOfY0, tagOfY1, Y1;
+        ZZ_pX Y0, tmp1, tagOfY0, tagOfY1, Y1, *tmpTag;
         long int ans(0);
         Y0.SetMaxLength(this->n);
         Y1.SetMaxLength(this->n);
@@ -291,12 +293,12 @@ int discreteLog::cheonDL() {
             cout.flush();
         }
         cout << "\n Gama(Y0) :: " << index << endl;
-
-        cout << "\n Y1 :: Y0.m" << index << "\n";
-        cellData[0][conv<int>(index)].printCellData();
-        
-
-
+        cout << "\n Y1 :: Y0.m" << index << "\n Tag of m" << index << ":: ";
+        tmpTag = cellData[0][conv<int>(index)].getTagFor();
+        for (int i = 0; i<this->n; ++i)
+            cout << tmpTag[i] << "\t";
+        cout << "\n";
+        cout << "\n Y0 :: " << Y0 << endl;
     }
 }
 
