@@ -64,6 +64,8 @@ public:
     void computeGroupElementExponentAndTag();
     ZZ_pX getTag(const ZZ_pX&);
 
+    int computeGamma(const ZZ_pX &);
+
     //setters and getters...
     ZZ getP();
     long getT();

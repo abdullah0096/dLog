@@ -268,6 +268,17 @@ int discreteLog::allocateTableMemory() {
     cout << "\ndiscreteLog::allocateTableMemory() :- Time for generation of Table :: " << tableGenerationTime;
 }
 
+int discreteLog::computeGamma(const ZZ_pX &tagOfY0) {
+    ZZ_p index;
+    ZZ_p::init(conv<ZZ>(this->r));
+    for (int i = 0; i < t; ++i) {
+        index += pow(2, i) * conv<int>(tagOfY0[i]);
+        //        cout << " " << tagOfY0[i] << "(" << pow(2, i) << ") +    ";
+        cout.flush();
+    }
+    return conv<int>(index);
+}
+
 int discreteLog::cheonDL() {
     if (allocateTableMemory() == -1) {
         return 0;
@@ -285,20 +296,43 @@ int discreteLog::cheonDL() {
         tagOfY0 = getTag(Y0);
         cout << "\n tag(Y0) :: " << tagOfY0 << endl;
 
-        ZZ_p index;
-        ZZ_p::init(conv<ZZ>(this->r));
-        for (int i = 0; i < t; ++i) {
-            index += pow(2, i) * conv<int>(tagOfY0[i]);
-            cout << " " << tagOfY0[i] << "(" << pow(2, i) << ") +    ";
-            cout.flush();
-        }
-        cout << "\n Gama(Y0) :: " << index << endl;
-        cout << "\n Y1 :: Y0.m" << index << "\n Tag of m" << index << ":: ";
-        tmpTag = cellData[0][conv<int>(index)].getTagFor();
+        //Instead of this comment function computeGamma is implemented
+        //        ZZ_p index;
+        //        ZZ_p::init(conv<ZZ>(this->r));
+        //        for (int i = 0; i < t; ++i) {
+        //            index += pow(2, i) * conv<int>(tagOfY0[i]);
+        //            cout << " " << tagOfY0[i] << "(" << pow(2, i) << ") +    ";
+        //            cout.flush();
+        //        }
+        int index = computeGamma(getTag(Y0));
+        cout << "\n computeGama(tag(Y0)):: " << computeGamma(getTag(Y0)) << endl;
+        cout << "\n Y1 :: Y0.m" << index << "\n Tag of m" << index << ":: (";
+        tmpTag = cellData[0][index].getTagFor();
         for (int i = 0; i<this->n; ++i)
             cout << tmpTag[i] << "\t";
-        cout << "\n";
-        cout << "\n Y0 :: " << Y0 << endl;
+        cout << "\b\b ) * ( " << Y0 << " )" << endl;
+
+        ZZ_pX acc;
+        acc.SetMaxLength(100);
+        // 3 :: size of extention , i.e size of tag vector
+        // tag = ( [] [] [] ) 
+        for (int i = 0; i < this->n; ++i) {
+            ZZ_pX var;
+            var.SetMaxLength(100);
+            //3 :: number of elements in Y
+            for (int j = 0; j < this->n; ++j) {
+                if (i == j) {
+                    SetCoeff(var, j, Y0[i]);
+                } else {
+                    SetCoeff(var, j, 0);
+                }
+            }
+            acc += tmpTag[i] * var;
+        }
+        acc = acc % irredPoly;
+        cout << " v.w :: " << acc << endl;
+        cout << " tag(v.w) :: " << getTag(acc) << endl;
+        cout << "\n gama(tag(v.w)) :: " << computeGamma(getTag(acc)) << endl;
     }
 }
 
