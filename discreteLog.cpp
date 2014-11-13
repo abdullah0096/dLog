@@ -273,7 +273,7 @@ int discreteLog::computeGamma(const ZZ_pX &tagOfY0) {
     ZZ_p::init(conv<ZZ>(this->r));
     for (int i = 0; i < t; ++i) {
         index += pow(2, i) * conv<int>(tagOfY0[i]);
-        //        cout << " " << tagOfY0[i] << "(" << pow(2, i) << ") +    ";
+        cout << " " << tagOfY0[i] << "(" << pow(2, i) << ") +    ";
         cout.flush();
     }
     return conv<int>(index);
@@ -284,6 +284,7 @@ int discreteLog::cheonDL() {
         return 0;
     } else {
         //    printNumberOfRowsInTable();
+        int *arrL = new int[l];
         ZZ_pX Y0, tmp1, tagOfY0, tagOfY1, Y1, *tmpTag;
         long int ans(0);
         Y0.SetMaxLength(this->n);
@@ -304,10 +305,11 @@ int discreteLog::cheonDL() {
         //            cout << " " << tagOfY0[i] << "(" << pow(2, i) << ") +    ";
         //            cout.flush();
         //        }
-        int index = computeGamma(getTag(Y0));
+        arrL[0] = computeGamma(getTag(Y0));
         cout << "\n computeGama(tag(Y0)):: " << computeGamma(getTag(Y0)) << endl;
-        cout << "\n Y1 :: Y0.m" << index << "\n Tag of m" << index << ":: (";
-        tmpTag = cellData[0][index].getTagFor();
+        cout << "\n----------------------------------------------------------------------\n";
+        cout << "\n Y1 :: Y0.m" << arrL[0] << "\n Tag of m" << arrL[0] << ":: (";
+        tmpTag = cellData[0][arrL[0]].getTagFor();
         for (int i = 0; i<this->n; ++i)
             cout << tmpTag[i] << "\t";
         cout << "\b\b ) * ( " << Y0 << " )" << endl;
@@ -332,7 +334,16 @@ int discreteLog::cheonDL() {
         acc = acc % irredPoly;
         cout << " v.w :: " << acc << endl;
         cout << " tag(v.w) :: " << getTag(acc) << endl;
-        cout << "\n gama(tag(v.w)) :: " << computeGamma(getTag(acc)) << endl;
+        cout << "\n 2gama(tag(v.w)) :: " << computeGamma(getTag(acc)) << endl;
+        cout << "\n----------------------------------------------------------------------\n";
+        arrL[1] = computeGamma(getTag(acc));
+        cout << "\n Y2 :: Y0.m1.m1 \n";
+        cout << "\n arrL :: " << arrL[0] << "  " << arrL[1] << endl;
+
+
+
+
+
     }
 }
 
