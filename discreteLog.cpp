@@ -127,9 +127,7 @@ void discreteLog::printTableMl() {
  * read files or etc
  */
 int discreteLog::readMultiplierInformation() {
-
     char fileName[50];
-
     for (long long int i = 0; i < this->l; ++i) {
 
         sprintf(fileName, "%ld_%ld.txt", r, (i + 1));
