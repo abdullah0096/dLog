@@ -281,8 +281,8 @@ int discreteLog::cheonDL() {
     if (allocateTableMemory() == -1) {
         return 0;
     } else {
-        //    printNumberOfRowsInTable();
         int *arrL = new int[l];
+        long int numberOfElementsInArrL(0);
         ZZ_pX Y0, tmp1, tagOfY0, tagOfY1, Y1, *tmpTag;
         long int ans(0);
         Y0.SetMaxLength(this->n);
@@ -304,6 +304,7 @@ int discreteLog::cheonDL() {
         //            cout.flush();
         //        }
         arrL[0] = computeGamma(getTag(Y0));
+        numberOfElementsInArrL++;
         cout << "\n computeGama(tag(Y0)):: " << computeGamma(getTag(Y0)) << endl;
         cout << "\n----------------------------------------------------------------------\n";
         cout << "\n Y1 :: Y0.m" << arrL[0] << "\n Tag of m" << arrL[0] << ":: (";
@@ -334,14 +335,89 @@ int discreteLog::cheonDL() {
         cout << " tag(v.w) :: " << getTag(acc) << endl;
         cout << "\n 2gama(tag(v.w)) :: " << computeGamma(getTag(acc)) << endl;
         cout << "\n----------------------------------------------------------------------\n";
+
         arrL[1] = computeGamma(getTag(acc));
+        numberOfElementsInArrL++;
         cout << "\n Y2 :: Y0.m1.m1 \n";
         cout << "\n arrL :: " << arrL[0] << "  " << arrL[1] << endl;
+        long int col(0);
+        if (col = getColumn(arrL, numberOfElementsInArrL)) {
+            cout << "\n Col is col :: " << col << endl;
+            cout << "\n Cell data is \n";
+            cellData[1][col].printCellData();
+        } else {
+            cout << "\n int discreteLog::cheonDL() :: not able to get the column ::\n";
+            exit(0);
+        }
+
+        clear(acc);
+        // 3 :: size of extention , i.e size of tag vector
+        // tag = ( [] [] [] ) 
+        for (int i = 0; i < this->n; ++i) {
+            ZZ_pX var;
+            var.SetMaxLength(100);
+            //3 :: number of elements in Y
+            for (int j = 0; j < this->n; ++j) {
+                if (i == j) {
+                    SetCoeff(var, j, Y0[i]);
+                } else {
+                    SetCoeff(var, j, 0);
+                }
+            }
+            clear(*tmpTag);
+
+            tmpTag = cellData[1][col].getTagFor();
+            acc += tmpTag[i] * var;
+        }
+
+        acc = acc % irredPoly;
+        cout << " v.w :: " << acc << endl;
+        cout << " tag(v.w) :: " << getTag(acc) << endl;
+        cout << "\n 2gama(tag(v.w)) :: " << computeGamma(getTag(acc)) << endl;
+        cout << "\n----------------------------------------------------------------------\n";
 
 
 
 
 
+    }
+}
+
+/**
+ * Given an array of integers and a row from table M
+ * this function returns the column where the array is in the same table
+ * NOT Using Binary Search
+ * @param arr : this array is searched in the table
+ * @param row : the row where we have to search (row-1 is handeled in the function)
+ * @return    : the column where array is present returns 0 if not found
+ */
+long long discreteLog::getColumn(int arr[], long long int row) {
+    /* The parameter row is used as row-1 as this is the number of elements in 
+     * the array arr i.e the count of number of elements in the array
+     * Hence to get the actual row in the table row-1 has to be considered
+     */
+
+    long long int col(-1);
+    --row;
+    // for to loop over all the colums in the row
+    for (long long int i = 0; i <this->numberOfElementsInTableRow[row]; ++i) {
+        //for the loop over the miltiplier in this row
+        bool flag = true;
+        for (long long int j = 0; j <= row; ++j) {
+            if (this->cellData[row][i].multiplierInformation[j] != arr[j]) {
+                flag = false;
+                break;
+            }
+        }
+        if (flag) {
+            col = i;
+            break;
+        }
+    }
+    if (col != -1) {
+        return col;
+    } else {
+        return 0;
     }
 }
 

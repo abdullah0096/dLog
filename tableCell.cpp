@@ -35,6 +35,6 @@ void tableCell::setValues(long t, ZZ p, long long int l, long long int n) {
         tag[i].SetMaxLength(this->t);
 }
 
-ZZ_pX* tableCell::getTagFor(){
+ZZ_pX* tableCell::getTagFor() {
     return this->tag;
 }

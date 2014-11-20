@@ -63,7 +63,7 @@ public:
     void printNumberOfRowsInTable();
     void computeGroupElementExponentAndTag();
     ZZ_pX getTag(const ZZ_pX&);
-
+    long long getColumn(int arr[], long long int row);
     int computeGamma(const ZZ_pX &);
 
     //setters and getters...
