@@ -35,6 +35,9 @@ void tableCell::setValues(long t, ZZ p, long long int l, long long int n) {
         tag[i].SetMaxLength(this->t);
 }
 
+/**
+ * @return Return's the tag for this cell in table Ml
+ */
 ZZ_pX* tableCell::getTagFor() {
     return this->tag;
 }

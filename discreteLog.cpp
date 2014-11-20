@@ -287,14 +287,12 @@ int discreteLog::cheonDL() {
         long int ans(0);
         Y0.SetMaxLength(this->n);
         Y1.SetMaxLength(this->n);
-
-        tagOfY0.SetMaxLength(this->t);
         ZZ_p::init(this->p);
-        Y0 = g;
-        cout << "\n Y0 = g =  " << Y0 << endl;
-        tagOfY0 = getTag(Y0);
-        cout << "\n tag(Y0) :: " << tagOfY0 << endl;
 
+        //We stat walking from here...
+        Y0 = g;
+        //        cout << "\n Y0 = g =  " << Y0 << endl;
+        //        cout << "\n tag(Y0) :: " << tagOfY0 << endl;
         //Instead of this comment function computeGamma is implemented
         //        ZZ_p index;
         //        ZZ_p::init(conv<ZZ>(this->r));
@@ -305,21 +303,21 @@ int discreteLog::cheonDL() {
         //        }
         arrL[0] = computeGamma(getTag(Y0));
         numberOfElementsInArrL++;
-        cout << "\n computeGama(tag(Y0)):: " << computeGamma(getTag(Y0)) << endl;
-        cout << "\n----------------------------------------------------------------------\n";
-        cout << "\n Y1 :: Y0.m" << arrL[0] << "\n Tag of m" << arrL[0] << ":: (";
+        //        cout << "\n computeGama(tag(Y0)):: " << computeGamma(getTag(Y0)) << endl;
+        //        cout << "\n----------------------------------------------------------------------\n";
+        //        cout << "\n Y1 :: Y0.m" << arrL[0] << "\n Tag of m" << arrL[0] << ":: (";
         tmpTag = cellData[0][arrL[0]].getTagFor();
-        for (int i = 0; i<this->n; ++i)
-            cout << tmpTag[i] << "\t";
-        cout << "\b\b ) * ( " << Y0 << " )" << endl;
+        //        for (int i = 0; i<this->n; ++i)
+        //            cout << tmpTag[i] << "\t";
+        //        cout << "\b\b ) * ( " << Y0 << " )" << endl;
 
         ZZ_pX acc;
-        acc.SetMaxLength(100);
+        acc.SetMaxLength(constants::accumulatorLength);
         // 3 :: size of extention , i.e size of tag vector
         // tag = ( [] [] [] ) 
         for (int i = 0; i < this->n; ++i) {
             ZZ_pX var;
-            var.SetMaxLength(100);
+            var.SetMaxLength(constants::accumulatorLength);
             //3 :: number of elements in Y
             for (int j = 0; j < this->n; ++j) {
                 if (i == j) {
