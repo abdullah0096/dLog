@@ -287,12 +287,19 @@ int discreteLog::cheonDL() {
         long int ans(0);
         Y0.SetMaxLength(this->n);
         Y1.SetMaxLength(this->n);
+        tagOfY0.SetMaxLength(this->t);
         ZZ_p::init(this->p);
 
         //We stat walking from here...
+        cout << "\n###################################################################################";
+        cout << "\n \t\t\t\t Starting to Walk \n";
+        cout << "###################################################################################";
         Y0 = g;
-        //        cout << "\n Y0 = g =  " << Y0 << endl;
-        //        cout << "\n tag(Y0) :: " << tagOfY0 << endl;
+        tagOfY0 = getTag(Y0);
+        cout << "\n Y0 = g =  " << Y0 << endl;
+        cout << "\n tag(Y0) :: " << tagOfY0 << endl;
+
+        // <editor-fold defaultstate="collapsed" desc=" COMMENT ">
         //Instead of this comment function computeGamma is implemented
         //        ZZ_p index;
         //        ZZ_p::init(conv<ZZ>(this->r));
@@ -301,83 +308,105 @@ int discreteLog::cheonDL() {
         //            cout << " " << tagOfY0[i] << "(" << pow(2, i) << ") +    ";
         //            cout.flush();
         //        }
+        // </editor-fold>        
         arrL[0] = computeGamma(getTag(Y0));
+        cout << "\n 1gamma :: " << arrL[numberOfElementsInArrL] << endl;
+        cout << "\n Y1 :: Y0.m" << arrL[0] << endl;
+        cout << "\n - - - - - - - - - - - - - - - [Start Loop]- - - - - - - - - - - - - - - - - - - - - - - - - \n";
+        tmpTag = cellData[numberOfElementsInArrL][arrL[numberOfElementsInArrL]].getTagFor();
         numberOfElementsInArrL++;
-        //        cout << "\n computeGama(tag(Y0)):: " << computeGamma(getTag(Y0)) << endl;
+
+        //Loop over l times during the walk
+        for (long j = 0; j< this->l; ++j) {
+            cout << "\n tmpTag :: ";
+            for (int i = 0; i< this->n; ++i)
+                cout << tmpTag[i] << "\t";
+            cout << "\n Y0 :: " << Y0 << endl;
+
+            ZZ_pX acc;
+            acc.SetMaxLength(constants::accumulatorLength);
+            // 3 :: size of extention , i.e size of tag vector
+            // tag = ( [] [] [] ) 
+            for (int i = 0; i < this->n; ++i) {
+                ZZ_pX var;
+                var.SetMaxLength(constants::accumulatorLength);
+                //3 :: number of elements in Y
+                for (int j = 0; j < this->n; ++j) {
+                    if (i == j) {
+                        SetCoeff(var, j, Y0[i]);
+                    } else {
+                        SetCoeff(var, j, 0);
+                    }
+                }
+                acc += tmpTag[i] * var;
+            }
+            acc = acc % irredPoly;
+            cout << " v.w :: " << acc << endl;
+            cout << " tag(v.w) :: " << getTag(acc) << endl;
+            arrL[numberOfElementsInArrL] = computeGamma(getTag(acc));
+            cout << "\n gama(tag(v.w)) :: " << arrL[numberOfElementsInArrL] << endl;
+            numberOfElementsInArrL++;
+            cout << "\n numberOfElementsInArrL :: " << numberOfElementsInArrL << endl;
+            cout << "\n Y" << numberOfElementsInArrL << " :: Y0";
+            for (int k = 0; k < numberOfElementsInArrL; ++k)
+                cout << ".m" << arrL[k];
+            cout << "\n----------------------------------------------------------------------\n";
+            for (int i = 0; i< this->n; ++i)
+                clear(tmpTag[i]);
+
+            // Start Here
+
+
+
+            break;
+        }
+        // <editor-fold defaultstate="collapsed" desc=" Commented and used a loop ">
+        //        cout << "\n Y2 :: Y0.m1.m1 \n";
+        //        cout << "\n arrL :: " << arrL[0] << "  " << arrL[1] << endl;
+        //        long int col(0);
+        //        if (col = getColumn(arrL, numberOfElementsInArrL)) {
+        //            cout << "\n Col is col :: " << col << endl;
+        //            cout << "\n Cell data is \n";
+        //            cellData[1][col].printCellData();
+        //        } else {
+        //            cout << "\n int discreteLog::cheonDL() :: not able to get the column ::\n";
+        //            exit(0);
+        //        }
+        //
+        //        clear(acc);
+        //        // 3 :: size of extention , i.e size of tag vector
+        //        // tag = ( [] [] [] ) 
+        //        for (int i = 0; i < this->n; ++i) {
+        //            ZZ_pX var;
+        //            var.SetMaxLength(100);
+        //            //3 :: number of elements in Y
+        //            for (int j = 0; j < this->n; ++j) {
+        //                if (i == j) {
+        //                    SetCoeff(var, j, Y0[i]);
+        //                } else {
+        //                    SetCoeff(var, j, 0);
+        //                }
+        //            }
+        //            clear(*tmpTag);
+        //
+        //            tmpTag = cellData[1][col].getTagFor();
+        //            acc += tmpTag[i] * var;
+        //        }
+        //
+        //        acc = acc % irredPoly;
+        //        cout << " v.w :: " << acc << endl;
+        //        cout << " tag(v.w) :: " << getTag(acc) << endl;
+        //        cout << "\n 2gama(tag(v.w)) :: " << computeGamma(getTag(acc)) << endl;
         //        cout << "\n----------------------------------------------------------------------\n";
-        //        cout << "\n Y1 :: Y0.m" << arrL[0] << "\n Tag of m" << arrL[0] << ":: (";
-        tmpTag = cellData[0][arrL[0]].getTagFor();
-        //        for (int i = 0; i<this->n; ++i)
-        //            cout << tmpTag[i] << "\t";
-        //        cout << "\b\b ) * ( " << Y0 << " )" << endl;
-
-        ZZ_pX acc;
-        acc.SetMaxLength(constants::accumulatorLength);
-        // 3 :: size of extention , i.e size of tag vector
-        // tag = ( [] [] [] ) 
-        for (int i = 0; i < this->n; ++i) {
-            ZZ_pX var;
-            var.SetMaxLength(constants::accumulatorLength);
-            //3 :: number of elements in Y
-            for (int j = 0; j < this->n; ++j) {
-                if (i == j) {
-                    SetCoeff(var, j, Y0[i]);
-                } else {
-                    SetCoeff(var, j, 0);
-                }
-            }
-            acc += tmpTag[i] * var;
-        }
-        acc = acc % irredPoly;
-        cout << " v.w :: " << acc << endl;
-        cout << " tag(v.w) :: " << getTag(acc) << endl;
-        cout << "\n 2gama(tag(v.w)) :: " << computeGamma(getTag(acc)) << endl;
-        cout << "\n----------------------------------------------------------------------\n";
-
-        arrL[1] = computeGamma(getTag(acc));
-        numberOfElementsInArrL++;
-        cout << "\n Y2 :: Y0.m1.m1 \n";
-        cout << "\n arrL :: " << arrL[0] << "  " << arrL[1] << endl;
-        long int col(0);
-        if (col = getColumn(arrL, numberOfElementsInArrL)) {
-            cout << "\n Col is col :: " << col << endl;
-            cout << "\n Cell data is \n";
-            cellData[1][col].printCellData();
-        } else {
-            cout << "\n int discreteLog::cheonDL() :: not able to get the column ::\n";
-            exit(0);
-        }
-
-        clear(acc);
-        // 3 :: size of extention , i.e size of tag vector
-        // tag = ( [] [] [] ) 
-        for (int i = 0; i < this->n; ++i) {
-            ZZ_pX var;
-            var.SetMaxLength(100);
-            //3 :: number of elements in Y
-            for (int j = 0; j < this->n; ++j) {
-                if (i == j) {
-                    SetCoeff(var, j, Y0[i]);
-                } else {
-                    SetCoeff(var, j, 0);
-                }
-            }
-            clear(*tmpTag);
-
-            tmpTag = cellData[1][col].getTagFor();
-            acc += tmpTag[i] * var;
-        }
-
-        acc = acc % irredPoly;
-        cout << " v.w :: " << acc << endl;
-        cout << " tag(v.w) :: " << getTag(acc) << endl;
-        cout << "\n 2gama(tag(v.w)) :: " << computeGamma(getTag(acc)) << endl;
-        cout << "\n----------------------------------------------------------------------\n";
-
-
-
-
-
+        //        arrL[numberOfElementsInArrL] = computeGamma(getTag(acc));
+        //        numberOfElementsInArrL++;
+        //        cout << "\n Y2 :: Y.";
+        //        for (int i = 0; i < numberOfElementsInArrL; ++i)
+        //            cout << "m" << arrL[i] << " ";
+        //        cout << endl;
+        //        cout << "\n arrL[0] :: " << arrL[0] << "\t arrL[1] :: " << arrL[1] << "\t arrL[2] :: " << arrL[2] << endl;
+        //        cout << "\n numberOfElementsInArrL :: " << numberOfElementsInArrL << endl;
+        // </editor-fold>
     }
 }
 
