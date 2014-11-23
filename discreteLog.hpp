@@ -65,6 +65,7 @@ public:
     ZZ_pX getTag(const ZZ_pX&);
     long long getColumn(int arr[], long long int row);
     int computeGamma(const ZZ_pX &);
+    void bubbleSort(int *, long int);
 
     //setters and getters...
     ZZ getP();
