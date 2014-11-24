@@ -70,21 +70,21 @@ void discreteLog::printParameters() {
  */
 void discreteLog::generateMultipliers() {
 
-    //    long long int alphaTmp[] = {4, 5, 6, 7, 1, 2, 7, 5};
-    //    long long int betaTmp[] = {5, 6, 7, 8, 6, 7, 1, 9};
+    long long int alphaTmp[] = {4, 5, 6, 7, 1, 2, 7, 5};
+    long long int betaTmp[] = {5, 6, 7, 8, 6, 7, 1, 9};
 
     std::cout << " Generating Multipliers (" << r << ")....";
     fflush(stdout);
     for (int i = 0; i < r; i++) {
         srand(time(NULL));
 
-        M->alpha[i] = rand() % this->orderOfG + 1;
-        usleep(constants::waitTimeTwoSecond);
-        M->beta[i] = rand() % this->orderOfG + 1;
-        usleep(constants::waitTimeOneSecond);
+        //        M->alpha[i] = rand() % this->orderOfG + 1;
+        //        usleep(constants::waitTimeTwoSecond);
+        //        M->beta[i] = rand() % this->orderOfG + 1;
+        //        usleep(constants::waitTimeOneSecond);
 
-        //        M->alpha[i] = alphaTmp[i];
-        //        M->beta[i] = betaTmp[i];
+        M->alpha[i] = alphaTmp[i];
+        M->beta[i] = betaTmp[i];
 
         M->i[i] = i;
 
@@ -230,6 +230,8 @@ void discreteLog::toDO() {
     cout << "\n &*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*\n ";
     cout << "\n \t\t\tTo-DO List....\n";
     cout << "\n Implement t = log2 (r) now reading from file...\n";
+    cout << "\n Optimization in searching for a tag\n";
+    cout << "\n Optimization in multiplication of tag and Y0 i.e (v.w) \n";
     cout << "\n &*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*\n\n ";
 }
 
@@ -299,11 +301,11 @@ int discreteLog::cheonDL() {
         return 0;
     } else {
 
+        ZZ_p::init(this->p);
         ZZ_pX Y0, tagOfY0, *tmpTag;
         Y0.SetMaxLength(this->n);
         tagOfY0.SetMaxLength(this->t);
 
-        ZZ_p::init(this->p);
 
         //We stat walking from here...
         cout << "\n###################################################################################";
@@ -337,11 +339,13 @@ int discreteLog::cheonDL() {
                     cout << tmpTag[i] << "\t";
                 cout << "\n Y0 :: " << Y0 << endl;
 
+                ZZ_p::init(this->p);
                 ZZ_pX acc, tagOfAcc;
                 acc.SetMaxLength(constants::accumulatorLength);
                 tagOfAcc.SetMaxLength(this->t);
+
                 // 3 :: size of extention , i.e size of tag vector
-                // tag = ( [] [] [] ) 
+                // tag = ( [] [] [] )
                 for (int i = 0; i < this->n; ++i) {
                     ZZ_pX var;
                     var.SetMaxLength(constants::accumulatorLength);
@@ -365,7 +369,7 @@ int discreteLog::cheonDL() {
                 bubbleSort(arrL, numberOfElementsInArrL + 1);
 
                 cout << "\n gama(tag(v.w)) :: " << computeGamma(tagOfAcc) << endl;
-                cout << "\n numberOfElementsInArrL :: " << numberOfElementsInArrL << endl;
+                //                cout << "\n numberOfElementsInArrL :: " << numberOfElementsInArrL << endl;
                 cout << "\n Y" << numberOfElementsInArrL + 1 << " :: Y0";
                 for (int k = 0; k <= numberOfElementsInArrL; ++k)
                     cout << ".m" << arrL[k];
@@ -394,16 +398,15 @@ int discreteLog::cheonDL() {
             ZZ_p::init(this->p);
             Y0 = Y0 * cellData[l - 1][col].groupElement;
             Y0 = Y0 % irredPoly;
-            cout << "\n multiplication :: " << Y0 << endl;
-            cout << "\n multiplication :: " << Y0 << endl;
+            cout << "\n multiplication ans :: " << Y0 << endl;
             cout << "\n Y0 :: " << Y0 << endl;
 
             walkCnt++;
             cout << "\n ############################################################################################################### \n walk CNT :: " << walkCnt << endl;
-            if (walkCnt == 1)
+            if (walkCnt == 2)
                 break;
 
-        }//End::while(1)       
+        }//End::while(1)
     }
 }
 
