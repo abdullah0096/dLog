@@ -70,22 +70,21 @@ void discreteLog::printParameters() {
  */
 void discreteLog::generateMultipliers() {
 
-    long long int alphaTmp[] = {4, 5, 6, 7, 1, 2, 7, 5};
-    long long int betaTmp[] = {5, 6, 7, 8, 6, 7, 1, 9};
-
+    //    long long int alphaTmp[] = {4, 5, 6, 7, 1, 2, 7, 5};
+    //    long long int betaTmp[] = {5, 6, 7, 8, 6, 7, 1, 9};
 
     std::cout << " Generating Multipliers (" << r << ")....";
     fflush(stdout);
     for (int i = 0; i < r; i++) {
         srand(time(NULL));
 
-        //        M->alpha[i] = rand() % this->orderOfG + 1;
-        //        usleep(constants::waitTimeTwoSecond);
-        //        M->beta[i] = rand() % this->orderOfG + 1;
-        //        usleep(constants::waitTimeOneSecond);
+        M->alpha[i] = rand() % this->orderOfG + 1;
+        usleep(constants::waitTimeTwoSecond);
+        M->beta[i] = rand() % this->orderOfG + 1;
+        usleep(constants::waitTimeOneSecond);
 
-        M->alpha[i] = alphaTmp[i];
-        M->beta[i] = betaTmp[i];
+        //        M->alpha[i] = alphaTmp[i];
+        //        M->beta[i] = betaTmp[i];
 
         M->i[i] = i;
 
@@ -363,20 +362,11 @@ int discreteLog::cheonDL() {
                 tagOfAcc = getTag(acc);
                 numberOfElementsInArrL++;
                 arrL[numberOfElementsInArrL] = computeGamma(tagOfAcc);
-
-                cout << "\n 111 before ..  => ";
-                for (int k = 0; k <= numberOfElementsInArrL; ++k)
-                    cout << arrL[k] << " ";
-                cout << endl;
                 bubbleSort(arrL, numberOfElementsInArrL + 1);
-                cout << "\n 111 after .. => ";
-                for (int k = 0; k <= numberOfElementsInArrL; ++k)
-                    cout << arrL[k] << " ";
-                cout << endl;
 
-                cout << "\n gama(tag(v.w)) :: " << arrL[numberOfElementsInArrL] << endl;
+                cout << "\n gama(tag(v.w)) :: " << computeGamma(tagOfAcc) << endl;
                 cout << "\n numberOfElementsInArrL :: " << numberOfElementsInArrL << endl;
-                cout << "\n Y" << numberOfElementsInArrL << " :: Y0";
+                cout << "\n Y" << numberOfElementsInArrL + 1 << " :: Y0";
                 for (int k = 0; k <= numberOfElementsInArrL; ++k)
                     cout << ".m" << arrL[k];
                 for (int i = 0; i< this->n; ++i)
@@ -409,7 +399,8 @@ int discreteLog::cheonDL() {
             cout << "\n Y0 :: " << Y0 << endl;
 
             walkCnt++;
-            if (walkCnt == 3)
+            cout << "\n ############################################################################################################### \n walk CNT :: " << walkCnt << endl;
+            if (walkCnt == 1)
                 break;
 
         }//End::while(1)       

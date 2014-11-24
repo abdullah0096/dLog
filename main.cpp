@@ -15,6 +15,7 @@ int main(int argc, char** argv) {
 
     long double time = 0.0;
     int end = 1;
+
     for (long int i = 0; i < end; i++) {
 
         long n, r, orderOfG, l, t;
