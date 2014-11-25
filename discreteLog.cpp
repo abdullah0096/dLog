@@ -466,3 +466,41 @@ void discreteLog::printNumberOfRowsInTable() {
         std::cout << this->numberOfElementsInTableRow[j] << "\t";
     }
 }
+
+int discreteLog::teskeDL() {
+    cout << "\n Solving using teske...\n";
+
+    //    ZZ_p::init(this->p);
+    ZZ_pX *node;
+    node = new ZZ_pX[constants::nodeLength];
+    for (long long int i = 0; i < constants::nodeLength; ++i) {
+        node[i].SetMaxLength(this->n);
+    }
+
+    node[0] = g;
+    cout << "\n Y0 :: " << node[0] << endl;
+    long int cnt(0);
+
+    ZZ_p::init(this->p);
+    ZZ_pX Y0, Y1;
+    Y0.SetMaxLength(this->n);
+    Y1.SetMaxLength(this->n);
+    Y0 = g;
+
+    while (1) {
+        //        M->groupElement[computeGamma(Y0)];
+        cout << "\n Y0 :: " << Y0 << " * M->groupElement[computeGamma(Y0)] :: " << M->groupElement[computeGamma(Y0)] << endl;
+        Y1 = Y0 * M->groupElement[computeGamma(Y0)];
+        cout << "\n Y1 :: " << Y1 << endl;
+
+        Y1 = Y1 % irredPoly;
+        cout << "\n final Y0 :: " << Y1 << endl;
+        Y0 = Y1;
+
+        cnt++;
+        if (cnt > 1)
+            break;
+        cout << "\n$ $ $ $ $ $ $ $ $ $ $ $ $ $ $ $ $ $ $ $ $ $ $ $ $ $ $ $ $ $ $ $ $ $ $ $ $ $ $ $ $ $ $ $ $\n";
+    }
+    return 1;
+}

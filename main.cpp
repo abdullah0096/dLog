@@ -38,13 +38,14 @@ int main(int argc, char** argv) {
                 << "\t l :: " << l << "\t t ::" << t << "\t";
         cout << "\n g :: " << g << "\t h :: " << h << "\n\n";
         ;
-        //        ZZ tmp2;
-        //        tmp2 = rep(h[0]);
-        //        a = conv<int>(h[0]);
-        ;
         discreteLog DLP(p, n, r, l, g, h, t, orderOfG);
         DLP.printParameters();
         DLP.printMultipliers();
+
+        DLP.teskeDL();
+
+        return 0;
+
         if (DLP.cheonDL() == 0) {
             cout << "\n Something Went Wrong.....\n";
         } else {
@@ -54,5 +55,4 @@ int main(int argc, char** argv) {
         fin.close();
     }
     cout << "\n TOTAL time :: " << time / end << endl;
-    return 0;
 }

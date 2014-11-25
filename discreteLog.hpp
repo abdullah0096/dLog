@@ -58,6 +58,7 @@ public:
     void printMultipliers();
     void printTableMl();
     int cheonDL();
+    int teskeDL();
     int readMultiplierInformation();
     int allocateTableMemory();
     void printNumberOfRowsInTable();

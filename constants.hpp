@@ -18,6 +18,9 @@ public:
      */
     static const long long int accumulatorLength = 100;
 
+    /** nodeLength : 10000 i.e the number of nodes in the walk
+     */
+    static const long long int nodeLength = 10000;
 };
 
 #endif	/* CONSTANTS_HPP */
