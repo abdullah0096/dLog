@@ -482,8 +482,9 @@ int discreteLog::bruteForceDl() {
     while (1) {
         if (power(g, counter) % irredPoly == h) {
             cout << "\n Brute Force Attact on DLP\n";
-            cout << "\n ans By Computation :: " << power(g, counter) % irredPoly << "\t x :: " << counter << endl;
-            this->x = counter;
+            cout << "\n \t\t\t\t\tans By Computation :: " << power(g, counter) % irredPoly << endl;
+            cout << "\n\t\t\t\t\t Solution to DLP by Brute Force :: " << counter << endl;
+//            this->x = counter;
             break;
         }
         counter++;
@@ -533,9 +534,13 @@ long long int eea(long long int a, long long int b) {
     return gcd;
 }
 
+/**
+ * Computes the Discrete Log using teske's r-adding walk
+ * @return solution to discrete Log
+ * TODO :: After Collision if gcd is not 1 then handling multiple collision detection
+ * and similar Stuff...
+ */
 int discreteLog::teskeDL() {
-    cout << "\n Solving using teske...\n";
-
     ZZ_pX *node;
     node = new ZZ_pX[constants::nodeLength];
     for (long long int i = 0; i < constants::nodeLength; ++i)
@@ -571,11 +576,12 @@ int discreteLog::teskeDL() {
             }
         }
         if (flag) {
-            cout << "\n Collision Found \n node[" << collisionOne << "] :: " << node[collisionOne];
-            cout << "\n S[" << collisionOne << "] :: " << S[collisionOne] << "\t T[" << collisionOne << "] :: " << T[collisionOne] << endl;
-            cout << "\t\t\n node[" << collisionTwo << "] :: " << node[collisionTwo];
-            cout << "\n S[" << collisionTwo << "] :: " << S[collisionTwo] << "\t T[" << collisionTwo << "] :: " << T[collisionTwo] << endl;
-
+            // <editor-fold defaultstate="collapsed" desc=" Collision Detection Display ">
+            //            cout << "\n Collision Found \n node[" << collisionOne << "] :: " << node[collisionOne];
+            //            cout << "\n S[" << collisionOne << "] :: " << S[collisionOne] << "\t T[" << collisionOne << "] :: " << T[collisionOne] << endl;
+            //            cout << "\t\t\n node[" << collisionTwo << "] :: " << node[collisionTwo];
+            //            cout << "\n S[" << collisionTwo << "] :: " << S[collisionTwo] << "\t T[" << collisionTwo << "] :: " << T[collisionTwo] << endl;
+            // </editor-fold>
             int num = S[collisionOne] - S[collisionTwo];
             int dnum = T[collisionTwo] - T[collisionOne];
 
@@ -588,15 +594,11 @@ int discreteLog::teskeDL() {
             dnum1 = conv<ZZ_p>(dnum);
 
             if (eea(dnum, this->orderOfG) == 1) {
-
                 X = num1 / dnum1;
                 this->x = conv<int>(X);
-                cout << "\n DLP by Teske :: " << x << endl;
-
-                //Verification 
+                cout << "\n\t\t\t\t\t Solution to DLP by Teske :: " << x << endl;
                 ZZ_p::init(this->p);
-                cout << "\n Verification \n by calculation ::" << power(g, this->x) % irredPoly << "\n    By Input h :: " << h << endl;
-
+                cout << "\n \t\t\t\t\tVerification \n\t\t\t\t\t by calculation ::" << power(g, this->x) % irredPoly << "\n\t\t\t\t\t    By Input h :: " << h << endl;
                 break;
             } else {
                 cout << "\n GCD IS NOT ONE  GCD :: " << eea(dnum, this->orderOfG) << endl;
@@ -605,6 +607,5 @@ int discreteLog::teskeDL() {
             }
         }
     }
-
     return 1;
 }

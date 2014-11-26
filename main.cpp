@@ -43,6 +43,8 @@ int main(int argc, char** argv) {
         DLP.printMultipliers();
 
         DLP.bruteForceDl();
+
+        //        discreteLog DLP1(p, n, r, l, g, h, t, orderOfG);
         DLP.teskeDL();
 
         return 0;
