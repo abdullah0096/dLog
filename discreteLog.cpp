@@ -1,9 +1,7 @@
-#include <NTL/GF2.h>
-
 #include "discreteLog.hpp"
 #include "utility.hpp"
 #include <cstring>
-#include <NTL/ZZX.h>
+#include <NTL/lzz_p.h>
 
 /**
  *  function to calculate factorial
@@ -232,6 +230,7 @@ void discreteLog::toDO() {
     cout << "\n Implement t = log2 (r) now reading from file...\n";
     cout << "\n Optimization in searching for a tag\n";
     cout << "\n Optimization in multiplication of tag and Y0 i.e (v.w) \n";
+    cout << "\n Modulus backup and restore in computeGamma Function \n";
     cout << "\n &*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*\n\n ";
 }
 
@@ -268,13 +267,18 @@ int discreteLog::allocateTableMemory() {
 }
 
 int discreteLog::computeGamma(const ZZ_pX &tagOfY0) {
-    ZZ_p index;
+
     ZZ_p::init(conv<ZZ>(this->r));
+    ZZ_p index;
     for (int i = 0; i < t; ++i) {
         index += pow(2, i) * conv<int>(tagOfY0[i]);
-        cout << " " << tagOfY0[i] << "(" << pow(2, i) << ") +    ";
+        //        cout << " " << tagOfY0[i] << "(" << pow(2, i) << ") +    ";
         cout.flush();
     }
+    // This a just a hack to reset the modulus back to p 
+    // a better mechanism should be used 
+    // Look into ZZ_pBak or something silmilar to save and restore modulus...
+    ZZ_p::init(this->p);
     return conv<int>(index);
 }
 
@@ -470,37 +474,66 @@ void discreteLog::printNumberOfRowsInTable() {
 int discreteLog::teskeDL() {
     cout << "\n Solving using teske...\n";
 
-    //    ZZ_p::init(this->p);
     ZZ_pX *node;
     node = new ZZ_pX[constants::nodeLength];
-    for (long long int i = 0; i < constants::nodeLength; ++i) {
+    for (long long int i = 0; i < constants::nodeLength; ++i)
         node[i].SetMaxLength(this->n);
-    }
+
+    long long int *S = new long long int[constants::nodeLength];
+    long long int *T = new long long int[constants::nodeLength];
+    long long int *indexArr = new long long int[constants::nodeLength];
 
     node[0] = g;
-    cout << "\n Y0 :: " << node[0] << endl;
+    S[0] = M->alpha[0];
+    T[0] = M->beta[0];
+    indexArr[0] = -1;
     long int cnt(0);
-
-    ZZ_p::init(this->p);
-    ZZ_pX Y0, Y1;
-    Y0.SetMaxLength(this->n);
-    Y1.SetMaxLength(this->n);
-    Y0 = g;
-
+    long long int collisionOne(-1), collisionTwo(-1);
+    bool flag = false;
+    int index(0);
     while (1) {
-        //        M->groupElement[computeGamma(Y0)];
-        cout << "\n Y0 :: " << Y0 << " * M->groupElement[computeGamma(Y0)] :: " << M->groupElement[computeGamma(Y0)] << endl;
-        Y1 = Y0 * M->groupElement[computeGamma(Y0)];
-        cout << "\n Y1 :: " << Y1 << endl;
-
-        Y1 = Y1 % irredPoly;
-        cout << "\n final Y0 :: " << Y1 << endl;
-        Y0 = Y1;
-
+        index = computeGamma(node[cnt]);
+        node[cnt + 1] = (node [cnt] * M->groupElement[index]) % irredPoly;
+        S[cnt + 1 ] = M->alpha[index] + S[cnt];
+        T[cnt + 1 ] = M->beta[index] + T[cnt];
+        indexArr[cnt + 1] = index;
         cnt++;
-        if (cnt > 1)
+        for (int i = 0; i < cnt; i++) {
+            if (node[i] == node[cnt]) {
+                collisionOne = i;
+                collisionTwo = cnt;
+                flag = true;
+                break;
+            }
+        }
+        if (flag)
             break;
-        cout << "\n$ $ $ $ $ $ $ $ $ $ $ $ $ $ $ $ $ $ $ $ $ $ $ $ $ $ $ $ $ $ $ $ $ $ $ $ $ $ $ $ $ $ $ $ $\n";
     }
+    cout << "\n ____________________________________________________________________________________ \n";
+    cout << "\n Sr. \t Node \t\t\t S \t\t T \t index\n";
+    for (long long int i = 0; i <= cnt; ++i) {
+        cout << i << "\t" << node[i] << "\t\t" << S[i] << "\t\t" << T[i] << "\t" << indexArr[i] << endl;
+    }
+
+    cout << "\n Collision Found \n node[" << collisionOne << "] :: " << node[collisionOne];
+    cout << "\n S[" << collisionOne << "] :: " << S[collisionOne] << "\t T[" << collisionOne << "] :: " << T[collisionOne] << endl;
+    cout << "\t\t\n node[" << collisionTwo << "] :: " << node[collisionTwo];
+    cout << "\n S[" << collisionTwo << "] :: " << S[collisionTwo] << "\t T[" << collisionTwo << "] :: " << T[collisionTwo] << endl;
+
+    long int counter(0);
+    //Brute Force Attack on DLP
+    while (1) {
+        if (power(g, counter) % irredPoly == h) {
+            cout << "\n ans :: " << power(g, counter) % irredPoly << "\t counter :: " << counter << endl;
+            break;
+        }
+        counter++;
+    }
+    
+    
+    
+    
+    
+    
     return 1;
 }
