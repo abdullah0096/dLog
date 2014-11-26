@@ -49,6 +49,7 @@ discreteLog::discreteLog(ZZ p, long n, long r, long l, ZZ_pX g, ZZ_pX h, long t,
 
     x = -1;
     tableGenerationTime = -1;
+    this->computeOrderOfG();
 }
 
 void discreteLog::printParameters() {
@@ -471,6 +472,67 @@ void discreteLog::printNumberOfRowsInTable() {
     }
 }
 
+/**
+ * Brute Force Attack on DLP
+ * @return This Discrete Log
+ */
+int discreteLog::bruteForceDl() {
+    long int counter(0);
+
+    while (1) {
+        if (power(g, counter) % irredPoly == h) {
+            cout << "\n Brute Force Attact on DLP\n";
+            cout << "\n ans By Computation :: " << power(g, counter) % irredPoly << "\t x :: " << counter << endl;
+            this->x = counter;
+            break;
+        }
+        counter++;
+    }
+    return this->x;
+}
+
+/**
+ * This method computer order of G using Brute Force Method
+ */
+void discreteLog::computeOrderOfG() {
+    long long int counter1(1);
+    while (1) {
+        if (power(g, counter1) % irredPoly == 1) {
+            this->orderOfG = counter1;
+            break;
+        }
+        counter1++;
+    }
+    cout << "\n Order(g=" << g << ") :: " << this->orderOfG << endl;
+}
+
+/**
+ * Extended Euclidian Algorithm computes gcd = (a,b)
+ * @param a 
+ * @param b
+ * @param gcd
+ */
+long long int eea(long long int a, long long int b) {
+    long long int x, y;
+    x = 0, y = 1;
+    int u = 1, v = 0, m, n, q, r;
+    long long int gcd = b;
+
+    while (a != 0) {
+        q = gcd / a;
+        r = gcd % a;
+        m = x - u*q;
+        n = y - v*q;
+        gcd = a;
+        a = r;
+        x = u;
+        y = v;
+        u = m;
+        v = n;
+    }
+    return gcd;
+}
+
 int discreteLog::teskeDL() {
     cout << "\n Solving using teske...\n";
 
@@ -498,6 +560,8 @@ int discreteLog::teskeDL() {
         T[cnt + 1 ] = M->beta[index] + T[cnt];
         indexArr[cnt + 1] = index;
         cnt++;
+
+        //For Loop to detect Collision
         for (int i = 0; i < cnt; i++) {
             if (node[i] == node[cnt]) {
                 collisionOne = i;
@@ -506,34 +570,41 @@ int discreteLog::teskeDL() {
                 break;
             }
         }
-        if (flag)
-            break;
-    }
-    cout << "\n ____________________________________________________________________________________ \n";
-    cout << "\n Sr. \t Node \t\t\t S \t\t T \t index\n";
-    for (long long int i = 0; i <= cnt; ++i) {
-        cout << i << "\t" << node[i] << "\t\t" << S[i] << "\t\t" << T[i] << "\t" << indexArr[i] << endl;
-    }
+        if (flag) {
+            cout << "\n Collision Found \n node[" << collisionOne << "] :: " << node[collisionOne];
+            cout << "\n S[" << collisionOne << "] :: " << S[collisionOne] << "\t T[" << collisionOne << "] :: " << T[collisionOne] << endl;
+            cout << "\t\t\n node[" << collisionTwo << "] :: " << node[collisionTwo];
+            cout << "\n S[" << collisionTwo << "] :: " << S[collisionTwo] << "\t T[" << collisionTwo << "] :: " << T[collisionTwo] << endl;
 
-    cout << "\n Collision Found \n node[" << collisionOne << "] :: " << node[collisionOne];
-    cout << "\n S[" << collisionOne << "] :: " << S[collisionOne] << "\t T[" << collisionOne << "] :: " << T[collisionOne] << endl;
-    cout << "\t\t\n node[" << collisionTwo << "] :: " << node[collisionTwo];
-    cout << "\n S[" << collisionTwo << "] :: " << S[collisionTwo] << "\t T[" << collisionTwo << "] :: " << T[collisionTwo] << endl;
+            int num = S[collisionOne] - S[collisionTwo];
+            int dnum = T[collisionTwo] - T[collisionOne];
 
-    long int counter(0);
-    //Brute Force Attack on DLP
-    while (1) {
-        if (power(g, counter) % irredPoly == h) {
-            cout << "\n ans :: " << power(g, counter) % irredPoly << "\t counter :: " << counter << endl;
-            break;
+            ZZ temp;
+            temp = conv<ZZ>(this->orderOfG);
+            ZZ_p::init(temp);
+            ZZ_p num1, dnum1, X;
+
+            num1 = conv<ZZ_p>(num);
+            dnum1 = conv<ZZ_p>(dnum);
+
+            if (eea(dnum, this->orderOfG) == 1) {
+
+                X = num1 / dnum1;
+                this->x = conv<int>(X);
+                cout << "\n DLP by Teske :: " << x << endl;
+
+                //Verification 
+                ZZ_p::init(this->p);
+                cout << "\n Verification \n by calculation ::" << power(g, this->x) % irredPoly << "\n    By Input h :: " << h << endl;
+
+                break;
+            } else {
+                cout << "\n GCD IS NOT ONE  GCD :: " << eea(dnum, this->orderOfG) << endl;
+                collisionOne = 0;
+                collisionTwo = 0;
+            }
         }
-        counter++;
     }
-    
-    
-    
-    
-    
-    
+
     return 1;
 }

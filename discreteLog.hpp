@@ -58,11 +58,13 @@ public:
     void generateMultipliers();
     void printMultipliers();
     void printTableMl();
-    int cheonDL();
+    int bruteForceDl();
     int teskeDL();
+    int cheonDL();
     int readMultiplierInformation();
     int allocateTableMemory();
     void printNumberOfRowsInTable();
+    void computeOrderOfG();
     void computeGroupElementExponentAndTag();
     ZZ_pX getTag(const ZZ_pX&);
     long long getColumn(int arr[], long long int row);

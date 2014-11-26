@@ -42,6 +42,7 @@ int main(int argc, char** argv) {
         DLP.printParameters();
         DLP.printMultipliers();
 
+        DLP.bruteForceDl();
         DLP.teskeDL();
 
         return 0;
