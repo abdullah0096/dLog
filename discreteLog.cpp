@@ -490,8 +490,9 @@ int discreteLog::cheonDL() {
         if (GCD(num, dnum) == 1) {
             X = num1 / dnum1;
             cout << "\n Ans by Cheon :: " << X << endl;
-        } else
+        } else {
             cout << "\n Ans by Cheon :: No Ans" << endl;
+        }
     }
 }
 
