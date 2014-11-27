@@ -54,11 +54,12 @@ public:
     long double tableGenerationTime;
     tableCell **cellData;
     discreteLog(ZZ, long, long, long, ZZ_pX, ZZ_pX, long, long);
+    void reset(ZZ, long, long, long, ZZ_pX, ZZ_pX, long, long);
     void printParameters();
     void generateMultipliers();
     void printMultipliers();
     void printTableMl();
-    int bruteForceDl();
+    int bruteForceDL();
     int teskeDL();
     int cheonDL();
     int readMultiplierInformation();

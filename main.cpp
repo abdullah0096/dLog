@@ -6,7 +6,6 @@
  */
 
 #include "discreteLog.hpp"
-
 #include <NTL/vec_ZZ.h>
 
 using namespace std;
@@ -37,17 +36,13 @@ int main(int argc, char** argv) {
         cout << "\n p :: " << p << "\t n :: " << n << "\t r :: " << r << "\t orderOfG :: " << orderOfG
                 << "\t l :: " << l << "\t t ::" << t << "\t";
         cout << "\n g :: " << g << "\t h :: " << h << "\n\n";
-        ;
+
         discreteLog DLP(p, n, r, l, g, h, t, orderOfG);
         DLP.printParameters();
         DLP.printMultipliers();
 
-        DLP.bruteForceDl();
-
-        //        discreteLog DLP1(p, n, r, l, g, h, t, orderOfG);
-        DLP.teskeDL();
-
-        return 0;
+        DLP.bruteForceDL();
+        //        DLP.teskeDL();
 
         if (DLP.cheonDL() == 0) {
             cout << "\n Something Went Wrong.....\n";
@@ -55,7 +50,10 @@ int main(int argc, char** argv) {
             time += DLP.tableGenerationTime;
             cout << "\n in Main :: Iteration # " << i << endl;
         }
+
         fin.close();
     }
+
     cout << "\n TOTAL time :: " << time / end << endl;
+    return 0;
 }
