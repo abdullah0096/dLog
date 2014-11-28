@@ -62,6 +62,7 @@ public:
     int bruteForceDL();
     int teskeDL();
     int cheonDL();
+    int cheonDL2();
     int readMultiplierInformation();
     int allocateTableMemory();
     void printNumberOfRowsInTable();

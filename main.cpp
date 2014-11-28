@@ -44,7 +44,7 @@ int main(int argc, char** argv) {
         DLP.bruteForceDL();
         //        DLP.teskeDL();
 
-        if (DLP.cheonDL() == 0) {
+        if (DLP.cheonDL2() == 0) {
             cout << "\n Something Went Wrong.....\n";
         } else {
             time += DLP.tableGenerationTime;
