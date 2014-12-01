@@ -13,8 +13,8 @@ multiplier::multiplier(long r, const ZZ& p) {
     ZZ_p::init(this->p);
 
     this->r = r;
-    alpha = new long[this->r];
-    beta = new long[this->r];
+    alpha = new ZZ[this->r];
+    beta = new ZZ[this->r];
     i = new long [this->r];
     groupElement = new ZZ_pX[this->r];
 }

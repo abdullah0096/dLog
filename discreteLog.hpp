@@ -32,7 +32,7 @@ private:
     ZZ p; //  Characterstics
     long n; //  Extension
     long x; //  Solution for the DLP
-    long orderOfG; // Order of the Group
+    ZZ orderOfG; // Order of the Group
     long r; // value of r in r-adding walk and other methods    
     long l; // number of rows in pre-computed table for CHEON DLP method
     long t; // size of tage vector for CHEON
@@ -53,7 +53,8 @@ private:
 public:
     long double tableGenerationTime;
     tableCell **cellData;
-    discreteLog(ZZ, long, long, long, ZZ_pX, ZZ_pX, long, long);
+    discreteLog(ZZ, long, long, long, ZZ_pX, ZZ_pX, long, ZZ);
+    discreteLog(ZZ, long, long, long, ZZ_pX, ZZ_pX, ZZ_pX, long, ZZ);
     void reset(ZZ, long, long, long, ZZ_pX, ZZ_pX, long, long);
     void printParameters();
     void generateMultipliers();
@@ -63,6 +64,8 @@ public:
     int teskeDL();
     int cheonDL();
     int cheonDL2();
+    int cheonDL3();
+    int cheonDL4();
     int readMultiplierInformation();
     int allocateTableMemory();
     void printNumberOfRowsInTable();
@@ -98,3 +101,47 @@ public:
 };
 
 #endif	/* DISCRETELOG_HPP */
+
+//F:= GF(2^5);
+//F;
+//g:= Generator(F);
+//h:=g^51;
+//h;
+//Eltseq(h);
+//Eltseq(g);
+//Z:=IrreducibleSparseGF2Polynomial(63);
+//Eltseq(Z);
+;
+//magma code to generate input instances...
+//n:=17;
+//F:= GF(2^n);
+//Id := IrreducibleSparseGF2Polynomial(n);
+//g:= Generator(F);
+//ord:= Order(g);
+//print "order(g) :: ";ord;
+//Eltseq(g);
+//h:=g^17;
+//Eltseq(h);
+//Eltseq(Id);
+;
+//magma code to generate multiple input instances...
+//cnt:=0;
+//for i in [1..30] 
+//do
+//    m := 17;
+//    p := 2;
+//    n:=5+cnt;
+//    F:= FiniteField(p^n);
+//    Id := IrreducibleSparseGF2Polynomial(n);
+//    g:= Generator(F);
+//    ord:= Order(g);    
+//    h:=g^m;
+//
+//    p, "" ,n," 8 ", ord, "4 2";
+//    Eltseq(g);
+//    Eltseq(h);
+//    Eltseq(Id);
+//    cnt:= cnt +2;
+//    i;
+//    print " ";
+//end for;

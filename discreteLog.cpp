@@ -20,7 +20,7 @@ long long int factorial(long long int f) {
  * @param h element of the Group such that g^x = h
  * @param orderOfG Order of the Group
  */
-discreteLog::discreteLog(ZZ p, long n, long r, long l, ZZ_pX g, ZZ_pX h, long t, long orderOfG) {
+discreteLog::discreteLog(ZZ p, long n, long r, long l, ZZ_pX g, ZZ_pX h, long t, ZZ orderOfG) {
     this->toDO();
     this->n = n;
     this->t = t;
@@ -52,6 +52,46 @@ discreteLog::discreteLog(ZZ p, long n, long r, long l, ZZ_pX g, ZZ_pX h, long t,
     this->computeOrderOfG();
 }
 
+/**
+ * @param q Characterstics
+ * @param n Extension
+ * @param x Solution for the DLP
+ * @param g Generator of the Group
+ * @param h element of the Group such that g^x = h
+ * @param orderOfG Order of the Group
+ */
+discreteLog::discreteLog(ZZ p, long n, long r, long l, ZZ_pX g, ZZ_pX h, ZZ_pX irrD, long t, ZZ orderOfG) {
+    this->toDO();
+    this->n = n;
+    this->t = t;
+    if (this->t >= this->n) {
+        std::cerr << "\n n :: " << n << " should be greater than size of tag i.e t :: " << t << endl;
+        exit(1);
+    }
+
+    this->p = p;
+    this->g = g;
+    this->h = h;
+    this->orderOfG = orderOfG;
+    this->r = r;
+    this->l = l;
+    this->tagStartPosition = this->n - this->t;
+    numberOfElementsInTableRow = new long[l];
+
+    ZZ_p::init(this->p);
+    this->irredPoly = irrD;
+
+    //Allocationg Memory for the set of Multipliers and generating them
+    M = new multiplier(r, p);
+    this->computeOrderOfG();
+    generateMultipliers();
+    //    printMultipliers();
+    std::cout << " discreteLog::discreteLog :- Assuming Multipliers are generated correctly. Should be Tested :-(\n";
+
+    x = -1;
+    tableGenerationTime = -1;
+}
+
 void discreteLog::printParameters() {
     cout << "\n*******************************************************************************************\n";
     if (x == -1) {
@@ -70,22 +110,28 @@ void discreteLog::printParameters() {
 void discreteLog::generateMultipliers() {
 
     long long int alphaTmp[] = {11, 1, 4, 2, 1, 8, 9, 5};
-    long long int betaTmp[] = {6, 3, 8, 2, 5, 8, 6, 4};
-    //    long long int alphaTmp[] = {4, 5, 6, 7, 1, 2, 7, 5};
-    //    long long int betaTmp[] = {5, 6, 7, 8, 6, 7, 1, 9};
+    //    long long int betaTmp[] = {6, 3, 8, 2, 5, 8, 6, 4};
+    //    long long int alphaTmp[] = {6, 9, 7, 9, 7, 7, 8, 4};
+    //    long long int betaTmp[] = {11, 6, 4, 5, 9, 7, 7, 5};
+    //    long long int alphaTmp[] = {22, 61, 81, 89, 97, 58, 54, 77};
+    long long int betaTmp[] = {100, 39, 21, 20, 49, 94, 22, 89};
 
     std::cout << " Generating Multipliers (" << r << ")....";
     fflush(stdout);
     for (int i = 0; i < r; i++) {
         srand(time(NULL));
 
-        //        M->alpha[i] = rand() % this->orderOfG + 1;
-        //        usleep(constants::waitTimeOneSecond);
-        //        M->beta[i] = rand() % this->orderOfG + 1;
-        //        usleep(constants::waitTimeOneSecond);
+        M->alpha[i] = RandomBnd(this->orderOfG) + rand() + 1;
+        M->alpha[i] = M->alpha[i] % orderOfG + 1;
+        usleep(constants::waitTimeOneSecond);
+        M->beta[i] = RandomBnd(this->orderOfG) + rand() + 1;
+        M->beta[i] = M->beta[i] % orderOfG + 1;
+        usleep(constants::waitTimeOneSecond);
 
-        M->alpha[i] = alphaTmp[i];
-        M->beta[i] = betaTmp[i];
+        cout << "\n M->beta[i] :: " << M->beta[i] << "\t M->alpha[i] :: " << M->alpha[i] << endl;
+
+        //        M->alpha[i] = alphaTmp[i];
+        //        M->beta[i] = betaTmp[i];
 
         M->i[i] = i;
 
@@ -95,11 +141,15 @@ void discreteLog::generateMultipliers() {
         std::cout << "\n Mul :: " << power(g, M->alpha[i]) * power(h, M->beta[i]) << "\n";
         std::cout << "\n ans :: " << power(g, M->alpha[i]) * power(h, M->beta[i]) % irredPoly << "\n";
          */
-        M->groupElement[i] = (power(g, M->alpha[i]) * power(h, M->beta[i])) % irredPoly;
+
+        //        M->groupElement[i] = (power(g, conv<long>(M->alpha[i])) * power(h, conv<long>(M->beta[i]))) % irredPoly;
+        M->groupElement[i] = (PowerMod(g, M->alpha[i], irredPoly) * PowerMod(g, M->alpha[i], irredPoly));
+        //        power(g, conv<long>(M->alpha[i])) * power(h, conv<long>(M->beta[i]))) % irredPoly;
 
         //        cout << "\n one :: " << temp1 << "\t two :: " << temp2 << "\t ans :: " << temp3 << std::endl;
         //        M->groupElement[i] = power(g, M->alpha[i]) * power(h, M->beta[i]);
         //        std::cout << "\n alpha ::" << this->M->alpha[i] << "\t beta :: " << this->M->beta[i] << "\t i :: " << i << "\t element :: " << this->M->groupElement[i] << std::endl;
+
     }
     std::cout << "[DONE]\n";
     usleep(constants::waitTimeHalfSecond);
@@ -164,7 +214,6 @@ int discreteLog::readMultiplierInformation() {
 }
 
 void discreteLog::computeGroupElementExponentAndTag() {
-
     try {
         for (long long int i = 0; i < this->l; ++i) {
             for (long long int j = 0; j < this->numberOfElementsInTableRow[i]; ++j) {
@@ -242,6 +291,7 @@ int discreteLog::allocateTableMemory() {
     // Allocating a 2D array for holding table data. Used for CHEON
     // Each cell Allocating a 2D array for holding table data.
     // Used for CHEON of the table has a object of type tableCell
+    timestamp_t startTimeTableGeneration = utility::get_timestamp();
     cellData = new tableCell*[l];
     for (int i = 0; i < l; i++) {
         long int topVal = (i + 1) + r - 1;
@@ -255,7 +305,7 @@ int discreteLog::allocateTableMemory() {
         numberOfElementsInTableRow[i] = numberOfRow;
     }
 
-    timestamp_t startTimeTableGeneration = utility::get_timestamp();
+
     if (readMultiplierInformation() == -1) {
         return -1;
     } else {
@@ -331,6 +381,7 @@ long long int eea(long long int a, long long int b) {
 }
 
 int discreteLog::cheonDL2() {
+    timestamp_t t1 = utility::get_timestamp();
     if (allocateTableMemory() == -1) {
         return 0;
     } else {
@@ -340,14 +391,14 @@ int discreteLog::cheonDL2() {
         long long int *S = new long long int[constants::nodeLength];
         long long int *T = new long long int[constants::nodeLength];
 
-        ZZ_pX *node;
-        node = new ZZ_pX[constants::nodeLength];
-        for (long long int i = 0; i < constants::nodeLength; ++i)
-            node[i].SetMaxLength(this->n);
+        //        ZZ_pX *node;
+        //        node = new ZZ_pX[constants::nodeLength];
+        //        for (long long int i = 0; i < constants::nodeLength; ++i)
+        //            node[i].SetMaxLength(this->n);
 
         //We stat walking from here...
         cout << "\n###################################################################################";
-        cout << "\n \t\t\t\t Starting to Walk \n";
+        cout << "\n \t\t\t\t Starting to Walk1 \n";
         cout << "###################################################################################";
         Y0 = g;
         cout << "\n Y0" << " :: " << Y0 << endl;
@@ -359,16 +410,16 @@ int discreteLog::cheonDL2() {
         bool flag = false;
 
         while (1) {
+            //            cout << "\n walkCnt :: " << walkCnt << endl;
             int *arrL = new int[l];
             long int numberOfElementsInArrL(0);
             long int col(0);
 
             tagOfY0 = getTag(Y0);
-
             arrL[0] = computeGamma(tagOfY0);
-            S[0] = cellData[numberOfElementsInArrL][arrL[numberOfElementsInArrL]].summationAlpha;
-            T[0] = cellData[numberOfElementsInArrL][arrL[numberOfElementsInArrL]].summationBeta;
-            node[0] = Y0;
+            //            S[0] = cellData[numberOfElementsInArrL][arrL[numberOfElementsInArrL]].summationAlpha;
+            //            T[0] = cellData[numberOfElementsInArrL][arrL[numberOfElementsInArrL]].summationBeta;
+            //            node[0] = Y0;
             tmpTag = cellData[numberOfElementsInArrL][arrL[numberOfElementsInArrL]].getTagFor();
 
             //Loop over l times during the walk
@@ -407,285 +458,228 @@ int discreteLog::cheonDL2() {
                     exit(0);
                 }
                 tmpTag = cellData[numberOfElementsInArrL][col].getTagFor();
+                walkCnt++;
             }//end For l times...
-
             // </editor-fold>
 
             Y0 = Y0 * cellData[l - 1][col].groupElement;
             Y0 = Y0 % irredPoly;
-
-            node[walkCnt] = Y0;
-            S[walkCnt] = S[walkCnt - 1] + cellData[l - 1][col].summationAlpha;
-            T[walkCnt] = T[walkCnt - 1] + cellData[l - 1][col].summationBeta;
-
-            // <editor-fold defaultstate="collapsed" desc=" For Loop For Collision Detection ">
-            for (long long int i = 0; i < walkCnt; i++) {
-                if (node[i] == node[walkCnt]) {
-                    collisionOne = i;
-                    collisionTwo = walkCnt;
-                    flag = true;
-                    break;
-                }
-            }
-
-            // </editor-fold>
-
-            walkCnt++;
-            if (flag) {
-                int num = S[collisionOne] - S[collisionTwo];
-                int dnum = T[collisionTwo] - T[collisionOne];
-                ZZ temp;
-                temp = conv<ZZ>(this->orderOfG);
-                ZZ_p::init(temp);
-                ZZ_p num1, dnum1, X;
-
-                num1 = conv<ZZ_p>(num);
-                dnum1 = conv<ZZ_p>(dnum);
-
-                if (GCD(dnum, this->orderOfG) == 1) {
-                    X = num1 / dnum1;
-                    this->x = conv<int>(X);
-                    ZZ_p::init(this->p);
-                    if (power(g, this->x) % irredPoly == h) {
-                        break;
-                    } else {
-                        this->generateMultipliers();
-                        printMultipliers();
-                        walkCnt = 0;
-                        collisionOne = 0;
-                        collisionTwo = 0;
-                        delete []S;
-                        delete []T;
-
-                        S = NULL;
-                        T = NULL;
-                        node = new ZZ_pX[constants::nodeLength];
-                        for (long long int i = 0; i < constants::nodeLength; ++i)
-                            node[i].SetMaxLength(this->n);
-                    }
-                } else {
-                    cout << "\n GCD IS NOT ONE  GCD :: " << GCD(dnum, this->orderOfG) << endl;
-                    this->generateMultipliers();
-                    printMultipliers();
-                    walkCnt = 0;
-                    collisionOne = 0;
-                    collisionTwo = 0;
-                    delete []S;
-                    delete []T;
-
-                    S = NULL;
-                    T = NULL;
-                    node = new ZZ_pX[constants::nodeLength];
-                    for (long long int i = 0; i < constants::nodeLength; ++i)
-                        node[i].SetMaxLength(this->n);
-                }
+            //            node[walkCnt] = Y0;
+            //            cout << "\n node :: " << node[walkCnt] << "\t walkCnt :: " << walkCnt << endl;
+            //            walkCnt++;
+            if (walkCnt > constants::nodeLength) {
+                break;
             }
         }//End::while(1)
     }
+    timestamp_t t2 = utility::get_timestamp();
+    double time = utility::getTimeInSeconds(t2, t1);
+    cout << "\t CHEON 10^7 iterations time :: " << time << " Seconds..." << endl;
+
 }
 
-int discreteLog::cheonDL() {
-    if (allocateTableMemory() == -1) {
-        return 0;
-    } else {
-        ZZ_pX Y0, tagOfY0, *tmpTag;
-        Y0.SetMaxLength(this->n);
-        tagOfY0.SetMaxLength(this->t);
-        long long int *S = new long long int[constants::nodeLength];
-        long long int *T = new long long int[constants::nodeLength];
-
-        ZZ_pX *node;
-        node = new ZZ_pX[constants::nodeLength];
-        for (long long int i = 0; i < constants::nodeLength; ++i)
-            node[i].SetMaxLength(this->n);
-
-        //We stat walking from here...
-        cout << "\n###################################################################################";
-        cout << "\n \t\t\t\t Starting to Walk \n";
-        cout << "###################################################################################";
-        Y0 = g;
-        cout << "\n Y0" << " :: " << Y0 << endl;
-
-        //while(1) loop from here...
-        long long int distinguishedPointCnt(0);
-        long long int walkCnt(1);
-        long long int collisionOne(-1), collisionTwo(-1);
-        bool flag = false;
-        while (1) {
-            int *arrL = new int[l];
-            long int numberOfElementsInArrL(0);
-            long int col(0);
-
-            tagOfY0 = getTag(Y0);
-            //            cout << "\n Y0 = g =  " << Y0 << endl;
-            //            cout << "\n tag(Y0) :: " << getTag(Y0) << endl;
-
-            arrL[0] = computeGamma(tagOfY0);
-            S[0] = cellData[numberOfElementsInArrL][arrL[numberOfElementsInArrL]].summationAlpha;
-            T[0] = cellData[numberOfElementsInArrL][arrL[numberOfElementsInArrL]].summationBeta;
-            node[0] = Y0;
-            //            cout << "\n\n\n \t\t\t\t node[0] :: " << node[0] << endl;
-            //            cout << "\n 1gamma :: " << arrL[numberOfElementsInArrL] << endl;
-            //            cout << "\n Y1 :: Y0.m" << arrL[0] << endl;
-            //            cout << "\n - - - - - - - - - - - - - - - [Start Loop]- - - - - - - - - - - - - - - - - - - - - - - - - \n";
-            tmpTag = cellData[numberOfElementsInArrL][arrL[numberOfElementsInArrL]].getTagFor();
-            //            cellData[numberOfElementsInArrL][arrL[numberOfElementsInArrL]].printCellData();
-
-            //Loop over l times during the walk
-            for (long j = 0; j< this->l - 1; ++j) {
-                //                cout << "\n tag of m" << arrL[numberOfElementsInArrL] << " => tmpTag::";
-                //                for (int i = 0; i< this->n; ++i)
-                //                    cout << tmpTag[i] << "\t";
-                //                cout << "\n Y0 :: " << Y0 << endl;
-
-                ZZ_pX acc, tagOfAcc;
-                acc.SetMaxLength(constants::accumulatorLength);
-                tagOfAcc.SetMaxLength(this->t);
-
-                // 3 :: size of extention , i.e size of tag vector
-                // tag = ( [] [] [] )
-                for (int i = 0; i < this->n; ++i) {
-                    ZZ_pX var;
-                    var.SetMaxLength(constants::accumulatorLength);
-                    //3 :: number of elements in Y
-                    for (int j = 0; j < this->n; ++j) {
-                        if (i == j) {
-                            SetCoeff(var, j, Y0[i]);
-                        } else {
-                            SetCoeff(var, j, 0);
-                        }
-                    }
-                    acc += tmpTag[i] * var;
-                }
-                acc = acc % irredPoly;
-                //                cout << " v.w :: " << acc << endl;
-                //                cout << " tag(v.w) :: " << getTag(acc) << endl;
-                clear(tagOfY0);
-                tagOfAcc = getTag(acc);
-                numberOfElementsInArrL++;
-                arrL[numberOfElementsInArrL] = computeGamma(tagOfAcc);
-                bubbleSort(arrL, numberOfElementsInArrL + 1);
-
-                //                cout << "\n gama(tag(v.w)) :: " << computeGamma(tagOfAcc) << endl;
-                //                cout << "\n numberOfElementsInArrL :: " << numberOfElementsInArrL << endl;
-                //                cout << "\n Y" << numberOfElementsInArrL + 1 << " :: Y0";
-                //                for (int k = 0; k <= numberOfElementsInArrL; ++k)
-                //                    cout << ".m" << arrL[k];
-                for (int i = 0; i< this->n; ++i)
-                    clear(tmpTag[i]);
-
-                col = getColumn(arrL, numberOfElementsInArrL);
-                if (col != -1) {
-                    //                    cout << "\n Col is col :: " << col << endl;
-                    //                    cout << "\n Cell data is \n";
-                    //                    cellData[numberOfElementsInArrL][col].printCellData();
-                    ;
-                } else {
-                    cout << "\n int discreteLog::cheonDL() :: not able to get column ::\n";
-                    exit(0);
-                }
-                tmpTag = cellData[numberOfElementsInArrL][col].getTagFor();
-                //                cout << "\n end tmpTag :: ";
-                //                for (int i = 0; i< this->n; ++i)
-                //                    cout << tmpTag[i] << "\t";
-                //                cout << "\n 222 j :: " << j << endl;
-                //                cout << "\n----------------------------------------------------------------------\n";
-            }
-
-            //            cout << "\n out col :: " << col << endl;
-            //            cout << "\n irrd :: " << irredPoly << "\t Y0 :: " << Y0 << "\t cellData[l - 1][col].groupElement :: " << cellData[l - 1][col].groupElement << endl;
-
-            Y0 = Y0 * cellData[l - 1][col].groupElement;
-            Y0 = Y0 % irredPoly;
-
-            //            cout << "\n multiplication ans :: " << Y0 << endl;
-            //            cout << "\n Y0 :: " << Y0 << endl;
-            cout << "\n Y" << walkCnt << " :: " << Y0 << endl;
-            int jkl;
-            cin>>jkl;
-            node[walkCnt] = Y0;
-            S[walkCnt] = S[walkCnt - 1] + cellData[l - 1][col].summationAlpha;
-            T[walkCnt] = T[walkCnt - 1] + cellData[l - 1][col].summationBeta;
-
-            //            cout << "\n ############################################################################################################### \n walk CNT :: " << walkCnt << endl;
-
-            //For Loop to detect Collision
-            for (long long int i = 0; i < walkCnt; i++) {
-                if (node[i] == node[walkCnt]) {
-                    collisionOne = i;
-                    collisionTwo = walkCnt;
-                    flag = true;
-                    break;
-                }
-            }
-            walkCnt++;
-            if (flag) {
-                cout << "\n Breeeeeeeaaaaaaking :-) ...\n";
-                cout << "\n Priting Walking Information .... \n";
-                cout << "\n Sr\tNode\t\tS\tT\n";
-                for (int i = 0; i < walkCnt; ++i) {
-                    cout << i << "\t" << node[i] << "\t" << S[i] << "\t" << T[i] << endl;
-                }
-                cout << "\n collisionOne :: " << collisionOne << "\t collisionTwo :: " << collisionTwo << endl;
-
-                int num = S[collisionOne] - S[collisionTwo];
-                int dnum = T[collisionTwo] - T[collisionOne];
-
-                ZZ temp;
-                temp = conv<ZZ>(this->orderOfG);
-                ZZ_p::init(temp);
-                ZZ_p num1, dnum1, X;
-
-                num1 = conv<ZZ_p>(num);
-                dnum1 = conv<ZZ_p>(dnum);
-
-                cout << "\n gcd :: " << GCD(num, dnum);
-                if (GCD(dnum, this->orderOfG) == 1) {
-                    X = num1 / dnum1;
-                    this->x = conv<int>(X);
-                    cout << "\n\t\t\t\t\t Solution to DLP by Teske :: " << x << endl;
-                    ZZ_p::init(this->p);
-                    cout << "\n \t\t\t\t\tVerification \n\t\t\t\t\t by calculation ::" << power(g, this->x) % irredPoly << "\n\t\t\t\t\t    By Input h :: " << h << endl;
-                    if (power(g, this->x) % irredPoly == h) {
-                        break;
-                    } else {
-                        this->generateMultipliers();
-                        printMultipliers();
-                        walkCnt = 0;
-                        collisionOne = 0;
-                        collisionTwo = 0;
-                        delete []node;
-                        delete []S;
-                        delete []T;
-
-                        node = new ZZ_pX[constants::nodeLength];
-                        for (long long int i = 0; i < constants::nodeLength; ++i)
-                            node[i].SetMaxLength(this->n);
-
-                        //                        attempt++;
-                    }
-                } else {
-                    cout << "\n GCD IS NOT ONE  GCD :: " << GCD(dnum, this->orderOfG) << endl;
-                    this->generateMultipliers();
-                    printMultipliers();
-                    walkCnt = 0;
-                    collisionOne = 0;
-                    collisionTwo = 0;
-                    delete []node;
-                    delete []S;
-                    delete []T;
-
-                    node = new ZZ_pX[constants::nodeLength];
-                    for (long long int i = 0; i < constants::nodeLength; ++i)
-                        node[i].SetMaxLength(this->n);
-                    //                    attempt++;
-                }
-            }
-        }//End::while(1)
-
-
-    }
-}
+//int discreteLog::cheonDL() {
+//    if (allocateTableMemory() == -1) {
+//        return 0;
+//    } else {
+//        ZZ_pX Y0, tagOfY0, *tmpTag;
+//        Y0.SetMaxLength(this->n);
+//        tagOfY0.SetMaxLength(this->t);
+//        long long int *S = new long long int[constants::nodeLength];
+//        long long int *T = new long long int[constants::nodeLength];
+//
+//        ZZ_pX *node;
+//        node = new ZZ_pX[constants::nodeLength];
+//        for (long long int i = 0; i < constants::nodeLength; ++i)
+//            node[i].SetMaxLength(this->n);
+//
+//        //We stat walking from here...
+//        cout << "\n###################################################################################";
+//        cout << "\n \t\t\t\t Starting to Walk \n";
+//        cout << "###################################################################################";
+//        Y0 = g;
+//        cout << "\n Y0" << " :: " << Y0 << endl;
+//
+//        //while(1) loop from here...
+//        long long int distinguishedPointCnt(0);
+//        long long int walkCnt(1);
+//        long long int collisionOne(-1), collisionTwo(-1);
+//        bool flag = false;
+//        while (1) {
+//            int *arrL = new int[l];
+//            long int numberOfElementsInArrL(0);
+//            long int col(0);
+//
+//            tagOfY0 = getTag(Y0);
+//            //            cout << "\n Y0 = g =  " << Y0 << endl;
+//            //            cout << "\n tag(Y0) :: " << getTag(Y0) << endl;
+//
+//            arrL[0] = computeGamma(tagOfY0);
+//            S[0] = cellData[numberOfElementsInArrL][arrL[numberOfElementsInArrL]].summationAlpha;
+//            T[0] = cellData[numberOfElementsInArrL][arrL[numberOfElementsInArrL]].summationBeta;
+//            node[0] = Y0;
+//            //            cout << "\n\n\n \t\t\t\t node[0] :: " << node[0] << endl;
+//            //            cout << "\n 1gamma :: " << arrL[numberOfElementsInArrL] << endl;
+//            //            cout << "\n Y1 :: Y0.m" << arrL[0] << endl;
+//            //            cout << "\n - - - - - - - - - - - - - - - [Start Loop]- - - - - - - - - - - - - - - - - - - - - - - - - \n";
+//            tmpTag = cellData[numberOfElementsInArrL][arrL[numberOfElementsInArrL]].getTagFor();
+//            //            cellData[numberOfElementsInArrL][arrL[numberOfElementsInArrL]].printCellData();
+//
+//            //Loop over l times during the walk
+//            for (long j = 0; j< this->l - 1; ++j) {
+//                //                cout << "\n tag of m" << arrL[numberOfElementsInArrL] << " => tmpTag::";
+//                //                for (int i = 0; i< this->n; ++i)
+//                //                    cout << tmpTag[i] << "\t";
+//                //                cout << "\n Y0 :: " << Y0 << endl;
+//
+//                ZZ_pX acc, tagOfAcc;
+//                acc.SetMaxLength(constants::accumulatorLength);
+//                tagOfAcc.SetMaxLength(this->t);
+//
+//                // 3 :: size of extention , i.e size of tag vector
+//                // tag = ( [] [] [] )
+//                for (int i = 0; i < this->n; ++i) {
+//                    ZZ_pX var;
+//                    var.SetMaxLength(constants::accumulatorLength);
+//                    //3 :: number of elements in Y
+//                    for (int j = 0; j < this->n; ++j) {
+//                        if (i == j) {
+//                            SetCoeff(var, j, Y0[i]);
+//                        } else {
+//                            SetCoeff(var, j, 0);
+//                        }
+//                    }
+//                    acc += tmpTag[i] * var;
+//                }
+//                acc = acc % irredPoly;
+//                //                cout << " v.w :: " << acc << endl;
+//                //                cout << " tag(v.w) :: " << getTag(acc) << endl;
+//                clear(tagOfY0);
+//                tagOfAcc = getTag(acc);
+//                numberOfElementsInArrL++;
+//                arrL[numberOfElementsInArrL] = computeGamma(tagOfAcc);
+//                bubbleSort(arrL, numberOfElementsInArrL + 1);
+//
+//                //                cout << "\n gama(tag(v.w)) :: " << computeGamma(tagOfAcc) << endl;
+//                //                cout << "\n numberOfElementsInArrL :: " << numberOfElementsInArrL << endl;
+//                //                cout << "\n Y" << numberOfElementsInArrL + 1 << " :: Y0";
+//                //                for (int k = 0; k <= numberOfElementsInArrL; ++k)
+//                //                    cout << ".m" << arrL[k];
+//                for (int i = 0; i< this->n; ++i)
+//                    clear(tmpTag[i]);
+//
+//                col = getColumn(arrL, numberOfElementsInArrL);
+//                if (col != -1) {
+//                    //                    cout << "\n Col is col :: " << col << endl;
+//                    //                    cout << "\n Cell data is \n";
+//                    //                    cellData[numberOfElementsInArrL][col].printCellData();
+//                    ;
+//                } else {
+//                    cout << "\n int discreteLog::cheonDL() :: not able to get column ::\n";
+//                    exit(0);
+//                }
+//                tmpTag = cellData[numberOfElementsInArrL][col].getTagFor();
+//                //                cout << "\n end tmpTag :: ";
+//                //                for (int i = 0; i< this->n; ++i)
+//                //                    cout << tmpTag[i] << "\t";
+//                //                cout << "\n 222 j :: " << j << endl;
+//                //                cout << "\n----------------------------------------------------------------------\n";
+//            }
+//
+//            //            cout << "\n out col :: " << col << endl;
+//            //            cout << "\n irrd :: " << irredPoly << "\t Y0 :: " << Y0 << "\t cellData[l - 1][col].groupElement :: " << cellData[l - 1][col].groupElement << endl;
+//
+//            Y0 = Y0 * cellData[l - 1][col].groupElement;
+//            Y0 = Y0 % irredPoly;
+//
+//            //            cout << "\n multiplication ans :: " << Y0 << endl;
+//            //            cout << "\n Y0 :: " << Y0 << endl;
+//            cout << "\n Y" << walkCnt << " :: " << Y0 << endl;
+//            int jkl;
+//            cin>>jkl;
+//            node[walkCnt] = Y0;
+//            S[walkCnt] = S[walkCnt - 1] + cellData[l - 1][col].summationAlpha;
+//            T[walkCnt] = T[walkCnt - 1] + cellData[l - 1][col].summationBeta;
+//
+//            //            cout << "\n ############################################################################################################### \n walk CNT :: " << walkCnt << endl;
+//
+//            //For Loop to detect Collision
+//            for (long long int i = 0; i < walkCnt; i++) {
+//                if (node[i] == node[walkCnt]) {
+//                    collisionOne = i;
+//                    collisionTwo = walkCnt;
+//                    flag = true;
+//                    break;
+//                }
+//            }
+//            walkCnt++;
+//            if (flag) {
+//                cout << "\n Breeeeeeeaaaaaaking :-) ...\n";
+//                cout << "\n Priting Walking Information .... \n";
+//                cout << "\n Sr\tNode\t\tS\tT\n";
+//                for (int i = 0; i < walkCnt; ++i) {
+//                    cout << i << "\t" << node[i] << "\t" << S[i] << "\t" << T[i] << endl;
+//                }
+//                cout << "\n collisionOne :: " << collisionOne << "\t collisionTwo :: " << collisionTwo << endl;
+//
+//                int num = S[collisionOne] - S[collisionTwo];
+//                int dnum = T[collisionTwo] - T[collisionOne];
+//
+//                ZZ temp;
+//                temp = conv<ZZ>(this->orderOfG);
+//                ZZ_p::init(temp);
+//                ZZ_p num1, dnum1, X;
+//
+//                num1 = conv<ZZ_p>(num);
+//                dnum1 = conv<ZZ_p>(dnum);
+//
+//                cout << "\n gcd :: " << GCD(num, dnum);
+//                if (GCD(dnum, this->orderOfG) == 1) {
+//                    X = num1 / dnum1;
+//                    this->x = conv<int>(X);
+//                    cout << "\n\t\t\t\t\t Solution to DLP by Teske :: " << x << endl;
+//                    ZZ_p::init(this->p);
+//                    cout << "\n \t\t\t\t\tVerification \n\t\t\t\t\t by calculation ::" << power(g, this->x) % irredPoly << "\n\t\t\t\t\t    By Input h :: " << h << endl;
+//                    if (power(g, this->x) % irredPoly == h) {
+//                        break;
+//                    } else {
+//                        this->generateMultipliers();
+//                        printMultipliers();
+//                        walkCnt = 0;
+//                        collisionOne = 0;
+//                        collisionTwo = 0;
+//                        delete []node;
+//                        delete []S;
+//                        delete []T;
+//
+//                        node = new ZZ_pX[constants::nodeLength];
+//                        for (long long int i = 0; i < constants::nodeLength; ++i)
+//                            node[i].SetMaxLength(this->n);
+//
+//                        //                        attempt++;
+//                    }
+//                } else {
+//                    cout << "\n GCD IS NOT ONE  GCD :: " << GCD(dnum, this->orderOfG) << endl;
+//                    this->generateMultipliers();
+//                    printMultipliers();
+//                    walkCnt = 0;
+//                    collisionOne = 0;
+//                    collisionTwo = 0;
+//                    delete []node;
+//                    delete []S;
+//                    delete []T;
+//
+//                    node = new ZZ_pX[constants::nodeLength];
+//                    for (long long int i = 0; i < constants::nodeLength; ++i)
+//                        node[i].SetMaxLength(this->n);
+//                    //                    attempt++;
+//                }
+//            }
+//        }//End::while(1)
+//
+//
+//    }
+//}
 
 /**
  * Given an array of integers and a row from table M
@@ -781,91 +775,91 @@ void discreteLog::computeOrderOfG() {
  * TODO :: After Collision if gcd is not 1 then handling multiple collision detection
  * and similar Stuff...
  */
-int discreteLog::teskeDL() {
-    ZZ_pX *node;
-    node = new ZZ_pX[constants::nodeLength];
-    for (long long int i = 0; i < constants::nodeLength; ++i)
-        node[i].SetMaxLength(this->n);
-
-    long long int *S = new long long int[constants::nodeLength];
-    long long int *T = new long long int[constants::nodeLength];
-    long long int *indexArr = new long long int[constants::nodeLength];
-
-    node[0] = g;
-    S[0] = M->alpha[0];
-    T[0] = M->beta[0];
-    indexArr[0] = -1;
-    long int cnt(0);
-    long long int collisionOne(-1), collisionTwo(-1);
-    bool flag = false;
-    int index(0);
-    long int attempt(1);
-    while (1) {
-        index = computeGamma(node[cnt]);
-        node[cnt + 1] = (node [cnt] * M->groupElement[index]) % irredPoly;
-        S[cnt + 1 ] = M->alpha[index] + S[cnt];
-        T[cnt + 1 ] = M->beta[index] + T[cnt];
-        indexArr[cnt + 1] = index;
-        cnt++;
-
-        //For Loop to detect Collision
-        for (int i = 0; i < cnt; i++) {
-            if (node[i] == node[cnt]) {
-                collisionOne = i;
-                collisionTwo = cnt;
-                flag = true;
-                break;
-            }
-        }
-        if (flag) {
-            // <editor-fold defaultstate="collapsed" desc=" Collision Detection Display ">
-            //            cout << "\n Collision Found \n node[" << collisionOne << "] :: " << node[collisionOne];
-            //            cout << "\n S[" << collisionOne << "] :: " << S[collisionOne] << "\t T[" << collisionOne << "] :: " << T[collisionOne] << endl;
-            //            cout << "\t\t\n node[" << collisionTwo << "] :: " << node[collisionTwo];
-            //            cout << "\n S[" << collisionTwo << "] :: " << S[collisionTwo] << "\t T[" << collisionTwo << "] :: " << T[collisionTwo] << endl;
-            // </editor-fold>
-            int num = S[collisionOne] - S[collisionTwo];
-            int dnum = T[collisionTwo] - T[collisionOne];
-
-            ZZ temp;
-            temp = conv<ZZ>(this->orderOfG);
-            ZZ_p::init(temp);
-            ZZ_p num1, dnum1, X;
-
-            num1 = conv<ZZ_p>(num);
-            dnum1 = conv<ZZ_p>(dnum);
-
-            if (eea(dnum, this->orderOfG) == 1) {
-                X = num1 / dnum1;
-                this->x = conv<int>(X);
-                cout << "\n\t\t\t\t\t Solution to DLP by Teske :: " << x << endl;
-                ZZ_p::init(this->p);
-                cout << "\n \t\t\t\t\tVerification \n\t\t\t\t\t by calculation ::" << power(g, this->x) % irredPoly << "\n\t\t\t\t\t    By Input h :: " << h << endl;
-                if (power(g, this->x) % irredPoly == h) {
-                    break;
-                } else {
-                    this->generateMultipliers();
-                    printMultipliers();
-                    collisionOne = 0;
-                    collisionTwo = 0;
-                    attempt++;
-                }
-            } else {
-                cout << "\n GCD IS NOT ONE  GCD :: " << eea(dnum, this->orderOfG) << endl;
-                this->generateMultipliers();
-                printMultipliers();
-                collisionOne = 0;
-                collisionTwo = 0;
-                attempt++;
-            }
-        }//END::If
-    }
-    cout << "\n Teske Number of attempts :: " << attempt << endl;
-    return 1;
-}
+//int discreteLog::teskeDL() {
+//    ZZ_pX *node;
+//    node = new ZZ_pX[constants::nodeLength];
+//    for (long long int i = 0; i < constants::nodeLength; ++i)
+//        node[i].SetMaxLength(this->n);
+//
+//    long long int *S = new long long int[constants::nodeLength];
+//    long long int *T = new long long int[constants::nodeLength];
+//    long long int *indexArr = new long long int[constants::nodeLength];
+//
+//    node[0] = g;
+//    S[0] = M->alpha[0];
+//    T[0] = M->beta[0];
+//    indexArr[0] = -1;
+//    long int cnt(0);
+//    long long int collisionOne(-1), collisionTwo(-1);
+//    bool flag = false;
+//    int index(0);
+//    long int attempt(1);
+//    while (1) {
+//        index = computeGamma(node[cnt]);
+//        node[cnt + 1] = (node [cnt] * M->groupElement[index]) % irredPoly;
+//        S[cnt + 1 ] = M->alpha[index] + S[cnt];
+//        T[cnt + 1 ] = M->beta[index] + T[cnt];
+//        indexArr[cnt + 1] = index;
+//        cnt++;
+//
+//        //For Loop to detect Collision
+//        for (int i = 0; i < cnt; i++) {
+//            if (node[i] == node[cnt]) {
+//                collisionOne = i;
+//                collisionTwo = cnt;
+//                flag = true;
+//                break;
+//            }
+//        }
+//        if (flag) {
+//            // <editor-fold defaultstate="collapsed" desc=" Collision Detection Display ">
+//            //            cout << "\n Collision Found \n node[" << collisionOne << "] :: " << node[collisionOne];
+//            //            cout << "\n S[" << collisionOne << "] :: " << S[collisionOne] << "\t T[" << collisionOne << "] :: " << T[collisionOne] << endl;
+//            //            cout << "\t\t\n node[" << collisionTwo << "] :: " << node[collisionTwo];
+//            //            cout << "\n S[" << collisionTwo << "] :: " << S[collisionTwo] << "\t T[" << collisionTwo << "] :: " << T[collisionTwo] << endl;
+//            // </editor-fold>
+//            int num = S[collisionOne] - S[collisionTwo];
+//            int dnum = T[collisionTwo] - T[collisionOne];
+//
+//            ZZ temp;
+//            temp = conv<ZZ>(this->orderOfG);
+//            ZZ_p::init(temp);
+//            ZZ_p num1, dnum1, X;
+//
+//            num1 = conv<ZZ_p>(num);
+//            dnum1 = conv<ZZ_p>(dnum);
+//
+//            if (eea(dnum, this->orderOfG) == 1) {
+//                X = num1 / dnum1;
+//                this->x = conv<int>(X);
+//                cout << "\n\t\t\t\t\t Solution to DLP by Teske :: " << x << endl;
+//                ZZ_p::init(this->p);
+//                cout << "\n \t\t\t\t\tVerification \n\t\t\t\t\t by calculation ::" << power(g, this->x) % irredPoly << "\n\t\t\t\t\t    By Input h :: " << h << endl;
+//                if (power(g, this->x) % irredPoly == h) {
+//                    break;
+//                } else {
+//                    this->generateMultipliers();
+//                    printMultipliers();
+//                    collisionOne = 0;
+//                    collisionTwo = 0;
+//                    attempt++;
+//                }
+//            } else {
+//                cout << "\n GCD IS NOT ONE  GCD :: " << eea(dnum, this->orderOfG) << endl;
+//                this->generateMultipliers();
+//                printMultipliers();
+//                collisionOne = 0;
+//                collisionTwo = 0;
+//                attempt++;
+//            }
+//        }//END::If
+//    }
+//    cout << "\n Teske Number of attempts :: " << attempt << endl;
+//    return 1;
+//}
 
 // <editor-fold defaultstate="collapsed" desc=" function reset ">
-//
+
 //void discreteLog::reset(ZZ p, long n, long r, long l, ZZ_pX g, ZZ_pX h, long t, long orderOfG) {
 //    this->n = 0;
 //    this->n = n;
@@ -905,3 +899,323 @@ int discreteLog::teskeDL() {
 //    this->computeOrderOfG();
 //}
 // </editor-fold>
+;
+//int discreteLog::cheonDL3() {
+//    if (allocateTableMemory() == -1) {
+//        return 0;
+//    } else {
+//        ZZ_pX Y0, tagOfY0, *tmpTag;
+//        Y0.SetMaxLength(this->n);
+//        tagOfY0.SetMaxLength(this->t);
+//        long long int *S = new long long int[constants::nodeLength];
+//        long long int *T = new long long int[constants::nodeLength];
+//
+//        ZZ_pX *node;
+//        node = new ZZ_pX[constants::nodeLength];
+//        for (long long int i = 0; i < constants::nodeLength; ++i)
+//            node[i].SetMaxLength(this->n);
+//
+//        //We start walking from here...
+//        Y0 = g;
+//
+//        //while(1) loop from here...
+//        long long int distinguishedPointCnt(0);
+//        long long int walkCnt(1);
+//        long long int collisionOne(-1), collisionTwo(-1);
+//        bool flag = false;
+//        while (1) {
+//            int *arrL = new int[l];
+//            long int numberOfElementsInArrL(0);
+//            long int col(0);
+//
+//            for (long int i = tagStartPosition; i < this->n; ++i) {
+//                SetCoeff(tagOfY0, i, Y0[i]);
+//            }
+//
+//            ZZ_p index;
+//            for (int i = 0; i < this->t; ++i) {
+//                index += pow(2, i) * conv<int>(tagOfY0[i]);
+//            }
+//            arrL[0] = conv<int>(index) % this->r;
+//
+//            S[0] = cellData[numberOfElementsInArrL][arrL[numberOfElementsInArrL]].summationAlpha;
+//            T[0] = cellData[numberOfElementsInArrL][arrL[numberOfElementsInArrL]].summationBeta;
+//            node[0] = Y0;
+//            tmpTag = cellData[numberOfElementsInArrL][arrL[numberOfElementsInArrL]].getTagFor();
+//
+//            //Loop over l times during the walk
+//            ZZ_pX acc, tagOfAcc;
+//            acc.SetMaxLength(constants::accumulatorLength);
+//            tagOfAcc.SetMaxLength(this->t - 1);
+//
+//            ZZ_pX var;
+//            var.SetMaxLength(constants::accumulatorLength);
+//            for (long j = 0; j< this->l - 1; ++j) {
+//                // 3 :: size of extention , i.e size of tag vector
+//                // tag = ( [] [] [] )
+//                for (int i = 0; i < this->n; ++i) {
+//                    //3 :: number of elements in Y
+//                    for (int j = 0; j < this->n; ++j) {
+//                        if (i == j) {
+//                            SetCoeff(var, j, Y0[i]);
+//                        } else {
+//                            SetCoeff(var, j, 0);
+//                        }
+//                    }
+//                    acc += tmpTag[i] * var;
+//                }
+//                acc = acc % irredPoly;
+//                cout << "\n tagStartPosition :: " << tagStartPosition << endl;
+//                for (long int i = tagStartPosition; i < this->n; ++i) {
+//                    SetCoeff(tagOfAcc, i, acc[i]);
+//                }
+//                numberOfElementsInArrL++;
+//                //                arrL[numberOfElementsInArrL] = computeGamma(tagOfAcc);
+//                cout << "\n tagOfAcc :: " << tagOfAcc << endl;
+//                ZZ_p index2;
+//                for (int i = 0; i < this->t; ++i) {
+//                    index2 += pow(2, i) * conv<int>(tagOfAcc[i]);
+//                    cout << "\n index2 :: " << index2 << endl;
+//                }
+//                arrL[numberOfElementsInArrL] = conv<int>(index2) % this->r;
+//
+//                bubbleSort(arrL, numberOfElementsInArrL + 1);
+//
+//                col = getColumn(arrL, numberOfElementsInArrL);
+//                if (col == -1) {
+//                    cout << "\n int discreteLog::cheonDL() :: not able to get column ::\n";
+//                    exit(0);
+//                }
+//                tmpTag = cellData[numberOfElementsInArrL][col].getTagFor();
+//            }
+//
+//            Y0 = Y0 * cellData[l - 1][col].groupElement;
+//            Y0 = Y0 % irredPoly;
+//
+//            node[walkCnt] = Y0;
+//            S[walkCnt] = S[walkCnt - 1] + cellData[l - 1][col].summationAlpha;
+//            T[walkCnt] = T[walkCnt - 1] + cellData[l - 1][col].summationBeta;
+//
+//            //For Loop to detect Collision
+//            for (long long int i = 0; i < walkCnt; i++) {
+//                if (node[i] == node[walkCnt]) {
+//                    collisionOne = i;
+//                    collisionTwo = walkCnt;
+//                    flag = true;
+//                    break;
+//                }
+//            }
+//            walkCnt++;
+//
+//            if (flag) {
+//                break;
+//            }
+//        }//End::while(1)
+//
+//        int num = S[collisionOne] - S[collisionTwo];
+//        int dnum = T[collisionTwo] - T[collisionOne];
+//
+//        ZZ temp;
+//        temp = conv<ZZ>(this->orderOfG);
+//        ZZ_p::init(temp);
+//        ZZ_p num1, dnum1, X;
+//
+//        num1 = conv<ZZ_p>(num);
+//        dnum1 = conv<ZZ_p>(dnum);
+//        cout << "\n HSDKJHKDSHFKJDSFKJHDSKHFKDSHKJFHKJDS\n";
+//
+//        X = num1 / dnum1;
+//        cout << "\n Ans by Cheon :: " << X << endl;
+//
+//    }
+//}
+
+int discreteLog::cheonDL4() {
+    if (allocateTableMemory() == -1) {
+        return 0;
+    } else {
+        ZZ_pX Y0, tagOfY0, *tmpTag;
+        Y0.SetMaxLength(this->n);
+        tagOfY0.SetMaxLength(this->t);
+        ZZ *S = new ZZ[constants::nodeLength];
+        ZZ *T = new ZZ[constants::nodeLength];
+
+        ZZ_pX *node;
+        node = new ZZ_pX[constants::nodeLength];
+        for (long long int i = 0; i < constants::nodeLength; ++i)
+            node[i].SetMaxLength(this->n);
+
+        //We stat walking from here...
+        cout << "\n###################################################################################";
+        cout << "\n \t\t\t\t Starting to Walk \n";
+        cout << "###################################################################################";
+        Y0 = g;
+
+        //while(1) loop from here...
+        long long int distinguishedPointCnt(0);
+        long long int walkCnt(1);
+        long long int collisionOne(-1), collisionTwo(-1);
+        bool flag = false;
+        while (1) {
+            int *arrL = new int[l];
+            long int numberOfElementsInArrL(0);
+            long int col(0);
+
+            tagOfY0 = getTag(Y0);
+            cout << "\n Y0 = g =  " << Y0 << endl;
+            cout << "\n tag(Y0) :: " << getTag(Y0) << endl;
+
+            arrL[0] = computeGamma(tagOfY0);
+            S[0] = cellData[numberOfElementsInArrL][arrL[numberOfElementsInArrL]].summationAlpha;
+            T[0] = cellData[numberOfElementsInArrL][arrL[numberOfElementsInArrL]].summationBeta;
+            node[0] = Y0;
+            cout << "\n\n\n \t\t\t\t node[0] :: " << node[0] << endl;
+            cout << "\n 1gamma :: " << arrL[numberOfElementsInArrL] << endl;
+            cout << "\n Y1 :: Y0.m" << arrL[0] << endl;
+            cout << "\n - - - - - - - - - - - - - - - [Start Loop]- - - - - - - - - - - - - - - - - - - - - - - - - \n";
+            tmpTag = cellData[numberOfElementsInArrL][arrL[numberOfElementsInArrL]].getTagFor();
+            cellData[numberOfElementsInArrL][arrL[numberOfElementsInArrL]].printCellData();
+
+            //Loop over l times during the walk
+            for (long j = 0; j< this->l - 1; ++j) {
+                cout << "\n tag of m" << arrL[numberOfElementsInArrL] << " => tmpTag::";
+                for (int i = 0; i< this->n; ++i)
+                    cout << tmpTag[i] << "\t";
+                cout << "\n Y0 :: " << Y0 << endl;
+
+                ZZ_pX acc, tagOfAcc;
+                acc.SetMaxLength(constants::accumulatorLength);
+                tagOfAcc.SetMaxLength(this->t);
+
+                // 3 :: size of extention , i.e size of tag vector
+                // tag = ( [] [] [] )
+                for (int i = 0; i < this->n; ++i) {
+                    ZZ_pX var;
+                    var.SetMaxLength(constants::accumulatorLength);
+                    //3 :: number of elements in Y
+                    for (int j = 0; j < this->n; ++j) {
+                        if (i == j) {
+                            SetCoeff(var, j, Y0[i]);
+                        } else {
+                            SetCoeff(var, j, 0);
+                        }
+                    }
+                    acc += tmpTag[i] * var;
+                }
+                acc = acc % irredPoly;
+                cout << " v.w :: " << acc << endl;
+                cout << " tag(v.w) :: " << getTag(acc) << endl;
+                clear(tagOfY0);
+                tagOfAcc = getTag(acc);
+                numberOfElementsInArrL++;
+                arrL[numberOfElementsInArrL] = computeGamma(tagOfAcc);
+                bubbleSort(arrL, numberOfElementsInArrL + 1);
+
+                cout << "\n gama(tag(v.w)) :: " << computeGamma(tagOfAcc) << endl;
+                cout << "\n numberOfElementsInArrL :: " << numberOfElementsInArrL << endl;
+                cout << "\n Y" << numberOfElementsInArrL + 1 << " :: Y0";
+                for (int k = 0; k <= numberOfElementsInArrL; ++k)
+                    cout << ".m" << arrL[k];
+                for (int i = 0; i< this->n; ++i)
+                    clear(tmpTag[i]);
+
+                col = getColumn(arrL, numberOfElementsInArrL);
+                if (col != -1) {
+                    cout << "\n Col is col :: " << col << endl;
+                    cout << "\n Cell data is \n";
+                    cellData[numberOfElementsInArrL][col].printCellData();
+                } else {
+                    cout << "\n int discreteLog::cheonDL() :: not able to get column ::\n";
+                    exit(0);
+                }
+                tmpTag = cellData[numberOfElementsInArrL][col].getTagFor();
+                cout << "\n end tmpTag :: ";
+                for (int i = 0; i< this->n; ++i)
+                    cout << tmpTag[i] << "\t";
+                cout << "\n 222 j :: " << j << endl;
+                cout << "\n----------------------------------------------------------------------\n";
+            }
+
+            cout << "\n out col :: " << col << endl;
+            cout << "\n irrd :: " << irredPoly << "\t Y0 :: " << Y0 << "\t cellData[l - 1][col].groupElement :: " << cellData[l - 1][col].groupElement << endl;
+
+            Y0 = Y0 * cellData[l - 1][col].groupElement;
+            Y0 = Y0 % irredPoly;
+
+            cout << "\n multiplication ans :: " << Y0 << endl;
+            cout << "\n Y0 :: " << Y0 << endl;
+
+            node[walkCnt] = Y0;
+            S[walkCnt] = S[walkCnt - 1] + cellData[l - 1][col].summationAlpha;
+            T[walkCnt] = T[walkCnt - 1] + cellData[l - 1][col].summationBeta;
+
+            cout << "\n ############################################################################################################### \n walk CNT :: " << walkCnt << endl;
+
+            //For Loop to detect Collision
+            for (long long int i = 0; i < walkCnt; i++) {
+                if (node[i] == node[walkCnt]) {
+                    collisionOne = i;
+                    collisionTwo = walkCnt;
+                    flag = true;
+                    break;
+                }
+            }
+            walkCnt++;
+
+            if (flag) {
+                cout << "\n Breeeeeeeaaaaaaking :-) ...\n";
+                break;
+            }
+            if (walkCnt >= constants::nodeLength)
+                break;
+        }//End::while(1)
+
+        cout << "\n Priting Walking Information .... \n";
+        cout << "\n Sr\tNode\t\tS\tT\n";
+        for (int i = 0; i < walkCnt; ++i) {
+            cout << i << "\t" << node[i] << "\t" << S[i] << "\t" << T[i] << endl;
+        }
+        cout << "\n collisionOne :: " << collisionOne << "\t collisionTwo :: " << collisionTwo << endl;
+
+        int num = conv<int>(S[collisionOne] - S[collisionTwo]);
+        int dnum = conv<int>(T[collisionTwo] - T[collisionOne]);
+
+        ZZ temp;
+        temp = conv<ZZ>(this->orderOfG);
+        ZZ_p::init(temp);
+        ZZ_p num1, dnum1, X;
+        cout << "\n -Modulus :: " << ZZ_p::modulus() << endl;
+        cout << "\n num :: " << num << "\t dnum :: " << dnum << endl;
+        num1 = conv<ZZ_p>(S[collisionOne] - S[collisionTwo]);
+        dnum1 = conv<ZZ_p>(T[collisionTwo] - T[collisionOne]);
+        cout << "\n -->>num1 :: " << conv<ZZ_p>(S[collisionOne] - S[collisionTwo]) << "\t dnum1 :: " << dnum1 << endl;
+
+        cout << "\n gcd :: " << GCD(num, dnum);
+        if (GCD(num, dnum) == 1) {
+            if (dnum1 != 0) {
+                X = num1 / dnum1;
+                cout << "\n Ans by Cheon :: " << X << endl;
+                cout << "\n Before=>g :: " << g << "\t X :: " << X << endl;
+                cout << "\n Before-Modulus :: " << ZZ_p::modulus() << endl;
+                ZZ_p::init(this->p);
+                cout << "\n After-Modulus :: " << ZZ_p::modulus() << endl;
+                ZZ_pX qq, ww;
+                ZZ X1 = conv<ZZ>(X);
+                cout << "\n X1 :: " << X1 << "\t X :: " << X << endl;
+                qq = g;
+                cout << "\n qq :: " << qq << endl;
+                ww = PowerMod(qq, X1, irredPoly);
+                cout << "\n PowerMod(qq,X, irredPoly) => qq :: " << ww << "\t h :: " << h << endl;
+                if (ww == h) {
+                    cout << "\n YES THE ANSWER IS RIGHT...\n";
+                } else {
+                    cout << "\n NO THE ANSWER IS WRONG...\n";
+                }
+            } else {
+                cout << "\n Dnum is ZERO :: dnum1 :: " << dnum1 << endl;
+            }
+        } else {
+            cout << "\n Ans by Cheon :: No Ans" << endl;
+        }
+    }
+}

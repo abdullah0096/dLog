@@ -21,8 +21,8 @@ class tableCell {
 public:
     int *multiplierInformation; // Vector to store multiplier information
     ZZ_pX groupElement; // 
-    long int summationAlpha; // summation of all alph's 
-    long int summationBeta; // summation of all beta's 
+    ZZ summationAlpha; // summation of all alph's 
+    ZZ summationBeta; // summation of all beta's 
     ZZ_pX *tag; // 
     long long int n;
     long t; // size of tag

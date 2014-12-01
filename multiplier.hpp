@@ -18,8 +18,8 @@ using namespace NTL;
 
 class multiplier {
 public:
-    long *alpha;
-    long *beta;
+    ZZ *alpha;
+    ZZ *beta;
     long *i;
     ZZ_pX *groupElement; // i.e the group element after multiplication of g^alpha * h^beta
     long r; //Number of multipliers

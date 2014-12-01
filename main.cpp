@@ -17,8 +17,8 @@ int main(int argc, char** argv) {
 
     for (long int i = 0; i < end; i++) {
 
-        long n, r, orderOfG, l, t;
-        ZZ p;
+        long long int n, r, l, t;
+        ZZ p, orderOfG;
         ZZ_pX g, h, irrdPoly;
 
         ifstream fin("in.txt");
@@ -29,22 +29,27 @@ int main(int argc, char** argv) {
 
         cout << "\n Reading Input from in.txt\n";
         fin >> p >> n >> r >> orderOfG >> l >>t;
-
         ZZ_p::init(p);
 
-        fin >> g>>h;
+        fin >> g;
+        cout << "\n g:: " << g << endl;
+        fin>> h;
+        cout << "\n h:: " << h << endl;
+        fin>>irrdPoly;
+        cout << "\n irrdPoly:: " << irrdPoly << endl;
+
         cout << "\n p :: " << p << "\t n :: " << n << "\t r :: " << r << "\t orderOfG :: " << orderOfG
                 << "\t l :: " << l << "\t t ::" << t << "\t";
         cout << "\n g :: " << g << "\t h :: " << h << "\n\n";
 
-        discreteLog DLP(p, n, r, l, g, h, t, orderOfG);
+        discreteLog DLP(p, n, r, l, g, h, irrdPoly, t, orderOfG);
         DLP.printParameters();
         DLP.printMultipliers();
 
         DLP.bruteForceDL();
         //        DLP.teskeDL();
 
-        if (DLP.cheonDL2() == 0) {
+        if (DLP.cheonDL4() == 0) {
             cout << "\n Something Went Wrong.....\n";
         } else {
             time += DLP.tableGenerationTime;
