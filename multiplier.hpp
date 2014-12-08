@@ -4,6 +4,12 @@
  *
  * Created on October 16, 2014, 11:26 AM
  */
+/* 
+ * File:   multiplier.hpp
+ * Author: Abdullah
+ *
+ * Created on December 2, 2014, 4:06 PM
+ */
 
 #ifndef MULTIPLIER_HPP
 #define	MULTIPLIER_HPP
@@ -20,20 +26,17 @@ class multiplier {
 public:
     ZZ *alpha;
     ZZ *beta;
-    long *i;
     ZZ_pX *groupElement; // i.e the group element after multiplication of g^alpha * h^beta
     long r; //Number of multipliers
     ZZ p;
 
     multiplier(long r, const ZZ& p);
-    void printMultiplier();
-    void setAlpha(long i, long value);
+    void printMultiplier() const;
 
     ~multiplier() {
         delete alpha;
         delete beta;
-        delete i;
     }
-
 };
+
 #endif	/* MULTIPLIER_HPP */

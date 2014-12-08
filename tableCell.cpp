@@ -1,6 +1,11 @@
 #include "tableCell.hpp"
 
-void tableCell::printCellData() {
+tableCell::tableCell() {
+    this->t = 0;
+    this->p = 1;
+}
+
+void tableCell::printCellData() const {
     cout << "\n__________________________\n";
     cout << " Multiplier information ::";
     for (long int i = 0; i< this->numberOfElementsInMultiplierInformation; ++i) {
@@ -15,29 +20,22 @@ void tableCell::printCellData() {
     cout << "\n__________________________\n";
 }
 
-tableCell::tableCell() {
-    this->t = 0;
-    this->p = 1;
-    //std::cout << "\n in here....\n";
+/**
+ * @return Return's the tag for this cell in table Ml
+ */
+ZZ_pX* tableCell::getTagFor() const {
+    return this->tag;
 }
 
-void tableCell::setValues(long t, ZZ p, long long int l, long long int n) {
+void tableCell::setValues(long t, ZZ p, long long int l, ZZ n) {
     this->t = t;
     this->p = p;
     this->numberOfElementsInMultiplierInformation = l;
     this->n = n;
 
     multiplierInformation = new int[this->numberOfElementsInMultiplierInformation];
-    ZZ_p::init(this->p);
 
-    tag = new ZZ_pX[this->n];
+    tag = new ZZ_pX[conv<long>(this->n)];
     for (int i = 0; i < this->n; ++i)
         tag[i].SetMaxLength(this->t);
-}
-
-/**
- * @return Return's the tag for this cell in table Ml
- */
-ZZ_pX* tableCell::getTagFor() {
-    return this->tag;
 }

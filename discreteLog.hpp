@@ -4,12 +4,20 @@
  *
  * Created on October 16, 2014, 11:25 AM
  */
+/* 
+ * File:   discreteLog.hpp
+ * Author: Abdullah
+ *
+ * Created on December 2, 2014, 3:44 PM
+ */
 
 #ifndef DISCRETELOG_HPP
 #define	DISCRETELOG_HPP
 
+
 #include <iostream>
 #include <fstream>
+#include <cstring>
 #include <time.h>
 #include <cstdlib>
 #include <stdio.h>
@@ -22,82 +30,59 @@
 #include "multiplier.hpp"
 #include "constants.hpp"
 #include "tableCell.hpp"
+#include "utility.hpp"
 
 using namespace NTL;
-
-typedef long long int my_NTL;
 
 class discreteLog {
 private:
     ZZ p; //  Characterstics
-    long n; //  Extension
-    long x; //  Solution for the DLP
+    ZZ n; //  Extension
+    ZZ x; //  Solution for the DLP
     ZZ orderOfG; // Order of the Group
     long r; // value of r in r-adding walk and other methods    
     long l; // number of rows in pre-computed table for CHEON DLP method
     long t; // size of tage vector for CHEON
-    int tagStartPosition; //starting point in a vector repenstation of a poly to compute the tag.
+    int tagStartPosition; //starting point in a vector representation of a poly to compute the tag.
 
     ZZ_pX h; // element of the Group such that g^x = h
     ZZ_pX g; // Generator of the Group
     ZZ_pX irredPoly; //Irreducible Polynomial
 
-    multiplier *M;
-
     long *numberOfElementsInTableRow;
 
-    //Temporary variables to hold polynomials
+    multiplier *M;
+    tableCell **cellData;
     ZZ_pX temp1, temp2, temp3, temp4, temp5;
-
+    long double tableGenerationTime;
+    long double timeByTeske, timeByCheon;
 
 public:
-    long double tableGenerationTime;
-    tableCell **cellData;
-    discreteLog(ZZ, long, long, long, ZZ_pX, ZZ_pX, long, ZZ);
-    discreteLog(ZZ, long, long, long, ZZ_pX, ZZ_pX, ZZ_pX, long, ZZ);
-    void reset(ZZ, long, long, long, ZZ_pX, ZZ_pX, long, long);
+    discreteLog(ZZ p, ZZ n, long r, long l, ZZ_pX g, ZZ_pX h, ZZ_pX irredPoly, long t, ZZ orderOfG);
     void printParameters();
     void generateMultipliers();
-    void printMultipliers();
-    void printTableMl();
-    int bruteForceDL();
-    int teskeDL();
-    int cheonDL();
-    int cheonDL2();
-    int cheonDL3();
-    int cheonDL4();
     int readMultiplierInformation();
-    int allocateTableMemory();
-    void printNumberOfRowsInTable();
-    void computeOrderOfG();
+    int generateTableML();
     void computeGroupElementExponentAndTag();
     ZZ_pX getTag(const ZZ_pX&);
-    long long getColumn(int arr[], long long int row);
     int computeGamma(const ZZ_pX &);
-    void bubbleSort(int *, long int);
+    void bubbleSort(int *array, long int n);
+    long long getColumn(int arr[], long long int row);
 
-    //setters and getters...
-    ZZ getP();
-    long getT();
-    void toDO();
+    int teske();
+    int teske2();
 
-    ~discreteLog() {
-        std::cout << "\n Destructor DiscreteLog : Cleaning Up Memory...\tNot completely implemented...\n";
+    int cheonDL();
+    int cheonDL2();
 
-        //        delete []M;
-        delete []numberOfElementsInTableRow;
-        ;
-        // Deleting 2D array..
-        //        for (int i = 0; i < NUM; i++) {
-        //            delete[] p[i];
-        //        }
-        //        delete []p;
-        ;
-        //        for (long long int i = 0; i < this->l; ++i) {
-        //            delete [] cellData[i];
-        //        }
-        //        delete [] cellData[this->l];
-    }//End::~discreteLog
+    inline long double getTimeByCheon() {
+        return this->timeByCheon;
+    }
+
+    inline long double getTimeByTeske() {
+        return this->timeByTeske;
+    }
+
 };
 
 #endif	/* DISCRETELOG_HPP */

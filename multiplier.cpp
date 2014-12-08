@@ -9,23 +9,17 @@
 multiplier::multiplier(long r, const ZZ& p) {
 
     this->p = p;
-    //    std::cout << "\n r :: " << r << "\t p :: " << p << std::endl;
     ZZ_p::init(this->p);
 
     this->r = r;
     alpha = new ZZ[this->r];
     beta = new ZZ[this->r];
-    i = new long [this->r];
     groupElement = new ZZ_pX[this->r];
 }
 
-void multiplier::printMultiplier() {
+void multiplier::printMultiplier() const {
 
     for (long j = 0; j < r; ++j) {
-        std::cout << "M[" << this->i[j] << "] = " << this->groupElement[j] << "\t aplha :: " << this->alpha[j] << "\t beta :: " << this->beta[j] << std::endl;
+        std::cout << "M[" << j << "] = " << this->groupElement[j] << "\t aplha :: " << this->alpha[j] << "\t beta :: " << this->beta[j] << std::endl;
     }
-}
-
-void multiplier::setAlpha(long i, long value) {
-    this->alpha[i] = value;
 }

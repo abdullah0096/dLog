@@ -4,10 +4,21 @@
  *
  * Created on October 16, 2014, 11:24 AM
  */
+/* 
+ * File:   main.cpp
+ * Author: Abdullah
+ *
+ * Created on December 2, 2014, 3:36 PM
+ */
+
+#include <cstdlib>
+#include <NTL/ZZ_pX.h>
+#include <NTL/ZZ.h>
+#include <fstream>
 
 #include "discreteLog.hpp"
-#include <NTL/vec_ZZ.h>
 
+using namespace NTL;
 using namespace std;
 
 int main(int argc, char** argv) {
@@ -17,8 +28,8 @@ int main(int argc, char** argv) {
 
     for (long int i = 0; i < end; i++) {
 
-        long long int n, r, l, t;
-        ZZ p, orderOfG;
+        long r, l, t;
+        ZZ p, n, orderOfG;
         ZZ_pX g, h, irrdPoly;
 
         ifstream fin("in.txt");
@@ -29,36 +40,24 @@ int main(int argc, char** argv) {
 
         cout << "\n Reading Input from in.txt\n";
         fin >> p >> n >> r >> orderOfG >> l >>t;
+
         ZZ_p::init(p);
 
-        fin >> g;
-        cout << "\n g:: " << g << endl;
-        fin>> h;
-        cout << "\n h:: " << h << endl;
-        fin>>irrdPoly;
-        cout << "\n irrdPoly:: " << irrdPoly << endl;
-
+        fin >> g >> h>>irrdPoly;
         cout << "\n p :: " << p << "\t n :: " << n << "\t r :: " << r << "\t orderOfG :: " << orderOfG
                 << "\t l :: " << l << "\t t ::" << t << "\t";
-        cout << "\n g :: " << g << "\t h :: " << h << "\n\n";
+        cout << "\n g :: " << g << "\t h :: " << h << "\t irrdPoly :: " << irrdPoly << endl;
 
         discreteLog DLP(p, n, r, l, g, h, irrdPoly, t, orderOfG);
         DLP.printParameters();
-        DLP.printMultipliers();
 
-        DLP.bruteForceDL();
-        //        DLP.teskeDL();
-
-        if (DLP.cheonDL4() == 0) {
-            cout << "\n Something Went Wrong.....\n";
-        } else {
-            time += DLP.tableGenerationTime;
-            cout << "\n in Main :: Iteration # " << i << endl;
-        }
+        DLP.cheonDL();
+        cout << "\n Time By Cheon2 ::" << DLP.getTimeByCheon() << " Seconds..." << endl;
+ 
+        DLP.teske();
+        cout << "\n Time By teske ::" << DLP.getTimeByTeske() << " Seconds..." << endl;
 
         fin.close();
     }
-
-    cout << "\n TOTAL time :: " << time / end << endl;
     return 0;
 }

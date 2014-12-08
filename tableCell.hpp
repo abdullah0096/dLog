@@ -4,6 +4,12 @@
  *
  * Created on October 21, 2014, 12:15 PM
  */
+/* 
+ * File:   tableCell.hpp
+ * Author: Abdullah
+ *
+ * Created on December 3, 2014, 11:11 AM
+ */
 
 #ifndef TABLECELL_HPP
 #define	TABLECELL_HPP
@@ -24,19 +30,19 @@ public:
     ZZ summationAlpha; // summation of all alph's 
     ZZ summationBeta; // summation of all beta's 
     ZZ_pX *tag; // 
-    long long int n;
+    ZZ n;
     long t; // size of tag
     ZZ p; // 
     long long int numberOfElementsInMultiplierInformation; // 
 
-
 public:
 
     tableCell();
-    void setValues(long t, ZZ p, long long int l, long long int n);
-    void printCellData();
-    ZZ_pX* getTagFor();
+    void printCellData() const;
+    ZZ_pX* getTagFor() const;
+
+    void setValues(long t, ZZ p, long long int l, ZZ n);
+
 };
 
 #endif	/* TABLECELL_HPP */
-
