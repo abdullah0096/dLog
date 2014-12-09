@@ -276,6 +276,39 @@ void discreteLog::bubbleSort(int *array, long int n) {
     }
 }
 
+/**
+ * Sorts the given array with the number of elements in array
+ * using Quick Sort
+ * @param array is the Array to be sorted
+ * @param n Number of elements in the array
+ */
+void discreteLog::quickSort(int *array, int left, int right) {
+    int i = left, j = right;
+    int tmp;
+    int pivot = array[(left + right) / 2];
+
+    /* partition */
+    while (i <= j) {
+        while (array[i] < pivot)
+            i++;
+        while (array[j] > pivot)
+            j--;
+        if (i <= j) {
+            tmp = array[i];
+            array[i] = array[j];
+            array[j] = tmp;
+            i++;
+            j--;
+        }
+    };
+
+    /* recursion */
+    if (left < j)
+        quickSort(array, left, j);
+    if (i < right)
+        quickSort(array, i, right);
+}
+
 int discreteLog::cheonDL() {
     if (generateTableML() == -1) {
         return 0;
@@ -302,19 +335,21 @@ int discreteLog::cheonDL() {
         bool isCollisionFound = false;
         long long int collisionOne(-1), collisionTwo(-1);
         cout << "\n Solving DL using Cheon's Algorithm ... \n";
+
+        ZZ_pX tagOfY0;
+        tagOfY0.SetMaxLength(this->t);
+        int *arrayL = new int[l];
+        ZZ_pX acc, tagOfAcc;
+        acc.SetMaxLength(constants::accumulatorLength);
+        tagOfAcc.SetMaxLength(this->t);
         timestamp_t startTime = utility::get_timestamp();
         while (1) {
-
-            ZZ_pX tagOfY0;
-            tagOfY0.SetMaxLength(this->t);
-
-            //            tagOfY0 = getTag(Y0);
+            // for loops get the tage of Y0
             for (int i = tagStartPosition; i < this->n; ++i) {
                 SetCoeff(tagOfY0, i, Y0[i]);
             }
 
             long long int col(0);
-
             ZZ_p::init(conv<ZZ>(this->r));
             ZZ_p index;
             for (int i = 0; i < t; ++i) {
@@ -323,17 +358,12 @@ int discreteLog::cheonDL() {
             col = conv<int>(index);
             ZZ_p::init(this->p);
 
-            int *arrayL = new int[l];
             arrayL[0] = col;
             int numberOfElementsInArrayL(1);
 
             for (long j = 0; j < l - 1; ++j) {
                 ZZ_pX *tmpTag, tag;
                 tmpTag = cellData[numberOfElementsInArrayL][col].getTagFor();
-
-                ZZ_pX acc, tagOfAcc;
-                acc.SetMaxLength(constants::accumulatorLength);
-                tagOfAcc.SetMaxLength(this->t);
 
                 for (int i = 0; i < this->n; ++i) {
                     ZZ_pX var;
@@ -364,7 +394,7 @@ int discreteLog::cheonDL() {
 
                 bubbleSort(arrayL, numberOfElementsInArrayL + 1);
                 //                col = getColumn(arrayL, numberOfElementsInArrayL);
-
+                //---------------------------------------------------------------------------------------------------------
                 for (long long int i = 0; i <this->numberOfElementsInTableRow[numberOfElementsInArrayL]; ++i) {
                     //for the loop over the multiplier in this row
                     bool flag = true;
@@ -379,6 +409,7 @@ int discreteLog::cheonDL() {
                         break;
                     }
                 }
+                //---------------------------------------------------------------------------------------------------------
                 numberOfElementsInArrayL++;
             }
 
@@ -407,11 +438,7 @@ int discreteLog::cheonDL() {
             }
 
             walkCnt += l;
-            whileLoopCnt++;
             if (walkCnt >= constants::nodeLength) {
-                nodes->kill();
-                T->kill();
-                S->kill();
                 break;
             }
         }//end while

@@ -67,6 +67,7 @@ public:
     ZZ_pX getTag(const ZZ_pX&);
     int computeGamma(const ZZ_pX &);
     void bubbleSort(int *array, long int n);
+    void quickSort(int *array, int left, int right);
     long long getColumn(int arr[], long long int row);
 
     int teske();
