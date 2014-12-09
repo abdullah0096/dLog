@@ -341,60 +341,58 @@ int discreteLog::cheonDL() {
         int *arrayL = new int[l];
         ZZ_pX acc, tagOfAcc;
         acc.SetMaxLength(constants::accumulatorLength);
+        ZZ_pX acc2;
+        acc2.SetMaxLength(constants::accumulatorLength);
+
+
         tagOfAcc.SetMaxLength(this->t);
+        ZZ index;
+        ZZ_pX *tmpTag, tag;
+
         timestamp_t startTime = utility::get_timestamp();
         while (1) {
-            // for loops get the tage of Y0
-            for (int i = tagStartPosition; i < this->n; ++i) {
-                SetCoeff(tagOfY0, i, Y0[i]);
-            }
-
             long long int col(0);
-            ZZ_p::init(conv<ZZ>(this->r));
-            ZZ_p index;
-            for (int i = 0; i < t; ++i) {
-                index += pow(2, i) * conv<int>(tagOfY0[i]);
+            // <editor-fold defaultstate="collapsed" desc="COMPUTE GAMMA FUNCTION HERE - [DONE]">
+            for (long i = tagStartPosition; i < this->n; ++i) {
+                index += power2_ZZ(i) * conv<ZZ>(Y0[i]);
             }
-            col = conv<int>(index);
-            ZZ_p::init(this->p);
+            col = conv<int>(index) % this->r;
+            // </editor-fold>
 
             arrayL[0] = col;
             int numberOfElementsInArrayL(1);
-
             for (long j = 0; j < l - 1; ++j) {
-                ZZ_pX *tmpTag, tag;
-                tmpTag = cellData[numberOfElementsInArrayL][col].getTagFor();
-
-                for (int i = 0; i < this->n; ++i) {
-                    ZZ_pX var;
-                    var.SetMaxLength(constants::accumulatorLength);
-                    for (int j = 0; j < this->n; ++j) {
-                        if (i == j) {
-                            SetCoeff(var, j, Y0[i]);
-                        } else {
-                            SetCoeff(var, j, 0);
-                        }
+                // <editor-fold defaultstate="collapsed" desc="v.w % irredPoly [DONE] ">
+                clear(acc);
+                for (int i = 0; i < Y0.rep.length(); ++i) {
+                    if (Y0[i] != 0 && cellData[numberOfElementsInArrayL][col].tag[i] != 0) {
+                        SetCoeff(acc2, i, Y0[i]);
+                        acc += acc2 * cellData[numberOfElementsInArrayL][col].tag[i];
+                        SetCoeff(acc2, i, 0);
                     }
-                    acc += tmpTag[i] * var;
                 }
-                acc = acc % irredPoly;
+                if (acc.rep.length() >= this->n)
+                    acc = acc % irredPoly;
+                // </editor-fold>
 
+                // <editor-fold defaultstate="collapsed" desc="CALCULATION TAG FOR ACC ">
                 tag.SetMaxLength(this->t);
-                for (int i = tagStartPosition; i < this->n; ++i) {
-                    SetCoeff(tag, i, acc[i]);
-                }
+                //                for (int i = tagStartPosition; i < this->n; ++i) {
+                //                    SetCoeff(tag, i, acc[i]);
+                //                }
+                //                cout << "\n tag " << tag << endl;
 
-                ZZ_p::init(conv<ZZ>(this->r));
-                ZZ_p index;
-                for (int i = 0; i < t; ++i) {
-                    index += pow(2, i) * conv<int>(acc[i]);
+                ZZ index2;
+                for (int i = tagStartPosition; i < this->n; ++i) {
+                    index2 += power2_ZZ(i) * conv<ZZ>(acc[i]);
                 }
-                arrayL[numberOfElementsInArrayL] = conv<int>(index);
-                ZZ_p::init(this->p);
+                arrayL[numberOfElementsInArrayL] = conv<int>(index2) % r;
+
+                // </editor-fold>
 
                 bubbleSort(arrayL, numberOfElementsInArrayL + 1);
-                //                col = getColumn(arrayL, numberOfElementsInArrayL);
-                //---------------------------------------------------------------------------------------------------------
+
+                // <editor-fold defaultstate="collapsed" desc="FOR LOOP TO GET THE REVELENT COLUMS">
                 for (long long int i = 0; i <this->numberOfElementsInTableRow[numberOfElementsInArrayL]; ++i) {
                     //for the loop over the multiplier in this row
                     bool flag = true;
@@ -409,13 +407,18 @@ int discreteLog::cheonDL() {
                         break;
                     }
                 }
-                //---------------------------------------------------------------------------------------------------------
+
+                // </editor-fold>
+
                 numberOfElementsInArrayL++;
             }
-
+            // <editor-fold defaultstate="collapsed" desc=" ACTUAL MULTIPLICATION ">
             Y0 = (cellData[l - 1][col].groupElement * Y0) % irredPoly;
-
             nodes[nodesCnt] = Y0;
+
+            // </editor-fold>
+
+            // <editor-fold defaultstate="collapsed" desc="Collision Detection and DLP calculation ">
             S[nodesCnt] = S[nodesCnt - 1] + cellData[l - 1][col].summationAlpha;
             T[nodesCnt] = T[nodesCnt - 1] + cellData[l - 1][col].summationBeta;
             nodesCnt++;
@@ -436,11 +439,12 @@ int discreteLog::cheonDL() {
                 ZZ_p::init(this->p);
                 break;
             }
-
             walkCnt += l;
             if (walkCnt >= constants::nodeLength) {
                 break;
             }
+            // </editor-fold>
+            //            exit(1);
         }//end while
         timestamp_t endTime = utility::get_timestamp();
         timeByCheon = utility::getTimeInSeconds(endTime, startTime);

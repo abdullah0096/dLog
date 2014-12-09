@@ -44,9 +44,9 @@ int main(int argc, char** argv) {
         ZZ_p::init(p);
 
         fin >> g >> h>>irrdPoly;
-        cout << "\n p :: " << p << "\t n :: " << n << "\t r :: " << r << "\t orderOfG :: " << orderOfG
-                << "\t l :: " << l << "\t t ::" << t << "\t";
-        cout << "\n g :: " << g << "\t h :: " << h << "\t irrdPoly :: " << irrdPoly << endl;
+        //        cout << "\n p :: " << p << "\t n :: " << n << "\t r :: " << r << "\t orderOfG :: " << orderOfG
+        //                << "\t l :: " << l << "\t t ::" << t << "\t";
+        //        cout << "\n g :: " << g << "\t h :: " << h << "\t irrdPoly :: " << irrdPoly << endl;
 
         discreteLog DLP(p, n, r, l, g, h, irrdPoly, t, orderOfG);
         DLP.printParameters();
