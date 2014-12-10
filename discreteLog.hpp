@@ -72,9 +72,11 @@ public:
 
     int teske();
     int teske2();
+    int teske3();
 
     int cheonDL();
     int cheonDL2();
+    int cheonDL3();
 
     inline long double getTimeByCheon() {
         return this->timeByCheon;

@@ -51,10 +51,10 @@ int main(int argc, char** argv) {
         discreteLog DLP(p, n, r, l, g, h, irrdPoly, t, orderOfG);
         DLP.printParameters();
 
-        DLP.cheonDL();
+        DLP.cheonDL3();
         cout << "\n Time By Cheon2 ::" << DLP.getTimeByCheon() << " Seconds..." << endl;
- 
-        DLP.teske();
+
+        DLP.teske3();
         cout << "\n Time By teske ::" << DLP.getTimeByTeske() << " Seconds..." << endl;
 
         fin.close();
