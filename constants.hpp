@@ -43,7 +43,5 @@ public:
      * numberOfIterations_10_5 : 100000
      */
     static const long long int numberOfIterations_10_5 = 1000000;
-    
-    
 };
 #endif	/* CONSTANTS_HPP */
