@@ -14,7 +14,6 @@
 #ifndef DISCRETELOG_HPP
 #define	DISCRETELOG_HPP
 
-
 #include <iostream>
 #include <fstream>
 #include <cstring>

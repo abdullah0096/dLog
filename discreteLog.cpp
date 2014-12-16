@@ -3,14 +3,10 @@
 using namespace std;
 
 /**
- *  function to calculate factorial
+ *  function to calculate factorial (large number)
  * @param f :
  * @return factorial of f
  */
-long long int factorial(long long int f) {
-    return (f == 1 || f == 0) ? 1 : factorial(f - 1) * f;
-}
-
 ZZ ZZfactorial(long long int number) {
     ZZ result = conv<ZZ>("1");
     for (int i = 1; i <= number; i++) {
@@ -79,9 +75,6 @@ void discreteLog::printParameters() {
  */
 void discreteLog::generateMultipliers() {
 
-    long alphaTmp[] = {69, 14, 108, 85, 104, 120, 52, 24};
-    long betaTmp[] = {68, 120, 32, 103, 93, 121, 99, 99};
-
     std::cout << " Generating Multipliers (" << r << ")....";
     fflush(stdout);
     for (int i = 0; i < r; i++) {
@@ -90,16 +83,9 @@ void discreteLog::generateMultipliers() {
         RandomBnd(M->alpha[i], orderOfG);
         RandomBnd(M->beta[i], orderOfG);
 
-        //        M->alpha[i] = conv<ZZ>(alphaTmp[i]);
-        //        M->beta[i] = conv<ZZ>(betaTmp[i]);
-
         M->groupElement[i] = (PowerMod(g, M->alpha[i], irredPoly) * PowerMod(h, M->beta[i], irredPoly)) % irredPoly;
     }
     std::cout << "[DONE]\n";
-
-    char fileName[50];
-    sprintf(fileName, "multipliers.txt");
-    ofstream fout(fileName);
 }
 
 /**

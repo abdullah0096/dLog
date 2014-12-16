@@ -36,9 +36,12 @@ OBJECTDIR=${CND_BUILDDIR}/${CND_CONF}/${CND_PLATFORM}
 # Object Files
 OBJECTFILES= \
 	${OBJECTDIR}/discreteLog.o \
+	${OBJECTDIR}/discreteLogGF2.o \
 	${OBJECTDIR}/main.o \
 	${OBJECTDIR}/multiplier.o \
+	${OBJECTDIR}/multiplierGF2.o \
 	${OBJECTDIR}/tableCell.o \
+	${OBJECTDIR}/tableCellGF2.o \
 	${OBJECTDIR}/utility.o
 
 
@@ -71,6 +74,11 @@ ${OBJECTDIR}/discreteLog.o: discreteLog.cpp
 	${RM} "$@.d"
 	$(COMPILE.cc) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/discreteLog.o discreteLog.cpp
 
+${OBJECTDIR}/discreteLogGF2.o: discreteLogGF2.cpp 
+	${MKDIR} -p ${OBJECTDIR}
+	${RM} "$@.d"
+	$(COMPILE.cc) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/discreteLogGF2.o discreteLogGF2.cpp
+
 ${OBJECTDIR}/main.o: main.cpp 
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
@@ -81,10 +89,20 @@ ${OBJECTDIR}/multiplier.o: multiplier.cpp
 	${RM} "$@.d"
 	$(COMPILE.cc) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/multiplier.o multiplier.cpp
 
+${OBJECTDIR}/multiplierGF2.o: multiplierGF2.cpp 
+	${MKDIR} -p ${OBJECTDIR}
+	${RM} "$@.d"
+	$(COMPILE.cc) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/multiplierGF2.o multiplierGF2.cpp
+
 ${OBJECTDIR}/tableCell.o: tableCell.cpp 
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
 	$(COMPILE.cc) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/tableCell.o tableCell.cpp
+
+${OBJECTDIR}/tableCellGF2.o: tableCellGF2.cpp 
+	${MKDIR} -p ${OBJECTDIR}
+	${RM} "$@.d"
+	$(COMPILE.cc) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/tableCellGF2.o tableCellGF2.cpp
 
 ${OBJECTDIR}/utility.o: utility.cpp 
 	${MKDIR} -p ${OBJECTDIR}
