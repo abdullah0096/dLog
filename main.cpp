@@ -24,13 +24,16 @@
 using namespace NTL;
 using namespace std;
 
+void foo();
+
 int main(int argc, char** argv) {
 
-    long double time = 0.0;
-    int end = 1;
-
-    //    for (long int i = 0; i < end; i++) {
+    foo();
+    // <editor-fold defaultstate="collapsed" desc=" made fun foo ">
+    //    long double time = 0.0;
+    //    int end = 1;
     //
+    //    for (long int i = 0; i < end; i++) {
     //        long r, l, t;
     //        ZZ p, n, orderOfG;
     //        ZZ_pX g, h, irrdPoly;
@@ -61,27 +64,69 @@ int main(int argc, char** argv) {
     //        cout << "\n Time By teske ::" << DLP.getTimeByTeske() << " Seconds..." << endl;
     //
     //        fin.close();
-    //
     //    }
+    // </editor-fold>
+    ;
+    // <editor-fold defaultstate="collapsed" desc="GF2 Code ">
+    //    long r, l, t;
+    //    ZZ p, n, orderOfG;
+    //    GF2X g, h, irrdPoly;
+    //
+    //    ifstream fin("in.txt");
+    //    if (!fin) {
+    //        cout << "\n ERROR in Main reading File in.txt...\n";
+    //        exit(1);
+    //    }
+    //
+    //    cout << "\n Reading Input from in.txt\n";
+    //    fin >> p >> n >> r >> orderOfG >> l >>t;
+    //
+    //    ZZ_p::init(p);
+    //    fin >> g >> h>>irrdPoly;
+    //
+    //    discreteLogGF2 DLP(p, n, r, l, g, h, irrdPoly, t, orderOfG);
+    //    DLP.printParameters();
+    // </editor-fold>
+    return 0;
+}
 
-    long r, l, t;
-    ZZ p, n, orderOfG;
-    GF2X g, h, irrdPoly;
-
-    ifstream fin("in.txt");
+void foo() {
+    long double time = 0.0;
+    int end = 1;
+    ifstream fin("in2.txt");
     if (!fin) {
         cout << "\n ERROR in Main reading File in.txt...\n";
         exit(1);
     }
 
-    cout << "\n Reading Input from in.txt\n";
-    fin >> p >> n >> r >> orderOfG >> l >>t;
+    while (!fin.eof()) {
+        long r, l, t;
+        ZZ p, n, orderOfG;
+        ZZ_pX g, h, irrdPoly;
 
-    ZZ_p::init(p);
-    fin >> g >> h>>irrdPoly;
+        cout << "\n Reading Input from in.txt\n";
+        fin >> p >> n >> r >> orderOfG >> l >>t;
 
-    discreteLogGF2 DLP(p, n, r, l, g, h, irrdPoly, t, orderOfG);
-    DLP.printParameters();
+        cout << "\n p :: " << p << "\t n :: " << n << "\t r :: " << r << "\t orderOfG :: " << orderOfG
+                << "\t l :: " << l << "\t t ::" << t << "\t";
+        ZZ_p::init(p);
+        fin >> g >> h>>irrdPoly;
+        cout << "\n g :: " << g << "\t h :: " << h << "\t irrdPoly :: " << irrdPoly << endl;
+        cout << "---------------------------------------------------------------------------------\n";
+        ;
 
-    return 0;
+        discreteLog *DLP;
+
+        for (int i = 0; i < 10; ++i) {
+            DLP = new discreteLog(p, n, r, l, g, h, irrdPoly, t, orderOfG);
+            DLP->cheonDL3();
+            cout << "\n Time for Table Generation :: " << DLP->getTableGenerationTime();
+            cout << "\n Time By Cheon2 ::" << DLP->getTimeByCheon() << " Seconds..." << endl;
+            DLP->~discreteLog();
+        }
+
+        //        DLP.teske3();
+        //        cout << "\n Time By teske ::" << DLP.getTimeByTeske() << " Seconds..." << endl;
+    }
+    fin.close();
 }

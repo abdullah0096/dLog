@@ -34,8 +34,9 @@ public:
     void printMultiplier() const;
 
     ~multiplier() {
-        delete alpha;
-        delete beta;
+        delete []alpha;
+        delete []beta;
+        delete []groupElement;
     }
 };
 

@@ -50,6 +50,8 @@ private:
 
     long *numberOfElementsInTableRow;
 
+    bool verbos;
+
     multiplier *M;
     tableCell **cellData;
     ZZ_pX temp1, temp2, temp3, temp4, temp5;
@@ -81,10 +83,39 @@ public:
         return this->timeByCheon;
     }
 
+    inline long double getTableGenerationTime() {
+        return this->tableGenerationTime;
+    }
+
     inline long double getTimeByTeske() {
         return this->timeByTeske;
     }
 
+    ~discreteLog() {
+        //        if (verbos)
+        cout << "\n IN DESTRUCTOR discreteLog....\n";
+
+        M->~multiplier();
+
+        for (int i = 0; i < l; ++i) {
+            cout << " row :: " << i << "\t elements :: " << numberOfElementsInTableRow[i];
+        }
+
+        cout << "\n";
+        // free dynamically allocated memory
+        for (int i = 0; i < l; i++) {
+            for (long long int j = 0; j < numberOfElementsInTableRow[i]; ++j) {
+                cellData[i][j].printCellData();
+                cout << "\n Deleting i :: " << i << "\t j :: " << j;
+                cellData[i][j].~tableCell();
+                cout << "...[DONE] " << endl;
+            }
+        }
+
+        //finally, we delete the array of pointers
+        //        delete [] cellData;
+        delete []numberOfElementsInTableRow;
+    }
 };
 
 #endif	/* DISCRETELOG_HPP */

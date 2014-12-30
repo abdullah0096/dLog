@@ -43,6 +43,10 @@ public:
 
     void setValues(long t, ZZ p, long long int l, ZZ n);
 
+    ~tableCell() {
+        delete []multiplierInformation;
+        delete []tag;
+    }
 };
 
 #endif	/* TABLECELL_HPP */

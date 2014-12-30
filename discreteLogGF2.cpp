@@ -129,19 +129,17 @@ int discreteLogGF2::readMultiplierInformation() {
  * @return : Tag for element
  */
 GF2X discreteLogGF2::getTag(const GF2X& element) {
-    try {
-        GF2X tmp;
-        tmp.SetMaxLength(this->t);
-        long tmpCnt(0);
 
-        for (int i = tagStartPosition; i < this->n; ++i) {
-            SetCoeff(tmp, tmpCnt, element[i]);
-            tmpCnt++;
-        }
-        return tmp;
-    } catch (...) {
-        cout << "\n Exception :: ZZ_pX discreteLog::getTag\n";
+    GF2X tmp;
+    tmp.SetMaxLength(this->t);
+    long tmpCnt(0);
+
+    for (int i = tagStartPosition; i < this->n; ++i) {
+        //        HERE ONE
+        //        SetCoeff(tmp, tmpCnt, element[i]);
+        tmpCnt++;
     }
+    return tmp;
 }
 
 void discreteLogGF2::computeGroupElementExponentAndTag() {
@@ -263,7 +261,8 @@ int discreteLogGF2::cheonDL() {
             long long int col(0);
             // <editor-fold defaultstate="collapsed" desc="COMPUTE GAMMA FUNCTION HERE - [DONE]">
             for (long i = tagStartPosition; i < this->n; ++i) {
-                index += power2_ZZ(i) * conv<ZZ>(nodes[nodesCnt - 1][i]);
+                //                HERE TWO
+                //                index += power2_ZZ(i) * conv<ZZ>(nodes[nodesCnt - 1][i]);
             }
             col = conv<int>(index) % this->r;
             // </editor-fold>
@@ -274,11 +273,12 @@ int discreteLogGF2::cheonDL() {
                 // <editor-fold defaultstate="collapsed" desc="v.w % irredPoly [DONE] ">
                 clear(acc);
                 for (int i = 0; i < nodes[nodesCnt - 1].xrep.length(); ++i) {
-                    if (nodes[nodesCnt - 1][i] != 0 && cellData[numberOfElementsInArrayL][col].tag[i] != 0) {
-                        SetCoeff(acc2, i, nodes[nodesCnt - 1][i]);
-                        acc += acc2 * cellData[numberOfElementsInArrayL][col].tag[i];
-                        SetCoeff(acc2, i, 0);
-                    }
+                    // HERE THREE
+                    //                    if (nodes[nodesCnt - 1][i] != 0 && cellData[numberOfElementsInArrayL][col].tag[i] != 0) {
+                    //                        SetCoeff(acc2, i, nodes[nodesCnt - 1][i]);
+                    //                        acc += acc2 * cellData[numberOfElementsInArrayL][col].tag[i];
+                    //                        SetCoeff(acc2, i, 0);
+                    //                    }
                 }
 
                 if (acc.xrep.length() >= this->n)
@@ -294,7 +294,8 @@ int discreteLogGF2::cheonDL() {
 
                 ZZ index2;
                 for (int i = 0; i < tagStartPosition; ++i) {
-                    index2 += power2_ZZ(i) * conv<ZZ>(acc[i]);
+                    //HERE FOUR
+                    //                    index2 += power2_ZZ(i) * conv<ZZ>(acc[i]);
                 }
 
                 int ijk = numberOfElementsInArrayL - 1;

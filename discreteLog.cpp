@@ -24,6 +24,8 @@ ZZ ZZfactorial(long long int number) {
  * @param orderOfG Order of the Group
  */
 discreteLog::discreteLog(ZZ p, ZZ n, long r, long l, ZZ_pX g, ZZ_pX h, ZZ_pX irredPoly, long t, ZZ orderOfG) {
+
+    verbos = false;
     this->n = n;
 
     if (n > 3) {
@@ -62,10 +64,10 @@ void discreteLog::printParameters() {
     std::cout << "\n*******************************************************************************************\n";
     if (x == -1) {
         std::cout << "\n GF(" << p << "^" << n << ")\t such that g :: " << g << "\t h ::" << h << "\t |G| :: " << orderOfG << "\tr ::" << r << "\t l :: " << l << "\t t :: " << t << std::endl;
-        std::cout << " Irred poly :: " << this->irredPoly << endl;
+        std::cout << " Irred poly :: " << this->irredPoly << "\t verbos :: " << verbos << endl;
     } else {
         std::cout << "\n GF(" << p << "^" << n << ")\t such that g :: " << g << "\t h ::" << h << "\t |G| :: " << orderOfG << "\tr ::" << r << "\t l :: " << l << std::endl;
-        std::cout << " Irred poly :: " << this->irredPoly << endl;
+        std::cout << " Irred poly :: " << this->irredPoly << "\t verbos :: " << verbos << endl;
     }
     std::cout << "\n*******************************************************************************************\n";
 }
@@ -75,7 +77,8 @@ void discreteLog::printParameters() {
  */
 void discreteLog::generateMultipliers() {
 
-    std::cout << " Generating Multipliers (" << r << ")....";
+    if (verbos)
+        std::cout << " Generating Multipliers (" << r << ")....";
     fflush(stdout);
     for (int i = 0; i < r; i++) {
         srand(time(NULL));
@@ -85,7 +88,8 @@ void discreteLog::generateMultipliers() {
 
         M->groupElement[i] = (PowerMod(g, M->alpha[i], irredPoly) * PowerMod(h, M->beta[i], irredPoly)) % irredPoly;
     }
-    std::cout << "[DONE]\n";
+    if (verbos)
+        std::cout << "[DONE]\n";
 }
 
 /**
@@ -154,16 +158,19 @@ int discreteLog::generateTableML() {
         return -1;
     } else {
         //        printNumberOfRowsInTable();
-        cout << "\n Computing Group-Element's Exponent's And Tag's .... ";
+        if (verbos)
+            cout << "\n Computing Group-Element's Exponent's And Tag's .... ";
         cout.flush();
         computeGroupElementExponentAndTag();
-        cout << " [Done] :-) \n";
+        if (verbos)
+            cout << " [Done] :-) \n";
         //        printTableMl();
     }
     timestamp_t endTimeTableGeneration = utility::get_timestamp();
 
     tableGenerationTime = utility::getTimeInSeconds(endTimeTableGeneration, startTimeTableGeneration);
-    cout << "\n Time for Table generation (CHEON) :: " << tableGenerationTime << endl;
+    if (verbos)
+        cout << "\n Time for Table generation (CHEON) :: " << tableGenerationTime << endl;
 }
 
 /**
@@ -552,7 +559,7 @@ int discreteLog::cheonDL3() {
         long long int walkCnt(0);
         long long int whileLoopCnt(0);
 
-        ZZ_pX *nodes = new ZZ_pX[constants::nodeLength];
+        ZZ_pX *nodes = new ZZ_pX[5];
         for (long long int i = 0; i < 5; ++i)
             nodes[i].SetMaxLength(conv<long>(this->n));
 
@@ -568,7 +575,8 @@ int discreteLog::cheonDL3() {
         long long int nodesCnt(1);
         bool isCollisionFound = false;
         long long int collisionOne(-1), collisionTwo(-1);
-        cout << "\n Solving DL using Cheon's Algorithm ... \n";
+        if (verbos)
+            cout << "\n Solving DL using Cheon's Algorithm ... \n";
 
         ZZ_pX tagOfY0;
         tagOfY0.SetMaxLength(this->t);
@@ -670,16 +678,19 @@ int discreteLog::cheonDL3() {
             //                ZZ_p::init(this->p);
             //                break;
             //            }
+            // </editor-fold>
+
             walkCnt += l;
-            if (walkCnt >= constants::numberOfIterations_10_5) {
+            if (walkCnt >= constants::numberOfIterations_10_6) {
                 break;
             }
-            // </editor-fold>
-            //            exit(1);
         }//end while
         timestamp_t endTime = utility::get_timestamp();
         timeByCheon = utility::getTimeInSeconds(endTime, startTime);
-        cout << "\n lpCnt :: " << lpCnt << endl;
+        delete []nodes;
+        delete []S;
+        delete []T;
+        delete []arrayL;
     }
 }
 
@@ -831,7 +842,8 @@ int discreteLog::teske3() {
     bool isCollisionFound = false;
     long long int collisionOne(-1), collisionTwo(-1);
 
-    cout << "\n\n Solving DL using Teske's Algorithm ... \n";
+    if (verbos)
+        cout << "\n\n Solving DL using Teske's Algorithm ... \n";
     timestamp_t startTime = utility::get_timestamp();
     while (1) {
         ZZ index;
@@ -864,7 +876,7 @@ int discreteLog::teske3() {
         //        }
 
         walkCnt++;
-        if (walkCnt >= constants::numberOfIterations_10_5)
+        if (walkCnt >= constants::numberOfIterations_10_6)
             break;
     }//END::while
     timestamp_t endTime = utility::get_timestamp();
