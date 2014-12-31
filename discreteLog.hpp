@@ -43,6 +43,7 @@ private:
     long l; // number of rows in pre-computed table for CHEON DLP method
     long t; // size of tage vector for CHEON
     int tagStartPosition; //starting point in a vector representation of a poly to compute the tag.
+    long long numberOfIterations;
 
     ZZ_pX h; // element of the Group such that g^x = h
     ZZ_pX g; // Generator of the Group
@@ -51,6 +52,7 @@ private:
     long *numberOfElementsInTableRow;
 
     bool verbos;
+    bool isTableMlGenerated;
 
     multiplier *M;
     tableCell **cellData;
@@ -74,10 +76,13 @@ public:
     int teske();
     int teske2();
     int teske3();
+    void cleanUpAfterTeske();
 
     int cheonDL();
     int cheonDL2();
     int cheonDL3();
+
+    void cleanUpAfterCheon();
 
     inline long double getTimeByCheon() {
         return this->timeByCheon;
@@ -87,34 +92,27 @@ public:
         return this->tableGenerationTime;
     }
 
+    inline long long getNumberOfIterations() {
+        return this->numberOfIterations;
+    }
+
     inline long double getTimeByTeske() {
         return this->timeByTeske;
     }
 
+    void printMultipliers() {
+        cout << "\n_________________________________________________________________________\n";
+        for (int i = 0; i < r; ++i) {
+            cout << M->alpha[i] << "\t " << M->beta[i] << "\t " << M->groupElement[i] << endl;
+        }
+        cout << "\n_________________________________________________________________________\n";
+    }
+
     ~discreteLog() {
-        //        if (verbos)
-        cout << "\n IN DESTRUCTOR discreteLog....\n";
-
-        M->~multiplier();
-
-        for (int i = 0; i < l; ++i) {
-            cout << " row :: " << i << "\t elements :: " << numberOfElementsInTableRow[i];
-        }
-
-        cout << "\n";
-        // free dynamically allocated memory
-        for (int i = 0; i < l; i++) {
-            for (long long int j = 0; j < numberOfElementsInTableRow[i]; ++j) {
-                cellData[i][j].printCellData();
-                cout << "\n Deleting i :: " << i << "\t j :: " << j;
-                cellData[i][j].~tableCell();
-                cout << "...[DONE] " << endl;
-            }
-        }
-
-        //finally, we delete the array of pointers
-        //        delete [] cellData;
-        delete []numberOfElementsInTableRow;
+        if (verbos)
+            cout << "\n IN DESTRUCTOR discreteLog....\n";
+        if (M != NULL)
+            M->~multiplier();
     }
 };
 

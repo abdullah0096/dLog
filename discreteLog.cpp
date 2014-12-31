@@ -26,6 +26,9 @@ ZZ ZZfactorial(long long int number) {
 discreteLog::discreteLog(ZZ p, ZZ n, long r, long l, ZZ_pX g, ZZ_pX h, ZZ_pX irredPoly, long t, ZZ orderOfG) {
 
     verbos = false;
+    isTableMlGenerated = false;
+    this->numberOfIterations = constants::numberOfIterations_10_6;
+    //    this->numberOfIterations = 100;
     this->n = n;
 
     if (n > 3) {
@@ -77,11 +80,12 @@ void discreteLog::printParameters() {
  */
 void discreteLog::generateMultipliers() {
 
-    if (verbos)
+    if (verbos) {
         std::cout << " Generating Multipliers (" << r << ")....";
-    fflush(stdout);
+        fflush(stdout);
+    }
+    SetSeed(conv<ZZ>("9343"));
     for (int i = 0; i < r; i++) {
-        srand(time(NULL));
 
         RandomBnd(M->alpha[i], orderOfG);
         RandomBnd(M->beta[i], orderOfG);
@@ -126,6 +130,7 @@ int discreteLog::readMultiplierInformation() {
                     cellData[i][j].multiplierInformation[multiplierCnt] = tmp;
                     ++multiplierCnt;
                 }
+                delete []data;
             }//END:while that reads data from file
         }
         fin.close();
@@ -170,7 +175,8 @@ int discreteLog::generateTableML() {
 
     tableGenerationTime = utility::getTimeInSeconds(endTimeTableGeneration, startTimeTableGeneration);
     if (verbos)
-        cout << "\n Time for Table generation (CHEON) :: " << tableGenerationTime << endl;
+        cout << "\n discreteLog::generateTableML() ==> Time for Table generation (CHEON) :: " << tableGenerationTime << endl;
+    this->isTableMlGenerated = true;
 }
 
 /**
@@ -336,7 +342,7 @@ int discreteLog::cheonDL() {
 
         tagOfAcc.SetMaxLength(this->t);
         ZZ index;
-        ZZ_pX *tmpTag, tag;
+        ZZ_pX tag;
 
         timestamp_t startTime = utility::get_timestamp();
         while (1) {
@@ -387,8 +393,6 @@ int discreteLog::cheonDL() {
                 //                bubbleSort(arrayL, numberOfElementsInArrayL + 1);
 
                 // </editor-fold>
-
-
 
                 //>>>>>>>>>>>>>> START HERE
                 // <editor-fold defaultstate="collapsed" desc="FOR LOOP TO GET THE REVELENT COLUMS">
@@ -553,145 +557,177 @@ int discreteLog::cheonDL2() {
 }
 
 int discreteLog::cheonDL3() {
-    if (generateTableML() == -1) {
-        return 0;
-    } else {
-        long long int walkCnt(0);
-        long long int whileLoopCnt(0);
 
-        ZZ_pX *nodes = new ZZ_pX[5];
-        for (long long int i = 0; i < 5; ++i)
-            nodes[i].SetMaxLength(conv<long>(this->n));
-
-        ZZ *S = new ZZ[5];
-        ZZ *T = new ZZ[5];
-
-        RandomBnd(S[0], orderOfG);
-        RandomBnd(T[0], orderOfG);
-        //        Y0 = (PowerMod(g, S[0], irredPoly) * PowerMod(h, T[0], irredPoly)) % irredPoly;
-
-        nodes[0] = (PowerMod(g, S[0], irredPoly) * PowerMod(h, T[0], irredPoly)) % irredPoly;
-
-        long long int nodesCnt(1);
-        bool isCollisionFound = false;
-        long long int collisionOne(-1), collisionTwo(-1);
+    //    if (generateTableML() == -1) {
+    //        return 0;
+    //    } else {
+    if (!isTableMlGenerated) {
+        generateTableML();
         if (verbos)
-            cout << "\n Solving DL using Cheon's Algorithm ... \n";
+            cout << "\n Time for Table Generation :: " << this->getTableGenerationTime();
+    } else {
+        if (verbos)
+            cout << "\n using already generated table...\n";
+    }
 
-        ZZ_pX tagOfY0;
-        tagOfY0.SetMaxLength(this->t);
-        int *arrayL = new int[l];
-        ZZ_pX acc, tagOfAcc;
-        acc.SetMaxLength(constants::accumulatorLength);
-        ZZ_pX acc2;
-        acc2.SetMaxLength(constants::accumulatorLength);
+    long long int walkCnt(0);
+    long long int whileLoopCnt(0);
 
+    ZZ_pX *nodes = new ZZ_pX[5];
+    for (long long int i = 0; i < 5; ++i)
+        nodes[i].SetMaxLength(conv<long>(this->n));
 
-        tagOfAcc.SetMaxLength(this->t);
-        ZZ index;
-        ZZ_pX *tmpTag, tag;
-        long int lpCnt(0);
+    ZZ *S = new ZZ[5];
+    ZZ *T = new ZZ[5];
 
-        timestamp_t startTime = utility::get_timestamp();
-        while (1) {
-            long long int col(0);
-            // <editor-fold defaultstate="collapsed" desc="COMPUTE GAMMA FUNCTION HERE - [DONE]">
-            for (long i = tagStartPosition; i < this->n; ++i) {
-                index += power2_ZZ(i) * conv<ZZ>(nodes[nodesCnt - 1][i]);
+    RandomBnd(S[0], orderOfG);
+    RandomBnd(T[0], orderOfG);
+
+    nodes[0] = (PowerMod(g, S[0], irredPoly) * PowerMod(h, T[0], irredPoly)) % irredPoly;
+
+    long long int nodesCnt(1);
+    bool isCollisionFound = false;
+    long long int collisionOne(-1), collisionTwo(-1);
+    if (verbos)
+        cout << "\n Solving DL using Cheon's Algorithm ... \n";
+
+    ZZ_pX tagOfY0;
+    tagOfY0.SetMaxLength(this->t);
+    int *arrayL = new int[l];
+    ZZ_pX acc, tagOfAcc;
+    acc.SetMaxLength(constants::accumulatorLength);
+    ZZ_pX acc2;
+    acc2.SetMaxLength(constants::accumulatorLength);
+
+    tagOfAcc.SetMaxLength(this->t);
+    ZZ index;
+    ZZ_pX tag;
+    timestamp_t startTime = utility::get_timestamp();
+    while (1) {
+        long long int col(0);
+        // <editor-fold defaultstate="collapsed" desc="COMPUTE GAMMA FUNCTION HERE - [DONE]">
+        for (long i = tagStartPosition; i < this->n; ++i) {
+            index += power2_ZZ(i) * conv<ZZ>(nodes[nodesCnt - 1][i]);
+        }
+        col = conv<int>(index) % this->r;
+        if (col < 0)
+            col += r;
+        // </editor-fold>
+        arrayL[0] = col;
+        int numberOfElementsInArrayL(1);
+        for (long j = 0; j < l - 1; ++j) {
+            // <editor-fold defaultstate="collapsed" desc="v.w % irredPoly [DONE] ">
+            clear(acc);
+            for (int i = 0; i < nodes[nodesCnt - 1].rep.length(); ++i) {
+                if (nodes[nodesCnt - 1][i] != 0 && cellData[numberOfElementsInArrayL][col].tag[i] != 0) {
+                    SetCoeff(acc2, i, nodes[nodesCnt - 1][i]);
+                    acc += acc2 * cellData[numberOfElementsInArrayL][col].tag[i];
+                    SetCoeff(acc2, i, 0);
+                }
             }
-            col = conv<int>(index) % this->r;
+            if (acc.rep.length() >= this->n)
+                acc = acc % irredPoly;
             // </editor-fold>
-            arrayL[0] = col;
-            int numberOfElementsInArrayL(1);
-            for (long j = 0; j < l - 1; ++j) {
-                // <editor-fold defaultstate="collapsed" desc="v.w % irredPoly [DONE] ">
-                clear(acc);
-                for (int i = 0; i < nodes[nodesCnt - 1].rep.length(); ++i) {
-                    if (nodes[nodesCnt - 1][i] != 0 && cellData[numberOfElementsInArrayL][col].tag[i] != 0) {
-                        SetCoeff(acc2, i, nodes[nodesCnt - 1][i]);
-                        acc += acc2 * cellData[numberOfElementsInArrayL][col].tag[i];
-                        SetCoeff(acc2, i, 0);
-                    }
-                }
-                if (acc.rep.length() >= this->n)
-                    acc = acc % irredPoly;
-                // </editor-fold>
 
-                // <editor-fold defaultstate="collapsed" desc="COMPUTE GAMMA FUNCTION AND INSERT INTO A SORTED ARRAY - [DONE] ">
-                ZZ index2;
-                for (int i = tagStartPosition; i < this->n; ++i) {
-                    index2 += power2_ZZ(i) * conv<ZZ>(acc[i]);
-                }
-                int ijk = numberOfElementsInArrayL - 1;
-                int item = conv<int>(index2) % r;
-                while (item < arrayL[ijk] && ijk >= 0) {
-                    arrayL[ijk + 1] = arrayL[ijk];
-                    ijk--;
-                }
-                arrayL[ijk + 1] = item;
-                // </editor-fold>
+            // <editor-fold defaultstate="collapsed" desc="COMPUTE GAMMA FUNCTION AND INSERT INTO A SORTED ARRAY - [DONE] ">
+            ZZ index2;
+            for (int i = tagStartPosition; i < this->n; ++i) {
+                index2 += power2_ZZ(i) * conv<ZZ>(acc[i]);
+            }
+            int ijk = numberOfElementsInArrayL - 1;
+            int item = conv<int>(index2) % r;
+            while (item < arrayL[ijk] && ijk >= 0) {
+                arrayL[ijk + 1] = arrayL[ijk];
+                ijk--;
+            }
+            arrayL[ijk + 1] = item;
+            // </editor-fold>
 
-                // <editor-fold defaultstate="collapsed" desc="FOR LOOP TO GET THE REVELENT COLUMS">
-                for (long long int i = 0; i <this->numberOfElementsInTableRow[numberOfElementsInArrayL]; ++i) {
-                    //for the loop over the multiplier in this row
-                    bool flag = true;
-                    for (long long int j = 0; j <= numberOfElementsInArrayL; ++j) {
-                        if (this->cellData[numberOfElementsInArrayL][i].multiplierInformation[j] != arrayL[j]) {
-                            flag = false;
-                            break;
-                        }
-                    }
-                    if (flag) {
-                        col = i;
+            // <editor-fold defaultstate="collapsed" desc="FOR LOOP TO GET THE REVELENT COLUMS">
+            for (long long int i = 0; i <this->numberOfElementsInTableRow[numberOfElementsInArrayL]; ++i) {
+                //for the loop over the multiplier in this row
+                bool flag = true;
+                for (long long int j = 0; j <= numberOfElementsInArrayL; ++j) {
+                    if (this->cellData[numberOfElementsInArrayL][i].multiplierInformation[j] != arrayL[j]) {
+                        flag = false;
                         break;
                     }
                 }
-                // </editor-fold>
-
-                numberOfElementsInArrayL++;
+                if (flag) {
+                    col = i;
+                    break;
+                }
             }
-            // <editor-fold defaultstate="collapsed" desc=" ACTUAL MULTIPLICATION ">
-            nodes[nodesCnt] = (cellData[l - 1][col].groupElement * nodes[nodesCnt - 1]) % irredPoly;
-            //            nodes[nodesCnt] = Y0;
-
             // </editor-fold>
 
-            // <editor-fold defaultstate="collapsed" desc="Collision Detection and DLP calculation ">
-            ;
-            //            S[nodesCnt] = S[nodesCnt - 1] + cellData[l - 1][col].summationAlpha;
-            //            T[nodesCnt] = T[nodesCnt - 1] + cellData[l - 1][col].summationBeta;
-            //            nodesCnt++;
-            //            for (long long int i = 0; i < nodesCnt - 1; ++i) {
-            //                if (nodes[i] == nodes[nodesCnt - 1]) {
-            //                    collisionOne = i;
-            //                    collisionTwo = nodesCnt - 1;
-            //                    isCollisionFound = true;
-            //                    break;
-            //                }
-            //            }
-            //
-            //            if (isCollisionFound) {
-            //                ZZ_p::init(this->orderOfG);
-            //                ZZ_p num = conv<ZZ_p>(S[collisionOne] - S[collisionTwo]);
-            //                ZZ_p dnum = conv<ZZ_p>(T[collisionTwo] - T[collisionOne]);
-            //                cout << "\n Ans by Cheon :: " << num / dnum << endl;
-            //                ZZ_p::init(this->p);
-            //                break;
-            //            }
-            // </editor-fold>
+            numberOfElementsInArrayL++;
+        }
+        // <editor-fold defaultstate="collapsed" desc=" ACTUAL MULTIPLICATION ">
+        nodes[nodesCnt] = (cellData[l - 1][col].groupElement * nodes[nodesCnt - 1]) % irredPoly;
+        //            nodes[nodesCnt] = Y0;
 
-            walkCnt += l;
-            if (walkCnt >= constants::numberOfIterations_10_6) {
-                break;
-            }
-        }//end while
-        timestamp_t endTime = utility::get_timestamp();
-        timeByCheon = utility::getTimeInSeconds(endTime, startTime);
-        delete []nodes;
-        delete []S;
-        delete []T;
-        delete []arrayL;
+        // </editor-fold>
+
+        // <editor-fold defaultstate="collapsed" desc="Collision Detection and DLP calculation ">
+        ;
+        //            S[nodesCnt] = S[nodesCnt - 1] + cellData[l - 1][col].summationAlpha;
+        //            T[nodesCnt] = T[nodesCnt - 1] + cellData[l - 1][col].summationBeta;
+        //            nodesCnt++;
+        //            for (long long int i = 0; i < nodesCnt - 1; ++i) {
+        //                if (nodes[i] == nodes[nodesCnt - 1]) {
+        //                    collisionOne = i;
+        //                    collisionTwo = nodesCnt - 1;
+        //                    isCollisionFound = true;
+        //                    break;
+        //                }
+        //            }
+        //
+        //            if (isCollisionFound) {
+        //                ZZ_p::init(this->orderOfG);
+        //                ZZ_p num = conv<ZZ_p>(S[collisionOne] - S[collisionTwo]);
+        //                ZZ_p dnum = conv<ZZ_p>(T[collisionTwo] - T[collisionOne]);
+        //                cout << "\n Ans by Cheon :: " << num / dnum << endl;
+        //                ZZ_p::init(this->p);
+        //                break;
+        //            }
+        // </editor-fold>
+
+        walkCnt += l;
+        if (walkCnt >= numberOfIterations) {
+            break;
+        }
+    }//end while
+    timestamp_t endTime = utility::get_timestamp();
+    timeByCheon = utility::getTimeInSeconds(endTime, startTime);
+    delete []nodes;
+    delete []S;
+    delete []T;
+    delete []arrayL;
+    //cleanUpAfterCheon();
+
+}
+
+/**
+ * Cleans up the memory allocated during the table generation
+ * and while performing other steps during CHEON DL Algo...
+ */
+void discreteLog::cleanUpAfterCheon() {
+
+    if (cellData != NULL) {
+        for (int i = 0; i < l; i++) {
+            delete[] cellData[i];
+        }
+        delete [] cellData;
+        delete []numberOfElementsInTableRow;
     }
+}
+
+/**
+ * Cleans up the memory allocated during the table generation
+ * and while performing other steps during Teske DL Algo...
+ */
+void discreteLog::cleanUpAfterTeske() {
+    // M->~multiplier();
 }
 
 /**
@@ -819,7 +855,6 @@ int discreteLog::teske2() {
 }
 
 int discreteLog::teske3() {
-
     ZZ_pX Y0;
     Y0.SetMaxLength(conv<long>(this->n));
     long long int walkCnt(0);
@@ -845,13 +880,18 @@ int discreteLog::teske3() {
     if (verbos)
         cout << "\n\n Solving DL using Teske's Algorithm ... \n";
     timestamp_t startTime = utility::get_timestamp();
+
     while (1) {
         ZZ index;
         for (long i = 0; i < this->n; ++i) {
             index += power2_ZZ(i) * conv<ZZ>(nodes[nodesCnt - 1][i]);
         }
         int gammaOfY0 = conv<int>(index) % this->r;
+        if (gammaOfY0 < 0)
+            gammaOfY0 += r;
+
         nodes[nodesCnt] = (nodes[nodesCnt - 1] * M->groupElement[gammaOfY0]) % irredPoly;
+
         //        S[nodesCnt] = S[nodesCnt - 1] + M->alpha[gammaOfY0];
         //        T[nodesCnt] = T[nodesCnt - 1] + M->beta[gammaOfY0];
 
@@ -876,9 +916,12 @@ int discreteLog::teske3() {
         //        }
 
         walkCnt++;
-        if (walkCnt >= constants::numberOfIterations_10_6)
+        if (walkCnt >= numberOfIterations)
             break;
     }//END::while
     timestamp_t endTime = utility::get_timestamp();
     timeByTeske = utility::getTimeInSeconds(endTime, startTime);
+    delete []nodes;
+    delete []S;
+    delete []T;
 }

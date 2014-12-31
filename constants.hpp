@@ -27,7 +27,7 @@ public:
 
     /** nodeLength : 100000 i.e the number of nodes in the walk
      */
-    static const long long int nodeLength = 1000000;
+    static const long long int nodeLength = 100000;
 
     /**
      * numberOfIterations_10_7 : 10000000
@@ -42,6 +42,10 @@ public:
     /**
      * numberOfIterations_10_5 : 100000
      */
-    static const long long int numberOfIterations_10_5 = 1000000;
+    static const long long int numberOfIterations_10_5 = 100000;
+    /**
+     * numberOfIterations_10_4 : 10000
+     */
+    static const long long int numberOfIterations_10_4 = 10000;
 };
 #endif	/* CONSTANTS_HPP */
