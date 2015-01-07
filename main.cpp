@@ -13,6 +13,7 @@
 
 #include <cstdlib>
 #include <fstream>
+#include <iomanip> 
 
 #include <NTL/ZZ_pX.h>
 #include <NTL/ZZ.h>
@@ -26,9 +27,61 @@ using namespace std;
 
 void foo();
 
+void InnerProduct1(ZZ_p& x, const Vec<ZZ_p>& a, const Vec<ZZ_p>& b) {
+    long n = min(a.MaxLength(), b.MaxLength());
+    //    cout << "\n n :: " << n << endl;
+    long i;
+    ZZ accum, t;
+
+    accum = 0;
+    for (i = 0; i < n; i++) {
+        mul(t, rep(a[i]), rep(b[i]));
+        add(accum, accum, t);
+    }
+    conv(x, accum);
+    //    cout << "\n x :: " << x << endl;
+}
+
+void foo2() {
+    ZZ_p::init(conv<ZZ>("564879132564879564132"));
+    ZZ_p ans;
+    vec_ZZ_p a, b;
+
+    a.SetMaxLength(1024);
+    b.SetMaxLength(1024);
+
+    //    cout << "\n a :: " << a << endl;
+    //    a.put(1, conv<ZZ_p>(1));
+
+    SetSeed(conv<ZZ>("9343"));
+    for (int i = 0; i < 1024; ++i) {
+        a[i] = random_ZZ_p();
+    }
+
+    SetSeed(conv<ZZ>("3113"));
+    for (int i = 0; i < 1024; ++i) {
+        b[i] = random_ZZ_p();
+    }
+
+    //    for (int i = 0; i < 10; ++i) {
+    //        cout << "a[" << i << "] :: " << a[i] << "\t b[" << i << "] :: " << b[i] << endl;
+    //    }
+    //    cout << "\n a.len() :: " << a.MaxLength() << "\t b.len() :: " << b.MaxLength() << endl;
+    long n = min(a.MaxLength(), b.MaxLength());
+    //    cout << "\n n :: " << n << endl;
+    //    InnerProduct(ans, a, b);
+    cout << "\n ans :: " << ans << endl;
+}
+
 int main(int argc, char** argv) {
 
+    //    for (int i = 0; i < 1000; i++) {
+    //        foo2();
+    //    }
+
+    //    InnerProduct1()
     foo();
+    ;
     // <editor-fold defaultstate="collapsed" desc=" made fun foo ">
     //    long double time = 0.0;
     //    int end = 1;
@@ -92,15 +145,15 @@ int main(int argc, char** argv) {
 
 void foo() {
     long double time = 0.0;
-    long numberOfIterations = 100;
+    long numberOfIterations = 10;
     long whileLoopCnt(0);
-    ifstream fin("in4.txt");
+    ifstream fin("in2.txt");
     if (!fin) {
         cout << "\n ERROR in Main reading File in.txt...\n";
         exit(1);
     }
-    ofstream cheon("cheon4_r-4_L-10_10^6.txt");
-    ofstream teske("teske4_r-4_L-10_10^6.txt");
+    ofstream cheon("cheon_time_test.txt");
+    ofstream teske("teske_time_test.txt");
 
     while (!fin.eof()) {
         long r, l, t;
@@ -130,9 +183,16 @@ void foo() {
         if (whileLoopCnt == 0) {
             cheon << "Number of Iterations :: " << numberOfIterations << endl;
             cheon << "Number of Iterations of Walk :: " << DLP->getNumberOfIterations() << endl;
-            cheon << "\nr \tl \tt \tp^n \tTime Cheon \tTable Generation Time" << endl;
+            cheon << "\nr l  t p^n \tTime Cheon \tTable Generation Time \t Gamma Time \tInner Prod Time \tTable Look-Up Time \tMiscellaneous Time \t Actual Multiplication" << endl;
         }
-        cheon << r << "\t" << l << "\t" << log2(r) << "\t2^" << n << "\t" << cheonTime << " Sec\t   " << DLP->getTableGenerationTime() << " Sec" << endl;
+        //        cheon << std::setprecision(5);
+
+        cheon << std::fixed;
+        cheon << r << " " << l << " " << trunc(log2(r)) << " 2^" << n << "\t" << cheonTime << " Sec\t   " << DLP->getTableGenerationTime() << " Sec\t\t "
+                << DLP->gammaTime / numberOfIterations << " Sec\t " << DLP->innerProductTime / numberOfIterations
+                << " Sec\t\t " << DLP->tableLookUpTime / numberOfIterations << " Sec\t\t"
+                << DLP->miscellaneousTime / numberOfIterations << " Sec\t " << DLP->actualMultiplicationTime / numberOfIterations << endl;
+
         cout << "\n Cheon Number Of Iterations :: " << numberOfIterations << " Done...\n";
 
         for (int i = 0; i < numberOfIterations; ++i) {
@@ -144,7 +204,7 @@ void foo() {
         if (whileLoopCnt == 0) {
             teske << "Number of Iterations :: " << numberOfIterations << endl;
             teske << "Number of Iterations of Walk :: " << DLP->getNumberOfIterations() << endl;
-            teske << "\nr \tp^n \tTime Cheon" << endl;
+            teske << "\nr \tp^n \tTime Teske \t" << endl;
         }
         teske << r << "\t2^" << n << "\t" << teskeTime << " Sec" << endl;
         cout << "\n Teske Number Of Iterations :: " << numberOfIterations << " Done...\n";

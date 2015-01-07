@@ -57,10 +57,10 @@ private:
     multiplier *M;
     tableCell **cellData;
     ZZ_pX temp1, temp2, temp3, temp4, temp5;
-    long double tableGenerationTime;
     long double timeByTeske, timeByCheon;
 
 public:
+    long double tableGenerationTime, gammaTime, innerProductTime, tableLookUpTime, miscellaneousTime , actualMultiplicationTime;
     discreteLog(ZZ p, ZZ n, long r, long l, ZZ_pX g, ZZ_pX h, ZZ_pX irredPoly, long t, ZZ orderOfG);
     void printParameters();
     void generateMultipliers();

@@ -47,5 +47,13 @@ public:
      * numberOfIterations_10_4 : 10000
      */
     static const long long int numberOfIterations_10_4 = 10000;
+    /**
+     * numberOfIterations_10_3 : 10000
+     */
+    static const long long int numberOfIterations_10_3 = 1000;
+    /**
+     * numberOfIterations_10_2 : 10000
+     */
+    static const long long int numberOfIterations_10_2 = 100;
 };
 #endif	/* CONSTANTS_HPP */

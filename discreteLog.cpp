@@ -27,7 +27,7 @@ discreteLog::discreteLog(ZZ p, ZZ n, long r, long l, ZZ_pX g, ZZ_pX h, ZZ_pX irr
 
     verbos = false;
     isTableMlGenerated = false;
-    this->numberOfIterations = constants::numberOfIterations_10_6;
+    this->numberOfIterations = constants::numberOfIterations_10_2;
     //    this->numberOfIterations = 100;
     this->n = n;
 
@@ -57,6 +57,11 @@ discreteLog::discreteLog(ZZ p, ZZ n, long r, long l, ZZ_pX g, ZZ_pX h, ZZ_pX irr
     this->x = -1;
     this->timeByCheon = 0;
     this->timeByTeske = 0;
+    this->innerProductTime = 0;
+    this->gammaTime = 0;
+    this->tableLookUpTime = 0;
+    this->miscellaneousTime = 0;
+    this->actualMultiplicationTime = 0;
 
     //Allocationg Memory for the set of Multipliers and generating them
     M = new multiplier(r, p);
@@ -605,6 +610,8 @@ int discreteLog::cheonDL3() {
     timestamp_t startTime = utility::get_timestamp();
     while (1) {
         long long int col(0);
+
+        timestamp_t gammaStart = utility::get_timestamp();
         // <editor-fold defaultstate="collapsed" desc="COMPUTE GAMMA FUNCTION HERE - [DONE]">
         for (long i = tagStartPosition; i < this->n; ++i) {
             index += power2_ZZ(i) * conv<ZZ>(nodes[nodesCnt - 1][i]);
@@ -613,11 +620,17 @@ int discreteLog::cheonDL3() {
         if (col < 0)
             col += r;
         // </editor-fold>
+        timestamp_t gammaEnd = utility::get_timestamp();
+        this->gammaTime += utility::getTimeInSeconds(gammaEnd, gammaStart);
+
         arrayL[0] = col;
         int numberOfElementsInArrayL(1);
         for (long j = 0; j < l - 1; ++j) {
+
+            timestamp_t InnerProductTimeStart = utility::get_timestamp();
             // <editor-fold defaultstate="collapsed" desc="v.w % irredPoly [DONE] ">
             clear(acc);
+
             for (int i = 0; i < nodes[nodesCnt - 1].rep.length(); ++i) {
                 if (nodes[nodesCnt - 1][i] != 0 && cellData[numberOfElementsInArrayL][col].tag[i] != 0) {
                     SetCoeff(acc2, i, nodes[nodesCnt - 1][i]);
@@ -628,21 +641,33 @@ int discreteLog::cheonDL3() {
             if (acc.rep.length() >= this->n)
                 acc = acc % irredPoly;
             // </editor-fold>
+            timestamp_t InnerProductTimeEnd = utility::get_timestamp();
+            this->innerProductTime += utility::getTimeInSeconds(InnerProductTimeEnd, InnerProductTimeStart);
 
-            // <editor-fold defaultstate="collapsed" desc="COMPUTE GAMMA FUNCTION AND INSERT INTO A SORTED ARRAY - [DONE] ">
+            timestamp_t gammaStart = utility::get_timestamp();
+            // <editor-fold defaultstate="collapsed" desc="COMPUTE GAMMA FUNCTION [DONE] ">
             ZZ index2;
             for (int i = tagStartPosition; i < this->n; ++i) {
                 index2 += power2_ZZ(i) * conv<ZZ>(acc[i]);
             }
             int ijk = numberOfElementsInArrayL - 1;
             int item = conv<int>(index2) % r;
+            // </editor-fold>
+            timestamp_t gammaEnd = utility::get_timestamp();
+            this->gammaTime += utility::getTimeInSeconds(gammaEnd, gammaStart);
+
+            timestamp_t miscellaneousTimeStart = utility::get_timestamp();
+            // <editor-fold defaultstate="collapsed" desc="INSERT INTO A SORTED ARRAY - [DONE] ">
             while (item < arrayL[ijk] && ijk >= 0) {
                 arrayL[ijk + 1] = arrayL[ijk];
                 ijk--;
             }
             arrayL[ijk + 1] = item;
             // </editor-fold>
+            timestamp_t miscellaneousTimeEnd = utility::get_timestamp();
+            this->miscellaneousTime += utility::getTimeInSeconds(miscellaneousTimeEnd, miscellaneousTimeStart);
 
+            timestamp_t TableLookUpTimeStart = utility::get_timestamp();
             // <editor-fold defaultstate="collapsed" desc="FOR LOOP TO GET THE REVELENT COLUMS">
             for (long long int i = 0; i <this->numberOfElementsInTableRow[numberOfElementsInArrayL]; ++i) {
                 //for the loop over the multiplier in this row
@@ -659,14 +684,19 @@ int discreteLog::cheonDL3() {
                 }
             }
             // </editor-fold>
+            timestamp_t TableLookUpTimeEnd = utility::get_timestamp();
+            this->tableLookUpTime += utility::getTimeInSeconds(TableLookUpTimeEnd, TableLookUpTimeStart);
 
             numberOfElementsInArrayL++;
         }
+        timestamp_t actualMultiplicationTimeStart = utility::get_timestamp();
         // <editor-fold defaultstate="collapsed" desc=" ACTUAL MULTIPLICATION ">
         nodes[nodesCnt] = (cellData[l - 1][col].groupElement * nodes[nodesCnt - 1]) % irredPoly;
         //            nodes[nodesCnt] = Y0;
 
         // </editor-fold>
+        timestamp_t actualMultiplicationTimeEnd = utility::get_timestamp();
+        this->actualMultiplicationTime += utility::getTimeInSeconds(actualMultiplicationTimeEnd, actualMultiplicationTimeStart);
 
         // <editor-fold defaultstate="collapsed" desc="Collision Detection and DLP calculation ">
         ;
@@ -704,7 +734,6 @@ int discreteLog::cheonDL3() {
     delete []T;
     delete []arrayL;
     //cleanUpAfterCheon();
-
 }
 
 /**
