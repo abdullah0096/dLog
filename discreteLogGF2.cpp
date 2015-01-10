@@ -137,6 +137,7 @@ GF2X discreteLogGF2::getTag(const GF2X& element) {
     for (int i = tagStartPosition; i < this->n; ++i) {
         //        HERE ONE
         //        SetCoeff(tmp, tmpCnt, element[i]);
+        SetCoeff(tmp, tmpCnt, coeff(element, i));
         tmpCnt++;
     }
     return tmp;
@@ -263,6 +264,7 @@ int discreteLogGF2::cheonDL() {
             for (long i = tagStartPosition; i < this->n; ++i) {
                 //                HERE TWO
                 //                index += power2_ZZ(i) * conv<ZZ>(nodes[nodesCnt - 1][i]);
+                
             }
             col = conv<int>(index) % this->r;
             // </editor-fold>

@@ -152,8 +152,8 @@ void foo() {
         cout << "\n ERROR in Main reading File in.txt...\n";
         exit(1);
     }
-    ofstream cheon("cheon_time_test.txt");
-    ofstream teske("teske_time_test.txt");
+    ofstream cheon("cheon_time_test1.txt");
+    ofstream teske("teske_time_test1.txt");
 
     while (!fin.eof()) {
         long r, l, t;
@@ -217,3 +217,5 @@ void foo() {
     teske.close();
     fin.close();
 }
+
+

@@ -2,4 +2,9 @@ Number of Iterations :: 10
 Number of Iterations of Walk :: 100
 
 r 	p^n 	Time Teske 	
+4	2^32	0.0078168 Sec
+4	2^64	0.0290365 Sec
+4	2^128	0.0805971 Sec
+4	2^256	0.0912356 Sec
+4	2^512	0.194442 Sec
 4	2^1024	0.414459 Sec

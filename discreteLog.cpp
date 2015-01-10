@@ -94,7 +94,6 @@ void discreteLog::generateMultipliers() {
 
         RandomBnd(M->alpha[i], orderOfG);
         RandomBnd(M->beta[i], orderOfG);
-
         M->groupElement[i] = (PowerMod(g, M->alpha[i], irredPoly) * PowerMod(h, M->beta[i], irredPoly)) % irredPoly;
     }
     if (verbos)
@@ -630,16 +629,18 @@ int discreteLog::cheonDL3() {
             timestamp_t InnerProductTimeStart = utility::get_timestamp();
             // <editor-fold defaultstate="collapsed" desc="v.w % irredPoly [DONE] ">
             clear(acc);
-
             for (int i = 0; i < nodes[nodesCnt - 1].rep.length(); ++i) {
+                cout << "\n nodes[nodesCnt][i] :: " << nodes[nodesCnt][i] << "\t  cellData[numberOfElementsInArrayL][col].tag[i] :: " << cellData[numberOfElementsInArrayL][col].tag[i] << endl;
                 if (nodes[nodesCnt - 1][i] != 0 && cellData[numberOfElementsInArrayL][col].tag[i] != 0) {
                     SetCoeff(acc2, i, nodes[nodesCnt - 1][i]);
                     acc += acc2 * cellData[numberOfElementsInArrayL][col].tag[i];
                     SetCoeff(acc2, i, 0);
                 }
             }
+            cout << "\n 1acc :: " << acc << endl;
             if (acc.rep.length() >= this->n)
                 acc = acc % irredPoly;
+            cout << "\n 2acc :: " << acc << endl;
             // </editor-fold>
             timestamp_t InnerProductTimeEnd = utility::get_timestamp();
             this->innerProductTime += utility::getTimeInSeconds(InnerProductTimeEnd, InnerProductTimeStart);
