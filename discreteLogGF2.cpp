@@ -16,6 +16,8 @@ ZZ ZZfactorial_1(long long int number) {
 }
 
 discreteLogGF2::discreteLogGF2(ZZ p, ZZ n, long r, long l, GF2X g, GF2X h, GF2X irredPoly, long t, ZZ orderOfG) {
+
+    this->p = p;
     this->n = n;
 
     if (n > 3) {
@@ -28,9 +30,6 @@ discreteLogGF2::discreteLogGF2(ZZ p, ZZ n, long r, long l, GF2X g, GF2X h, GF2X 
         std::cerr << "\n n :: " << n << " should be greater than size of tag i.e t :: " << t << std::endl;
         exit(1);
     }
-
-    //    this->p = p;
-    //    ZZ_p::init(this->p);
 
     this->g = g;
     this->h = h;
@@ -45,7 +44,7 @@ discreteLogGF2::discreteLogGF2(ZZ p, ZZ n, long r, long l, GF2X g, GF2X h, GF2X 
     this->timeByCheon = 0;
     this->timeByTeske = 0;
 
-    //Allocationg Memory for the set of Multipliers and generating them
+    //Allocating Memory for the set of Multipliers and generating them
     M = new multiplierGF2(r, p);
     generateMultipliers();
 }
@@ -133,10 +132,7 @@ GF2X discreteLogGF2::getTag(const GF2X& element) {
     GF2X tmp;
     tmp.SetMaxLength(this->t);
     long tmpCnt(0);
-
-    for (int i = tagStartPosition; i < this->n; ++i) {
-        //        HERE ONE
-        //        SetCoeff(tmp, tmpCnt, element[i]);
+    for (int i = 0; i < this->t; ++i) {
         SetCoeff(tmp, tmpCnt, coeff(element, i));
         tmpCnt++;
     }
@@ -144,7 +140,6 @@ GF2X discreteLogGF2::getTag(const GF2X& element) {
 }
 
 void discreteLogGF2::computeGroupElementExponentAndTag() {
-
     try {
         for (long long int i = 0; i < this->l; ++i) {
             for (long long int j = 0; j < this->numberOfElementsInTableRow[i]; ++j) {
@@ -165,15 +160,19 @@ void discreteLogGF2::computeGroupElementExponentAndTag() {
                 this->cellData[i][j].groupElement = this->temp1 % irredPoly;
 
                 //calculating tag for 1,x,x^2,...,x^(n-1)
-                for (long long int i1 = 0; i1 < n; ++i1) {
-                    ZZ_p::init(this->p);
+                for (long long int i1 = 0; i1 < t; ++i1) {
+
                     GF2X tmp, tmp2;
                     tmp.SetMaxLength(conv<long>(this->n));
                     tmp2.SetMaxLength(conv<long>(this->n));
 
                     SetCoeff(tmp, i1, 1);
                     tmp2 = (tmp * cellData[i][j].groupElement) % this->irredPoly;
-                    this->cellData[i][j].tag[i1] = getTag(tmp2);
+                    if (i1 == 0) {
+                        this->cellData[i][j].tag[i1] = getTag(cellData[i][j].groupElement);
+                    } else {
+                        this->cellData[i][j].tag[i1] = getTag(tmp2);
+                    }
                 }
             }
             clear(temp1);
@@ -206,12 +205,10 @@ int discreteLogGF2::generateTableML() {
     if (readMultiplierInformation() == -1) {
         return -1;
     } else {
-        //        printNumberOfRowsInTable();
         cout << "\n Computing Group-Element's Exponent's And Tag's .... ";
         cout.flush();
         computeGroupElementExponentAndTag();
         cout << " [Done] :-) \n";
-        //        printTableMl();
     }
     timestamp_t endTimeTableGeneration = utility::get_timestamp();
 
@@ -235,7 +232,6 @@ int discreteLogGF2::cheonDL() {
 
         RandomBnd(S[0], orderOfG);
         RandomBnd(T[0], orderOfG);
-        //        Y0 = (PowerMod(g, S[0], irredPoly) * PowerMod(h, T[0], irredPoly)) % irredPoly;
 
         nodes[0] = g;
 
@@ -252,7 +248,6 @@ int discreteLogGF2::cheonDL() {
         GF2X acc2;
         acc2.SetMaxLength(constants::accumulatorLength);
 
-
         tagOfAcc.SetMaxLength(this->t);
         ZZ index;
         GF2X *tmpTag, tag;
@@ -261,10 +256,8 @@ int discreteLogGF2::cheonDL() {
         while (1) {
             long long int col(0);
             // <editor-fold defaultstate="collapsed" desc="COMPUTE GAMMA FUNCTION HERE - [DONE]">
-            for (long i = tagStartPosition; i < this->n; ++i) {
-                //                HERE TWO
-                //                index += power2_ZZ(i) * conv<ZZ>(nodes[nodesCnt - 1][i]);
-                
+            for (long i = 0; i < this->t; ++i) {
+                index += power2_ZZ(i) * conv<ZZ>(coeff(nodes[nodesCnt - 1], i));
             }
             col = conv<int>(index) % this->r;
             // </editor-fold>
@@ -275,12 +268,11 @@ int discreteLogGF2::cheonDL() {
                 // <editor-fold defaultstate="collapsed" desc="v.w % irredPoly [DONE] ">
                 clear(acc);
                 for (int i = 0; i < nodes[nodesCnt - 1].xrep.length(); ++i) {
-                    // HERE THREE
-                    //                    if (nodes[nodesCnt - 1][i] != 0 && cellData[numberOfElementsInArrayL][col].tag[i] != 0) {
-                    //                        SetCoeff(acc2, i, nodes[nodesCnt - 1][i]);
-                    //                        acc += acc2 * cellData[numberOfElementsInArrayL][col].tag[i];
-                    //                        SetCoeff(acc2, i, 0);
-                    //                    }
+                    if (coeff(nodes[nodesCnt - 1], i) != 0 && cellData[numberOfElementsInArrayL][col].tag[i] != 0) {
+                        SetCoeff(acc2, i, coeff(nodes[nodesCnt - 1], i));
+                        acc += acc2 * cellData[numberOfElementsInArrayL][col].tag[i];
+                        SetCoeff(acc2, i, 0);
+                    }
                 }
 
                 if (acc.xrep.length() >= this->n)
@@ -288,16 +280,11 @@ int discreteLogGF2::cheonDL() {
                 // </editor-fold>
 
                 // <editor-fold defaultstate="collapsed" desc="COMPUTE GAMMA FUNCTION AND INSERT INTO A SORTED ARRAY - [DONE] ">
-                //                tag.SetMaxLength(this->t);
-                //                for (int i = tagStartPosition; i < this->n; ++i) {
-                //                    SetCoeff(tag, i, acc[i]);
-                //                }
-                //                cout << "\n tag " << tag << endl;
 
                 ZZ index2;
-                for (int i = 0; i < tagStartPosition; ++i) {
-                    //HERE FOUR
-                    //                    index2 += power2_ZZ(i) * conv<ZZ>(acc[i]);
+                clear(acc);
+                for (long i = 0; i < this->t; ++i) {
+                    index2 += power2_ZZ(i) * conv<ZZ>(coeff(acc, i));
                 }
 
                 int ijk = numberOfElementsInArrayL - 1;
@@ -307,12 +294,8 @@ int discreteLogGF2::cheonDL() {
                     ijk--;
                 }
                 arrayL[ijk + 1] = item;
-                //                arrayL[numberOfElementsInArrayL] = conv<int>(index2) % r;
-                //                bubbleSort(arrayL, numberOfElementsInArrayL + 1);
-
                 // </editor-fold>
 
-                //>>>>>>>>>>>>>> START HERE
                 // <editor-fold defaultstate="collapsed" desc="FOR LOOP TO GET THE REVELENT COLUMS">
                 for (long long int i = 0; i <this->numberOfElementsInTableRow[numberOfElementsInArrayL]; ++i) {
                     //for the loop over the multiplier in this row
@@ -334,8 +317,6 @@ int discreteLogGF2::cheonDL() {
             }
             // <editor-fold defaultstate="collapsed" desc=" ACTUAL MULTIPLICATION ">
             nodes[nodesCnt] = (cellData[l - 1][col].groupElement * nodes[nodesCnt - 1]) % irredPoly;
-            //            nodes[nodesCnt] = Y0;
-
             // </editor-fold>
 
             // <editor-fold defaultstate="collapsed" desc="Collision Detection and DLP calculation ">
@@ -361,10 +342,11 @@ int discreteLogGF2::cheonDL() {
             }
             walkCnt += l;
             if (walkCnt >= constants::nodeLength) {
+                cout << "\n Breaking after :: " << walkCnt << " iterations.....\n";
                 break;
             }
             // </editor-fold>
-            //            exit(1);
+
         }//end while
         timestamp_t endTime = utility::get_timestamp();
         timeByCheon = utility::getTimeInSeconds(endTime, startTime);

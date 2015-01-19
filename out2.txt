@@ -1,0 +1,142 @@
+
+ Reading Input from in.txt
+ Generating Multipliers (4)....[DONE]
+
+*******************************************************************************************
+
+ GF(2^7)	 such that g :: [0 1]	 h ::[0 0 0 1 0 1]	 |G| :: 127	r ::4	 l :: 3	 t :: 2
+ Irred poly :: [1 1 0 0 0 0 0 1]
+
+*******************************************************************************************
+
+ Computing Group-Element's Exponent's And Tag's ....  [Done] :-) 
+
+ Time for Table generation (CHEON) :: 0.000364
+
+ Solving DL using Cheon's Algorithm ... 
+
+__________________________
+ Multiplier information ::0 0 
+ groupElement  :: [0 1 0 0 0 0 1]
+ Summation ALPHA :: 110
+ Summation BETA  :: 64
+ tag ::[0 1]	[]	[]	[]	[1]	[1 1]	[1 1]	
+__________________________
+
+ nodes[nodesCnt - 1] :: [0 1]
+
+ acc :: 
+	 coeff(acc,5) :: 0	 coeff(acc,6) :: 0
+ index2 :: 0
+
+__________________________
+ Multiplier information ::0 0 0 
+ groupElement  :: [1 1 0 0 0 1]
+ Summation ALPHA :: 165
+ Summation BETA  :: 96
+ tag ::[1]	[0 1]	[]	[]	[1]	[1 1]	[1 1]	
+__________________________
+
+ nodes[nodesCnt - 1] :: [0 1]
+
+ acc :: 
+	 coeff(acc,5) :: 0	 coeff(acc,6) :: 0
+ index2 :: 0
+
+__________________________
+ Multiplier information ::0 0 
+ groupElement  :: [0 1 0 0 0 0 1]
+ Summation ALPHA :: 110
+ Summation BETA  :: 64
+ tag ::[0 1]	[]	[]	[]	[1]	[1 1]	[1 1]	
+__________________________
+
+ nodes[nodesCnt - 1] :: [0 1 1 0 0 0 1]
+
+ acc :: 
+	 coeff(acc,5) :: 0	 coeff(acc,6) :: 0
+ index2 :: 0
+
+__________________________
+ Multiplier information ::0 0 0 
+ groupElement  :: [1 1 0 0 0 1]
+ Summation ALPHA :: 165
+ Summation BETA  :: 96
+ tag ::[1]	[0 1]	[]	[]	[1]	[1 1]	[1 1]	
+__________________________
+
+ nodes[nodesCnt - 1] :: [0 1 1 0 0 0 1]
+
+ acc :: 
+	 coeff(acc,5) :: 0	 coeff(acc,6) :: 0
+ index2 :: 0
+
+__________________________
+ Multiplier information ::0 0 
+ groupElement  :: [0 1 0 0 0 0 1]
+ Summation ALPHA :: 110
+ Summation BETA  :: 64
+ tag ::[0 1]	[]	[]	[]	[1]	[1 1]	[1 1]	
+__________________________
+
+ nodes[nodesCnt - 1] :: [0 1 0 1 1 1]
+
+ acc :: 
+	 coeff(acc,5) :: 0	 coeff(acc,6) :: 0
+ index2 :: 0
+
+__________________________
+ Multiplier information ::0 0 0 
+ groupElement  :: [1 1 0 0 0 1]
+ Summation ALPHA :: 165
+ Summation BETA  :: 96
+ tag ::[1]	[0 1]	[]	[]	[1]	[1 1]	[1 1]	
+__________________________
+
+ nodes[nodesCnt - 1] :: [0 1 0 1 1 1]
+
+ acc :: 
+	 coeff(acc,5) :: 0	 coeff(acc,6) :: 0
+ index2 :: 0
+
+__________________________
+ Multiplier information ::0 0 
+ groupElement  :: [0 1 0 0 0 0 1]
+ Summation ALPHA :: 110
+ Summation BETA  :: 64
+ tag ::[0 1]	[]	[]	[]	[1]	[1 1]	[1 1]	
+__________________________
+
+ nodes[nodesCnt - 1] :: [0 0 1 1 1]
+
+ acc :: 
+	 coeff(acc,5) :: 0	 coeff(acc,6) :: 0
+ index2 :: 0
+
+__________________________
+ Multiplier information ::0 0 0 
+ groupElement  :: [1 1 0 0 0 1]
+ Summation ALPHA :: 165
+ Summation BETA  :: 96
+ tag ::[1]	[0 1]	[]	[]	[1]	[1 1]	[1 1]	
+__________________________
+
+ nodes[nodesCnt - 1] :: [0 0 1 1 1]
+
+ acc :: 
+	 coeff(acc,5) :: 0	 coeff(acc,6) :: 0
+ index2 :: 0
+
+__________________________
+ Multiplier information ::0 0 
+ groupElement  :: [0 1 0 0 0 0 1]
+ Summation ALPHA :: 110
+ Summation BETA  :: 64
+ tag ::[0 1]	[]	[]	[]	[1]	[1 1]	[1 1]	
+__________________________
+
+ nodes[nodesCnt - 1] :: [1 0 1 1 0 1]
+
+ acc :: 0 
+	 coeff(acc,5) :: 0	 coeff(acc,6) :: 0
+ index2 :: 0

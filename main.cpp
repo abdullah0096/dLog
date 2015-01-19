@@ -27,21 +27,6 @@ using namespace std;
 
 void foo();
 
-void InnerProduct1(ZZ_p& x, const Vec<ZZ_p>& a, const Vec<ZZ_p>& b) {
-    long n = min(a.MaxLength(), b.MaxLength());
-    //    cout << "\n n :: " << n << endl;
-    long i;
-    ZZ accum, t;
-
-    accum = 0;
-    for (i = 0; i < n; i++) {
-        mul(t, rep(a[i]), rep(b[i]));
-        add(accum, accum, t);
-    }
-    conv(x, accum);
-    //    cout << "\n x :: " << x << endl;
-}
-
 void foo2() {
     ZZ_p::init(conv<ZZ>("564879132564879564132"));
     ZZ_p ans;
@@ -49,9 +34,6 @@ void foo2() {
 
     a.SetMaxLength(1024);
     b.SetMaxLength(1024);
-
-    //    cout << "\n a :: " << a << endl;
-    //    a.put(1, conv<ZZ_p>(1));
 
     SetSeed(conv<ZZ>("9343"));
     for (int i = 0; i < 1024; ++i) {
@@ -63,82 +45,36 @@ void foo2() {
         b[i] = random_ZZ_p();
     }
 
-    //    for (int i = 0; i < 10; ++i) {
-    //        cout << "a[" << i << "] :: " << a[i] << "\t b[" << i << "] :: " << b[i] << endl;
-    //    }
-    //    cout << "\n a.len() :: " << a.MaxLength() << "\t b.len() :: " << b.MaxLength() << endl;
     long n = min(a.MaxLength(), b.MaxLength());
-    //    cout << "\n n :: " << n << endl;
-    //    InnerProduct(ans, a, b);
     cout << "\n ans :: " << ans << endl;
 }
 
 int main(int argc, char** argv) {
 
-    //    for (int i = 0; i < 1000; i++) {
-    //        foo2();
-    //    }
+    //    foo();
+    ;
 
-    //    InnerProduct1()
-    foo();
-    ;
-    // <editor-fold defaultstate="collapsed" desc=" made fun foo ">
-    //    long double time = 0.0;
-    //    int end = 1;
-    //
-    //    for (long int i = 0; i < end; i++) {
-    //        long r, l, t;
-    //        ZZ p, n, orderOfG;
-    //        ZZ_pX g, h, irrdPoly;
-    //
-    //        ifstream fin("in.txt");
-    //        if (!fin) {
-    //            cout << "\n ERROR in Main reading File in.txt...\n";
-    //            exit(1);
-    //        }
-    //
-    //        cout << "\n Reading Input from in.txt\n";
-    //        fin >> p >> n >> r >> orderOfG >> l >>t;
-    //
-    //        ZZ_p::init(p);
-    //
-    //        fin >> g >> h>>irrdPoly;
-    //        //        cout << "\n p :: " << p << "\t n :: " << n << "\t r :: " << r << "\t orderOfG :: " << orderOfG
-    //        //                << "\t l :: " << l << "\t t ::" << t << "\t";
-    //        //        cout << "\n g :: " << g << "\t h :: " << h << "\t irrdPoly :: " << irrdPoly << endl;
-    //
-    //        discreteLog DLP(p, n, r, l, g, h, irrdPoly, t, orderOfG);
-    //        DLP.printParameters();
-    //
-    //        DLP.cheonDL3();
-    //        cout << "\n Time By Cheon2 ::" << DLP.getTimeByCheon() << " Seconds..." << endl;
-    //
-    //        DLP.teske3();
-    //        cout << "\n Time By teske ::" << DLP.getTimeByTeske() << " Seconds..." << endl;
-    //
-    //        fin.close();
-    //    }
-    // </editor-fold>
-    ;
     // <editor-fold defaultstate="collapsed" desc="GF2 Code ">
-    //    long r, l, t;
-    //    ZZ p, n, orderOfG;
-    //    GF2X g, h, irrdPoly;
-    //
-    //    ifstream fin("in.txt");
-    //    if (!fin) {
-    //        cout << "\n ERROR in Main reading File in.txt...\n";
-    //        exit(1);
-    //    }
-    //
-    //    cout << "\n Reading Input from in.txt\n";
-    //    fin >> p >> n >> r >> orderOfG >> l >>t;
-    //
-    //    ZZ_p::init(p);
-    //    fin >> g >> h>>irrdPoly;
-    //
-    //    discreteLogGF2 DLP(p, n, r, l, g, h, irrdPoly, t, orderOfG);
-    //    DLP.printParameters();
+    long r, l, t;
+    ZZ p, n, orderOfG;
+    GF2X g, h, irrdPoly;
+
+    ifstream fin("in.txt");
+    if (!fin) {
+        cout << "\n ERROR in Main reading File in.txt...\n";
+        exit(1);
+    }
+
+    cout << "\n Reading Input from in.txt\n";
+    fin >> p >> n >> r >> orderOfG >> l >>t;
+
+    ZZ_p::init(p);
+    fin >> g >> h>>irrdPoly;
+
+    discreteLogGF2 DLP(p, n, r, l, g, h, irrdPoly, t, orderOfG);
+    DLP.printParameters();
+    DLP.cheonDL();
+    cout << "\n Time :: " << DLP.getTimeByCheon() << endl;
     // </editor-fold>
     return 0;
 }
