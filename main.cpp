@@ -74,7 +74,10 @@ int main(int argc, char** argv) {
     discreteLogGF2 DLP(p, n, r, l, g, h, irrdPoly, t, orderOfG);
     DLP.printParameters();
     DLP.cheonDL();
-    cout << "\n Time :: " << DLP.getTimeByCheon() << endl;
+    cout << "\n Cheon Time :: " << DLP.getTimeByCheon() << " Seconds." << endl;
+
+    DLP.teske();
+    cout << "\n Teske Time :: " << fixed << DLP.getTimeByTeske() << " Seconds." << endl;
     // </editor-fold>
     return 0;
 }

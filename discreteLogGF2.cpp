@@ -337,6 +337,7 @@ int discreteLogGF2::cheonDL() {
                 ZZ_p num = conv<ZZ_p>(S[collisionOne] - S[collisionTwo]);
                 ZZ_p dnum = conv<ZZ_p>(T[collisionTwo] - T[collisionOne]);
                 cout << "\n Ans by Cheon :: " << num / dnum << endl;
+                cout << "\n Breaking Cheon with Ans after :: " << walkCnt << " iterations.....\n";
                 ZZ_p::init(this->p);
                 break;
             }
@@ -351,4 +352,73 @@ int discreteLogGF2::cheonDL() {
         timestamp_t endTime = utility::get_timestamp();
         timeByCheon = utility::getTimeInSeconds(endTime, startTime);
     }
+}
+
+int discreteLogGF2::teske() {
+
+    GF2X Y0;
+    Y0.SetMaxLength(conv<long>(this->n));
+    long long int walkCnt(0);
+    long long int whileLoopCnt(0);
+
+    GF2X *nodes = new GF2X[constants::nodeLength];
+    for (long long int i = 0; i < constants::nodeLength; ++i)
+        nodes[i].SetMaxLength(conv<long>(this->n));
+
+    ZZ *S = new ZZ[constants::nodeLength];
+    ZZ *T = new ZZ[constants::nodeLength];
+
+    ZZ A, B;
+    RandomBnd(A, orderOfG);
+    RandomBnd(B, orderOfG);
+    Y0 = (PowerMod(this->g, A, irredPoly) * PowerMod(this->h, B, irredPoly)) % irredPoly;
+    nodes[0] = Y0;
+
+    long long int nodesCnt(1);
+    bool isCollisionFound = false;
+    long long int collisionOne(-1), collisionTwo(-1);
+
+    cout << "\n\n Solving DL using Teske's Algorithm ... \n";
+    timestamp_t startTime = utility::get_timestamp();
+    while (1) {
+        ZZ index;
+        for (long i = 0; i < this->n; ++i) {
+            index += power2_ZZ(i) * conv<ZZ>(coeff(nodes[nodesCnt - 1], i));
+        }
+        int gammaOfY0 = conv<int>(index) % this->r;
+        if (gammaOfY0 < 0)
+            gammaOfY0 += r;
+        nodes[nodesCnt] = (nodes[nodesCnt - 1] * M->groupElement[gammaOfY0]) % irredPoly;
+        S[nodesCnt] = S[nodesCnt - 1] + M->alpha[gammaOfY0];
+        T[nodesCnt] = T[nodesCnt - 1] + M->beta[gammaOfY0];
+
+        for (long long int i = 0; i < nodesCnt; ++i) {
+            if (nodes[i] == nodes[nodesCnt ]) {
+                collisionOne = i;
+                collisionTwo = nodesCnt;
+                isCollisionFound = true;
+                break;
+            }
+        }//END::for collision Detection
+        nodesCnt++;
+
+        if (isCollisionFound) {
+            ZZ_p::init(this->orderOfG);
+            ZZ_p num = conv<ZZ_p>(S[collisionOne] - S[collisionTwo]);
+            ZZ_p dnum = conv<ZZ_p>(T[collisionTwo] - T[collisionOne]);
+            cout << "\n Ans by Teske :: " << num / dnum << endl;
+            cout << "\n Teske Breaking With Ans after :: " << whileLoopCnt << " iterations...\n";
+            ZZ_p::init(this->p);
+            break;
+        }
+
+        whileLoopCnt++;
+        if (whileLoopCnt >= constants::nodeLength) {
+            cout << "\n Teske Breaking after :: " << whileLoopCnt << " iterations...\n";
+            break;
+        }
+
+    }//END::while
+    timestamp_t endTime = utility::get_timestamp();
+    timeByTeske = utility::getTimeInSeconds(endTime, startTime);
 }

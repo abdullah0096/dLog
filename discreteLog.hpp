@@ -60,7 +60,7 @@ private:
     long double timeByTeske, timeByCheon;
 
 public:
-    long double tableGenerationTime, gammaTime, innerProductTime, tableLookUpTime, miscellaneousTime , actualMultiplicationTime;
+    long double tableGenerationTime, gammaTime, innerProductTime, tableLookUpTime, miscellaneousTime, actualMultiplicationTime;
     discreteLog(ZZ p, ZZ n, long r, long l, ZZ_pX g, ZZ_pX h, ZZ_pX irredPoly, long t, ZZ orderOfG);
     void printParameters();
     void generateMultipliers();
@@ -150,7 +150,7 @@ public:
 //    F:= FiniteField(p^n);
 //    Id := IrreducibleSparseGF2Polynomial(n);
 //    g:= Generator(F);
-//    ord:= Order(g);    
+//    ord:= Order(g);
 //    h:=g^m;
 //
 //    p, "" ,n," 8 ", ord, "4 2";
