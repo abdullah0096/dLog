@@ -27,37 +27,15 @@ using namespace std;
 
 void foo();
 
-void foo2() {
-    ZZ_p::init(conv<ZZ>("564879132564879564132"));
-    ZZ_p ans;
-    vec_ZZ_p a, b;
-
-    a.SetMaxLength(1024);
-    b.SetMaxLength(1024);
-
-    SetSeed(conv<ZZ>("9343"));
-    for (int i = 0; i < 1024; ++i) {
-        a[i] = random_ZZ_p();
-    }
-
-    SetSeed(conv<ZZ>("3113"));
-    for (int i = 0; i < 1024; ++i) {
-        b[i] = random_ZZ_p();
-    }
-
-    long n = min(a.MaxLength(), b.MaxLength());
-    cout << "\n ans :: " << ans << endl;
-}
-
 int main(int argc, char** argv) {
 
     //    foo();
     ;
-
     // <editor-fold defaultstate="collapsed" desc="GF2 Code ">
     long r, l, t;
     ZZ p, n, orderOfG;
     GF2X g, h, irrdPoly;
+    long numberOfIterations = 1;
 
     ifstream fin("in.txt");
     if (!fin) {
@@ -75,9 +53,17 @@ int main(int argc, char** argv) {
     DLP.printParameters();
     DLP.cheonDL();
     cout << "\n Cheon Time :: " << DLP.getTimeByCheon() << " Seconds." << endl;
+    cout << "\nr l  t p^n \tTime Cheon \tTable Generation Time \t Gamma Time \tInner Prod Time \tTable Look-Up Time \tMiscellaneous Time \t Actual Multiplication" << endl;
+    cout << r << " " << l << " " << trunc(log2(r)) << " 2^" << n << "\t" << DLP.getTimeByCheon()
+            << " Sec\t   " << DLP.getTableGenerationTime() << " Sec\t\t "
+            << DLP.gammaTime / numberOfIterations << " Sec\t " << DLP.innerProductTime / numberOfIterations
+            << " Sec\t\t " << DLP.tableLookUpTime / numberOfIterations << " Sec\t\t"
+            << DLP.miscellaneousTime / numberOfIterations << " Sec\t\t " << DLP.actualMultiplicationTime / numberOfIterations << endl;
 
-    DLP.teske();
-    cout << "\n Teske Time :: " << fixed << DLP.getTimeByTeske() << " Seconds." << endl;
+    cout << "\n Collision Time :: " << DLP.collisionTime << endl;
+    
+    //    DLP.teske();
+    //    cout << "\n Teske Time :: " << fixed << DLP.getTimeByTeske() << " Seconds." << endl;
     // </editor-fold>
     return 0;
 }

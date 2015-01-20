@@ -23,7 +23,7 @@ public:
 
     /** accLength : 100
      */
-    static const long long int accumulatorLength = 100000;
+    static const long long int accumulatorLength = 1000000;
 
     /** nodeLength : 100000 i.e the number of nodes in the walk
      */

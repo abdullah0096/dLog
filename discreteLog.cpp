@@ -561,7 +561,7 @@ int discreteLog::cheonDL2() {
 }
 
 int discreteLog::cheonDL3() {
-   
+
     if (!isTableMlGenerated) {
         generateTableML();
         if (verbos)
