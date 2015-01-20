@@ -346,10 +346,10 @@ int discreteLogGF2::cheonDL() {
             timestamp_t actualMultiplicationTimeEnd = utility::get_timestamp();
             this->actualMultiplicationTime += utility::getTimeInSeconds(actualMultiplicationTimeEnd, actualMultiplicationTimeStart);
 
-            timestamp_t collisionTimeStart = utility::get_timestamp();
+            //            timestamp_t collisionTimeStart = utility::get_timestamp();
             // <editor-fold defaultstate="collapsed" desc="Collision Detection and DLP calculation ">
-            S[nodesCnt] = S[nodesCnt - 1] + cellData[l - 1][col].summationAlpha;
-            T[nodesCnt] = T[nodesCnt - 1] + cellData[l - 1][col].summationBeta;
+            //            S[nodesCnt] = S[nodesCnt - 1] + cellData[l - 1][col].summationAlpha;
+            //            T[nodesCnt] = T[nodesCnt - 1] + cellData[l - 1][col].summationBeta;
             nodesCnt++;
             //            for (long long int i = 0; i < nodesCnt - 1; ++i) {
             //                if (nodes[i] == nodes[nodesCnt - 1]) {
@@ -370,8 +370,8 @@ int discreteLogGF2::cheonDL() {
             //                break;
             //            }
             // </editor-fold>
-            timestamp_t collisionTimeEnd = utility::get_timestamp();
-            this->collisionTime += utility::getTimeInSeconds(collisionTimeEnd, collisionTimeStart);
+            //            timestamp_t collisionTimeEnd = utility::get_timestamp();
+            //            this->collisionTime += utility::getTimeInSeconds(collisionTimeEnd, collisionTimeStart);
 
             walkCnt += l;
             if (walkCnt >= constants::nodeLength) {
