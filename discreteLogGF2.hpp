@@ -39,7 +39,7 @@ private:
     long t; // size of tage vector for CHEON
     int tagStartPosition; //starting point in a vector representation of a poly to compute the tag.
     long long numberOfIterations;
-    
+
     GF2X h; // element of the Group such that g^x = h
     GF2X g; // Generator of the Group
     GF2X irredPoly; //Irreducible Polynomial
@@ -55,7 +55,7 @@ private:
 
 public:
     long double tableGenerationTime, gammaTime, innerProductTime, tableLookUpTime, miscellaneousTime, actualMultiplicationTime;
-    long double collisionTime;
+    long double collisionTime, walkCntTime;
     discreteLogGF2(ZZ p, ZZ n, long r, long l, GF2X g, GF2X h, GF2X irredPoly, long t, ZZ orderOfG);
     void printParameters();
     void generateMultipliers();
@@ -77,6 +77,7 @@ public:
     int cheonDL3();
 
     inline long double getTimeByCheon() {
+        this->timeByCheon = this->gammaTime + this->innerProductTime + this->tableLookUpTime + this->miscellaneousTime + this->actualMultiplicationTime;
         return this->timeByCheon;
     }
 
@@ -91,7 +92,6 @@ public:
     inline long long getNumberOfIterations() {
         return this->numberOfIterations;
     }
-
 
 };
 #endif	/* DISCRETELOGGF2_HPP */

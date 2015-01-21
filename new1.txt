@@ -11,7 +11,7 @@
 
  Computing Group-Element's Exponent's And Tag's ....  [Done] :-) 
 
- Time for Table generation (CHEON) :: 0.040834
+ Time for Table generation (CHEON) :: 0.033607
 
  Solving DL using Cheon's Algorithm ... 
 [0 0 0 0 1 0 0 1 0 1 1 0 1 1 0 0 0 0 1 1 1 1 1 0 0 1 1 0 0 1 0 1 1 1 1 1 0 0 0 0 0 0 0 1 0 1 0 1 0 1 0 0 1 0 0 0 1 0 0 1 1 0 0 1 1 1 1 0 1 1 0 0 0 1 1 0 1 0 1 0 0 1 0 0 1 0 1 0 1 1 1 0 0 0 0 1 1 0 0 0 0 1 0 0 0 1 1 1 0 0 1 1 0 1 1 0 0 0 0 1 0 0 0 1 1 1 1]
@@ -1017,9 +1017,9 @@
 
  Breaking after :: 10000 iterations.....
 
- Cheon Time :: 0.076491 Seconds.
+ Cheon Time :: 0.048699 Seconds.
 
 r l  t p^n 	Time Cheon 	Table Generation Time 	 Gamma Time 	Inner Prod Time 	Table Look-Up Time 	Miscellaneous Time 	 Actual Multiplication
-4 10 2 2^127	0.076491 Sec	   0.040834 Sec		 0.009874 Sec	 0.007842 Sec		 0.004615 Sec		0.003062 Sec		 0.026057
+4 10 2 2^127	0.048699 Sec	   0.033607 Sec		 0 Sec	 0 Sec		 0 Sec		0 Sec		 0
 
- Collision Time :: 0.010187
+ Collision Time :: 0

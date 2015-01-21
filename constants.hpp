@@ -27,7 +27,7 @@ public:
 
     /** nodeLength : 100000 i.e the number of nodes in the walk
      */
-    static const long long int nodeLength = 1000000;
+    static const long long int nodeLength = 1000;
 
     /**
      * numberOfIterations_10_7 : 10000000
