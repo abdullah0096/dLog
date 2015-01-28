@@ -407,7 +407,6 @@ int discreteLogGF2::cheonDL3() {
         long long int whileLoopCnt(0);
         long long int actualMultCnt(0);
 
-
         GF2X Y0;
         Y0.SetMaxLength(conv<long>(this->n));
         ZZ A, B;
@@ -515,7 +514,7 @@ int discreteLogGF2::cheonDL3() {
             // <editor-fold defaultstate="collapsed" desc=" ACTUAL MULTIPLICATION ">
             //            Y0 = (Y0 * Y0) % irredPoly;
             Y0 = (cellData[l - 1][col].groupElement * Y0) % irredPoly;
-            cout << Y0 << endl;
+            //            cout << Y0 << endl;
             // </editor-fold>
             timestamp_t actualMultiplicationTimeEnd = utility::get_timestamp();
             this->actualMultiplicationTime += utility::getTimeInSeconds(actualMultiplicationTimeEnd, actualMultiplicationTimeStart);

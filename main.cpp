@@ -29,12 +29,12 @@ void foo();
 
 int main(int argc, char** argv) {
 
-    //    foo();
-    ;
     // <editor-fold defaultstate="collapsed" desc="GF2 Code ">
     long r, l, t;
     ZZ p, n, orderOfG;
-    GF2X g, h, irrdPoly;
+    GF2X irrdPoly;
+
+
     long numberOfIterations = 1;
 
     ifstream fin("in.txt");
@@ -42,47 +42,64 @@ int main(int argc, char** argv) {
         cout << "\n ERROR in Main reading File in.txt...\n";
         exit(1);
     }
+    fin >>irrdPoly;
+    GF2E::init(irrdPoly);
+    GF2E g, h;
+
+    cout << "\n irrdPoly :: " << irrdPoly << endl;
 
     cout << "\n Reading Input from in.txt\n";
     fin >> p >> n >> r >> orderOfG >> l >>t;
-
     ZZ_p::init(p);
-    fin >> g >> h>>irrdPoly;
+
+    fin >> g >> h;
+    cout << "\n g :: " << g << "\t h :: " << h << endl;
 
     long long int cnt = 0;
-    GF2X tmp;
-    tmp.SetMaxLength(10000);
-    long double time = 0;
-    cout << "\n g :: " << g << endl;
-    while (1) {
+    GF2E tmp;
 
+    long double time = 0;
+
+    h = (h * h * h * h * h * h * h * h * h);
+    g = (g * g * g);
+
+    cout << "\n g * g :: " << g * g << endl;
+    cout << "\n g :: " << g << endl;
+    cout << "\n h :: " << h << endl;
+    exit(0);
+    while (1) {
         timestamp_t TableLookUpTimeStart = utility::get_timestamp();
-        tmp = (g * h) % irrdPoly;
+        tmp = (h * h);
         timestamp_t TableLookUpTimeEnd = utility::get_timestamp();
         time += utility::getTimeInSeconds(TableLookUpTimeEnd, TableLookUpTimeStart);
         cnt++;
-        if (cnt > 1000000)
+        if (cnt > 10000000)
             break;
     }
     cout << "\n time :: " << time << "\t cnt :: " << cnt << endl;
-    exit(0);
-
-    discreteLogGF2 DLP(p, n, r, l, g, h, irrdPoly, t, orderOfG);
-    DLP.printParameters();
-    DLP.cheonDL3();
-    cout << "\n Cheon Time :: " << DLP.getTimeByCheon() << " Seconds." << endl;
-    cout << "\nr l  t p^n \tTime Cheon \tTable Generation Time \t Gamma Time \tInner Prod Time \tTable Look-Up Time \tMiscellaneous Time \t Actual Multiplication" << endl;
-    cout << r << " " << l << " " << trunc(log2(r)) << " 2^" << n << "\t" << DLP.getTimeByCheon()
-            << " Sec\t   " << DLP.getTableGenerationTime() << " Sec\t\t "
-            << DLP.gammaTime / numberOfIterations << " Sec\t " << DLP.innerProductTime / numberOfIterations
-            << " Sec\t\t " << DLP.tableLookUpTime / numberOfIterations << " Sec\t\t"
-            << DLP.miscellaneousTime / numberOfIterations << " Sec\t\t " << DLP.actualMultiplicationTime / numberOfIterations << endl;
-
-    cout << "\n Collision Time :: " << DLP.collisionTime << endl;
-    cout << "\n Walk Cnt Time :: " << DLP.walkCntTime << endl;
-
+    ;
+    //    discreteLogGF2 DLP(p, n, r, l, g, h, irrdPoly, t, orderOfG);
+    //    DLP.printParameters();
+    //    DLP.cheonDL3();
+    //    cout << "\n Cheon Time :: " << DLP.getTimeByCheon() << " Seconds." << endl;
+    //    cout << "\nr l  t p^n \tTime Cheon \tTable Generation Time \t Gamma Time \tInner Prod Time \tTable Look-Up Time \tMiscellaneous Time \t Actual Multiplication" << endl;
+    //    cout << r << " " << l << " " << trunc(log2(r)) << " 2^" << n << "\t" << DLP.getTimeByCheon()
+    //            << " Sec\t   " << DLP.getTableGenerationTime() << " Sec\t\t "
+    //            << DLP.gammaTime / numberOfIterations << " Sec\t " << DLP.innerProductTime / numberOfIterations
+    //            << " Sec\t\t " << DLP.tableLookUpTime / numberOfIterations << " Sec\t\t"
+    //            << DLP.miscellaneousTime / numberOfIterations << " Sec\t\t " << DLP.actualMultiplicationTime / numberOfIterations << endl;
+    //    cout << r << " " << l << " " << trunc(log2(r)) << " 2^" << n << "\t" << DLP.getTimeByCheon()
+    //            << " Sec\t   " << DLP.getTableGenerationTime() << " Sec\t\t "
+    //            << ((DLP.gammaTime / numberOfIterations) / DLP.getTimeByCheon()) * 100 << " %  \t " << ((DLP.innerProductTime / numberOfIterations) / DLP.getTimeByCheon()) * 100
+    //            << " %  \t\t " << ((DLP.tableLookUpTime / numberOfIterations) / DLP.getTimeByCheon()) * 100 << " %   \t\t"
+    //            << ((DLP.miscellaneousTime / numberOfIterations) / DLP.getTimeByCheon()) * 100 << " %   \t\t " << ((DLP.actualMultiplicationTime / numberOfIterations) / DLP.getTimeByCheon()) * 100 << " %" << endl;
+    //
+    //    cout << "\n Collision Time :: " << DLP.collisionTime << endl;
+    //    cout << "\n Walk Cnt Time :: " << DLP.walkCntTime << endl;
+    ;
     //    DLP.teske();
     //    cout << "\n Teske Time :: " << fixed << DLP.getTimeByTeske() << " Seconds." << endl;
+
     // </editor-fold>
     return 0;
 }
@@ -161,5 +178,3 @@ void foo() {
     teske.close();
     fin.close();
 }
-
-
