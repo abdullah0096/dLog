@@ -5,8 +5,8 @@
  * Created on December 15, 2014, 12:21 PM
  */
 
-#ifndef MULTIPLIERGF2_HPP
-#define	MULTIPLIERGF2_HPP
+#ifndef MULTIPLIERGF2E_HPP
+#define	MULTIPLIERGF2E_HPP
 
 #include <iostream>
 
@@ -34,4 +34,4 @@ public:
     }
 };
 
-#endif	/* MULTIPLIERGF2_HPP */
+#endif	/* MULTIPLIERGF2E_HPP */

@@ -53,6 +53,9 @@ private:
     GF2X temp1, temp2, temp3, temp4, temp5;
     long double timeByTeske, timeByCheon;
 
+    bool verbos;
+    bool isTableMlGenerated;
+
 public:
     long double tableGenerationTime, gammaTime, innerProductTime, tableLookUpTime, miscellaneousTime, actualMultiplicationTime;
     long double collisionTime, walkCntTime;

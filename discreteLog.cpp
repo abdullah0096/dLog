@@ -28,10 +28,10 @@ discreteLog::discreteLog(ZZ p, ZZ n, long r, long l, ZZ_pX g, ZZ_pX h, ZZ_pX irr
     verbos = false;
     isTableMlGenerated = false;
     this->numberOfIterations = constants::numberOfIterations_10_2;
-    //    this->numberOfIterations = 100;
+
     this->n = n;
 
-    if (n > 3) {
+    if (r > 3) {
         this->t = log2(r);
     } else {
         this->t = t;
@@ -568,7 +568,7 @@ int discreteLog::cheonDL3() {
             cout << "\n Time for Table Generation :: " << this->getTableGenerationTime();
     } else {
         if (verbos)
-            cout << "\n using already generated table...\n";
+            cout << "\n Using already generated table...\n";
     }
 
     long long int walkCnt(0);
@@ -627,17 +627,17 @@ int discreteLog::cheonDL3() {
             // <editor-fold defaultstate="collapsed" desc="v.w % irredPoly [DONE] ">
             clear(acc);
             for (int i = 0; i < nodes[nodesCnt - 1].rep.length(); ++i) {
-                cout << "\n nodes[nodesCnt][i] :: " << nodes[nodesCnt][i] << "\t  cellData[numberOfElementsInArrayL][col].tag[i] :: " << cellData[numberOfElementsInArrayL][col].tag[i] << endl;
+                //                cout << "\n nodes[nodesCnt][i] :: " << nodes[nodesCnt][i] << "\t  cellData[numberOfElementsInArrayL][col].tag[i] :: " << cellData[numberOfElementsInArrayL][col].tag[i] << endl;
                 if (nodes[nodesCnt - 1][i] != 0 && cellData[numberOfElementsInArrayL][col].tag[i] != 0) {
                     SetCoeff(acc2, i, nodes[nodesCnt - 1][i]);
                     acc += acc2 * cellData[numberOfElementsInArrayL][col].tag[i];
                     SetCoeff(acc2, i, 0);
                 }
             }
-            cout << "\n 1acc :: " << acc << endl;
+            //            cout << "\n 1acc :: " << acc << endl;
             if (acc.rep.length() >= this->n)
                 acc = acc % irredPoly;
-            cout << "\n 2acc :: " << acc << endl;
+            //            cout << "\n 2acc :: " << acc << endl;
             // </editor-fold>
             timestamp_t InnerProductTimeEnd = utility::get_timestamp();
             this->innerProductTime += utility::getTimeInSeconds(InnerProductTimeEnd, InnerProductTimeStart);

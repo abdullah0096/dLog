@@ -17,6 +17,10 @@ ZZ ZZfactorial_1(long long int number) {
 
 discreteLogGF2::discreteLogGF2(ZZ p, ZZ n, long r, long l, GF2X g, GF2X h, GF2X irredPoly, long t, ZZ orderOfG) {
 
+    verbos = false;
+    isTableMlGenerated = false;
+    this->numberOfIterations = constants::numberOfIterations_10_2;
+
     this->p = p;
     this->n = n;
 
@@ -60,8 +64,8 @@ discreteLogGF2::discreteLogGF2(ZZ p, ZZ n, long r, long l, GF2X g, GF2X h, GF2X 
  * This function generates the Multiplier Set i.e. exponents (alpha and beta)
  */
 void discreteLogGF2::generateMultipliers() {
-
-    std::cout << " Generating Multipliers (" << r << ")....";
+    if (verbos)
+        std::cout << " Generating Multipliers (" << r << ")....";
     fflush(stdout);
     for (int i = 0; i < r; i++) {
         srand(time(NULL));
@@ -71,7 +75,8 @@ void discreteLogGF2::generateMultipliers() {
 
         M->groupElement[i] = (PowerMod(g, M->alpha[i], irredPoly) * PowerMod(h, M->beta[i], irredPoly)) % irredPoly;
     }
-    std::cout << "[DONE]\n";
+    if (verbos)
+        std::cout << "[DONE]\n";
 }
 
 void discreteLogGF2::printParameters() {
@@ -212,15 +217,19 @@ int discreteLogGF2::generateTableML() {
     if (readMultiplierInformation() == -1) {
         return -1;
     } else {
-        cout << "\n Computing Group-Element's Exponent's And Tag's .... ";
+        if (verbos)
+            cout << "\n Computing Group-Element's Exponent's And Tag's .... ";
         cout.flush();
         computeGroupElementExponentAndTag();
-        cout << " [Done] :-) \n";
+        if (verbos)
+            cout << " [Done] :-) \n";
     }
     timestamp_t endTimeTableGeneration = utility::get_timestamp();
 
     tableGenerationTime = utility::getTimeInSeconds(endTimeTableGeneration, startTimeTableGeneration);
-    cout << "\n Time for Table generation (CHEON) :: " << tableGenerationTime << endl;
+    if (verbos)
+        cout << "\n Time for Table generation (CHEON) :: " << tableGenerationTime << endl;
+    this->isTableMlGenerated = true;
 }
 
 /**
@@ -568,116 +577,125 @@ int discreteLogGF2::cheonDL3() {
  * No Collision Detection
  */
 int discreteLogGF2::cheonDL2() {
-    if (generateTableML() == -1) {
-        return 0;
+
+    if (!isTableMlGenerated) {
+        generateTableML();
+        if (verbos)
+            cout << "\n Time for Table Generation :: " << this->getTableGenerationTime();
     } else {
-        long long int walkCnt(0);
-        long long int whileLoopCnt(0);
+        if (verbos)
+            cout << "\n Using already generated table...\n";
+    }
 
-        GF2X Y0;
-        ZZ A, B;
-        RandomBnd(A, orderOfG);
-        RandomBnd(B, orderOfG);
-        Y0 = (PowerMod(this->g, A, irredPoly) * PowerMod(this->h, B, irredPoly)) % irredPoly;
+    long long int walkCnt(0);
+    long long int whileLoopCnt(0);
 
-        bool isCollisionFound = false;
-        long long int collisionOne(-1), collisionTwo(-1);
+    GF2X Y0;
+    ZZ A, B;
+    RandomBnd(A, orderOfG);
+    RandomBnd(B, orderOfG);
+    Y0 = (PowerMod(this->g, A, irredPoly) * PowerMod(this->h, B, irredPoly)) % irredPoly;
+
+    bool isCollisionFound = false;
+    long long int collisionOne(-1), collisionTwo(-1);
+    if (verbos)
         cout << "\n Solving DL using Cheon's Algorithm ... \n";
 
-        GF2X tagOfY0;
-        tagOfY0.SetMaxLength(this->t);
+    GF2X tagOfY0;
+    tagOfY0.SetMaxLength(this->t);
 
-        GF2X Y1;
-        tagOfY0.SetMaxLength(this->t);
+    GF2X Y1;
+    tagOfY0.SetMaxLength(this->t);
 
-        int *arrayL = new int[l];
-        GF2X acc, tagOfAcc;
-        acc.SetMaxLength(constants::accumulatorLength);
-        GF2X acc2;
-        acc2.SetMaxLength(constants::accumulatorLength);
+    int *arrayL = new int[l];
+    GF2X acc, tagOfAcc;
+    acc.SetMaxLength(constants::accumulatorLength);
+    GF2X acc2;
+    acc2.SetMaxLength(constants::accumulatorLength);
 
-        tagOfAcc.SetMaxLength(this->t);
-        ZZ index;
-        GF2X *tmpTag, tag;
+    tagOfAcc.SetMaxLength(this->t);
+    ZZ index;
+    GF2X *tmpTag, tag;
 
-        timestamp_t startTime = utility::get_timestamp();
-        while (1) {
-            long long int col(0);
-            // <editor-fold defaultstate="collapsed" desc="COMPUTE GAMMA FUNCTION HERE - [DONE]">
-            for (long i = 0; i < this->t; ++i) {
-                index += power2_ZZ(i) * conv<ZZ>(coeff(Y0, i));
+    timestamp_t startTime = utility::get_timestamp();
+    while (1) {
+        long long int col(0);
+        // <editor-fold defaultstate="collapsed" desc="COMPUTE GAMMA FUNCTION HERE - [DONE]">
+        for (long i = 0; i < this->t; ++i) {
+            index += power2_ZZ(i) * conv<ZZ>(coeff(Y0, i));
+        }
+        col = conv<int>(index) % this->r;
+        // </editor-fold>
+
+        arrayL[0] = col;
+        int numberOfElementsInArrayL(1);
+        for (long j = 0; j < l - 1; ++j) {
+            // <editor-fold defaultstate="collapsed" desc="v.w % irredPoly [DONE] ">
+            clear(acc);
+            for (int i = 0; i < Y0.xrep.length(); ++i) {
+                if (coeff(Y0, i) != 0 && cellData[numberOfElementsInArrayL][col].tag[i] != 0) {
+                    SetCoeff(acc2, i, coeff(Y0, i));
+                    acc += acc2 * cellData[numberOfElementsInArrayL][col].tag[i];
+                    SetCoeff(acc2, i, 0);
+                }
             }
-            col = conv<int>(index) % this->r;
+
+            if (acc.xrep.length() >= this->n)
+                acc = acc % irredPoly;
             // </editor-fold>
 
-            arrayL[0] = col;
-            int numberOfElementsInArrayL(1);
-            for (long j = 0; j < l - 1; ++j) {
-                // <editor-fold defaultstate="collapsed" desc="v.w % irredPoly [DONE] ">
-                clear(acc);
-                for (int i = 0; i < Y0.xrep.length(); ++i) {
-                    if (coeff(Y0, i) != 0 && cellData[numberOfElementsInArrayL][col].tag[i] != 0) {
-                        SetCoeff(acc2, i, coeff(Y0, i));
-                        acc += acc2 * cellData[numberOfElementsInArrayL][col].tag[i];
-                        SetCoeff(acc2, i, 0);
-                    }
-                }
+            // <editor-fold defaultstate="collapsed" desc="COMPUTE GAMMA FUNCTION- [DONE] ">
+            ZZ index2;
+            clear(acc);
+            for (long i = 0; i < this->t; ++i) {
+                index2 += power2_ZZ(i) * conv<ZZ>(coeff(acc, i));
+            }
+            int ijk = numberOfElementsInArrayL - 1;
+            int item = conv<int>(index2) % r;
+            // </editor-fold>
 
-                if (acc.xrep.length() >= this->n)
-                    acc = acc % irredPoly;
-                // </editor-fold>
+            // <editor-fold defaultstate="collapsed" desc="INERT INTO SORTED ARRAY">
+            while (item < arrayL[ijk] && ijk >= 0) {
+                arrayL[ijk + 1] = arrayL[ijk];
+                ijk--;
+            }
+            arrayL[ijk + 1] = item;
+            // </editor-fold>
 
-                // <editor-fold defaultstate="collapsed" desc="COMPUTE GAMMA FUNCTION- [DONE] ">
-                ZZ index2;
-                clear(acc);
-                for (long i = 0; i < this->t; ++i) {
-                    index2 += power2_ZZ(i) * conv<ZZ>(coeff(acc, i));
-                }
-                int ijk = numberOfElementsInArrayL - 1;
-                int item = conv<int>(index2) % r;
-                // </editor-fold>
-
-                // <editor-fold defaultstate="collapsed" desc="INERT INTO SORTED ARRAY">
-                while (item < arrayL[ijk] && ijk >= 0) {
-                    arrayL[ijk + 1] = arrayL[ijk];
-                    ijk--;
-                }
-                arrayL[ijk + 1] = item;
-                // </editor-fold>
-
-                // <editor-fold defaultstate="collapsed" desc="FOR LOOP TO GET THE REVELENT COLUMS">
-                for (long long int i = 0; i <this->numberOfElementsInTableRow[numberOfElementsInArrayL]; ++i) {
-                    //for the loop over the multiplier in this row
-                    bool flag = true;
-                    for (long long int j = 0; j <= numberOfElementsInArrayL; ++j) {
-                        if (this->cellData[numberOfElementsInArrayL][i].multiplierInformation[j] != arrayL[j]) {
-                            flag = false;
-                            break;
-                        }
-                    }
-                    if (flag) {
-                        col = i;
+            // <editor-fold defaultstate="collapsed" desc="FOR LOOP TO GET THE REVELENT COLUMS">
+            for (long long int i = 0; i <this->numberOfElementsInTableRow[numberOfElementsInArrayL]; ++i) {
+                //for the loop over the multiplier in this row
+                bool flag = true;
+                for (long long int j = 0; j <= numberOfElementsInArrayL; ++j) {
+                    if (this->cellData[numberOfElementsInArrayL][i].multiplierInformation[j] != arrayL[j]) {
+                        flag = false;
                         break;
                     }
                 }
-                // </editor-fold>
-
-                numberOfElementsInArrayL++;
+                if (flag) {
+                    col = i;
+                    break;
+                }
             }
-            // <editor-fold defaultstate="collapsed" desc=" ACTUAL MULTIPLICATION ">
-            Y0 = (cellData[l - 1][col].groupElement * Y0) % irredPoly;
             // </editor-fold>
 
-            walkCnt += l;
-            if (walkCnt >= constants::nodeLength) {
+            numberOfElementsInArrayL++;
+        }
+        // <editor-fold defaultstate="collapsed" desc=" ACTUAL MULTIPLICATION ">
+        Y0 = (cellData[l - 1][col].groupElement * Y0) % irredPoly;
+        // </editor-fold>
+
+        walkCnt += l;
+        if (walkCnt >= numberOfIterations) {
+            if (verbos)
                 cout << "\n Breaking after :: " << walkCnt << " iterations.....\n";
-                break;
-            }
-        }//end while
-        timestamp_t endTime = utility::get_timestamp();
-        timeByCheon = utility::getTimeInSeconds(endTime, startTime);
-        delete []arrayL;
-    }
+            break;
+        }
+    }//end while
+    timestamp_t endTime = utility::get_timestamp();
+    timeByCheon = utility::getTimeInSeconds(endTime, startTime);
+    delete []arrayL;
+
 }
 
 int discreteLogGF2::teske() {
@@ -703,8 +721,8 @@ int discreteLogGF2::teske() {
     long long int nodesCnt(1);
     bool isCollisionFound = false;
     long long int collisionOne(-1), collisionTwo(-1);
-
-    cout << "\n\n Solving DL using Teske's Algorithm ... \n";
+    if (verbos)
+        cout << "\n\n Solving DL using Teske's Algorithm ... \n";
     timestamp_t startTime = utility::get_timestamp();
     while (1) {
 
@@ -743,7 +761,83 @@ int discreteLogGF2::teske() {
 
         whileLoopCnt++;
         if (whileLoopCnt == constants::nodeLength) {
-            cout << "\n Teske Breaking after :: " << whileLoopCnt << " iterations...\n";
+            if (verbos)
+                cout << "\n Teske Breaking after :: " << whileLoopCnt << " iterations...\n";
+            break;
+        }
+    }//END::while
+    timestamp_t endTime = utility::get_timestamp();
+    timeByTeske = utility::getTimeInSeconds(endTime, startTime);
+}
+
+/**
+ * Without Collision Detection...
+ */
+int discreteLogGF2::teske2() {
+
+    GF2X Y0;
+    Y0.SetMaxLength(conv<long>(this->n));
+    long long int walkCnt(0);
+    long long int whileLoopCnt(1);
+
+    GF2X *nodes = new GF2X[1];
+    for (long long int i = 0; i < 1; ++i)
+        nodes[i].SetMaxLength(conv<long>(this->n));
+
+    ZZ *S = new ZZ[1];
+    ZZ *T = new ZZ[1];
+
+    ZZ A, B;
+    RandomBnd(S[0], orderOfG);
+    RandomBnd(T[0], orderOfG);
+    Y0 = (PowerMod(this->g, S[0], irredPoly) * PowerMod(this->h, T[0], irredPoly)) % irredPoly;
+    nodes[0] = Y0;
+
+    long long int nodesCnt(1);
+    bool isCollisionFound = false;
+    long long int collisionOne(-1), collisionTwo(-1);
+    if (verbos)
+        cout << "\n\n Solving DL using Teske's Algorithm ... \n";
+    timestamp_t startTime = utility::get_timestamp();
+    while (1) {
+
+        ZZ index;
+        for (long i = 0; i < this->n; ++i) {
+            index += power2_ZZ(i) * conv<ZZ>(coeff(nodes[nodesCnt - 1], i));
+        }
+        int gammaOfY0 = conv<int>(index) % this->r;
+        if (gammaOfY0 < 0)
+            gammaOfY0 += r;
+
+        nodes[nodesCnt] = (nodes[nodesCnt - 1] * M->groupElement[gammaOfY0]) % irredPoly;
+
+        //        S[nodesCnt] = S[nodesCnt - 1] + M->alpha[gammaOfY0];
+        //        T[nodesCnt] = T[nodesCnt - 1] + M->beta[gammaOfY0];
+        //
+        //        for (long long int i = 0; i < nodesCnt; ++i) {
+        //            if (nodes[i] == nodes[nodesCnt ]) {
+        //                collisionOne = i;
+        //                collisionTwo = nodesCnt;
+        //                isCollisionFound = true;
+        //                break;
+        //            }
+        //        }//END::for collision Detection
+        //        nodesCnt++;
+
+        //        if (isCollisionFound) {
+        //            ZZ_p::init(this->orderOfG);
+        //            ZZ_p num = conv<ZZ_p>(S[collisionOne] - S[collisionTwo]);
+        //            ZZ_p dnum = conv<ZZ_p>(T[collisionTwo] - T[collisionOne]);
+        //            cout << "\n Ans by Teske :: " << num / dnum << endl;
+        //            cout << "\n Teske Breaking With Ans after :: " << whileLoopCnt << " iterations...\n";
+        //            ZZ_p::init(this->p);
+        //            break;
+        //        }
+
+        whileLoopCnt++;
+        if (whileLoopCnt == constants::nodeLength) {
+            if (verbos)
+                cout << "\n Teske Breaking after :: " << whileLoopCnt << " iterations...\n";
             break;
         }
     }//END::while

@@ -5,8 +5,8 @@
  * Created on December 15, 2014, 11:31 AM
  */
 
-#ifndef DISCRETELOGGF2_HPP
-#define	DISCRETELOGGF2_HPP
+#ifndef DISCRETELOGGF2E_HPP
+#define	DISCRETELOGGF2E_HPP
 
 #include <iostream>
 #include <fstream>
@@ -32,6 +32,7 @@
 #include "tableCellGF2E.hpp"
 #include "constants.hpp"
 #include "utility.hpp"
+
 class tableCellGF2E;
 
 class discreteLogGF2E {
@@ -103,4 +104,4 @@ public:
     }
 
 };
-#endif	/* DISCRETELOGGF2_HPP */
+#endif	/* DISCRETELOGGF2E_HPP */

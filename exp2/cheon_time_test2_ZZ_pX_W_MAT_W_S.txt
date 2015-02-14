@@ -1,0 +1,7 @@
+Number of Iterations :: 10
+Number of Iterations of Walk :: 10
+
+r l  t p^n 	Time Cheon 	Table Generation Time 	 Gamma Time 	Inner Prod Time 	Table Look-Up Time 	Miscellaneous Time 	 Actual Multiplication
+8 4 3.000000 2^31	0.000596 Sec	   0.597015 Sec		 0.000030 Sec	 0.000347 Sec		 0.000004 Sec		0.000002 Sec	 0.000195
+8 4 3.000000 2^61	0.001907 Sec	   3.729428 Sec		 0.000030 Sec	 0.001066 Sec		 0.000003 Sec		0.000003 Sec	 0.000784
+8 4 3.000000 2^89	0.004072 Sec	   10.942332 Sec		 0.000034 Sec	 0.002293 Sec		 0.000005 Sec		0.000003 Sec	 0.001717
