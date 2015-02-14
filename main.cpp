@@ -14,12 +14,7 @@
 #include <cstdlib>
 #include <fstream>
 #include <iomanip> 
-
-#include <NTL/ZZ_pX.h>
-#include <NTL/ZZ.h>
-#include <NTL/GF2X.h>
-#include <NTL/GF2EX.h>
-#include <NTL/GF2E.h>
+#include <sstream>
 
 #include "utility.hpp"
 
@@ -46,15 +41,21 @@ int main(int argc, char** argv) {
         cout << "\n ERROR in Main reading File in.txt...\n";
         exit(1);
     }
-
     cout << "\n Reading Input from in.txt\n";
 
     fin >> p >> n >> r >> orderOfG >> l >>t;
     ZZ_p::init(p);
 
+    ZZ_pX id2;
+    BuildIrred(id2, conv<long>(n));
+    stringstream out;
+    out << id2;
     fin >>irrdPoly;
+    out>>irrdPoly;
+
     GF2E::init(irrdPoly);
     GF2E g, h;
+
     fin >> g >> h;
 
     long double time = 0;
@@ -79,13 +80,12 @@ int main(int argc, char** argv) {
     cout << "\n Collision Time :: " << DLP.collisionTime << endl;
     cout << "\n Walk Cnt Time :: " << DLP.cheon_walkCntTime << endl;
     cout << "\n-------------------------------------------------\n";
+
     DLP.teske2();
+
     cout << "\n Teske Time :: " << DLP.getTimeByTeske() << " Seconds." << endl;
     cout << "\n Gamma Time :: " << DLP.teske_gammaTime << "\t ( " << (DLP.teske_gammaTime / DLP.getTimeByTeske()) * 100 << " % )" << endl;
     cout << "\n Actual Mul :: " << DLP.teske_actualMultiplicationTime << "\t ( " << (DLP.teske_actualMultiplicationTime / DLP.getTimeByTeske())*100 << " % )" << endl;
-
-    //    DLP.teske();
-    //    cout << "\n Teske Time :: " << fixed << DLP.getTimeByTeske() << " Seconds." << endl;
 
     // </editor-fold>
     return 0;

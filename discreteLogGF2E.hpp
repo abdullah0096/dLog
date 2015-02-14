@@ -20,6 +20,10 @@
 #include <NTL/GF2X.h>
 #include <NTL/GF2E.h>
 #include <NTL/GF2EX.h>
+#include <NTL/mat_GF2E.h>
+#include <NTL/matrix.h>
+#include <NTL/vec_vec_GF2E.h>
+
 
 #include <NTL/ZZ_pX.h>
 #include <NTL/ZZ_pXFactoring.h>
@@ -58,7 +62,7 @@ private:
 public:
     long double tableGenerationTime, cheon_gammaTime, innerProductTime, tableLookUpTime, cheon_miscellaneousTime, cheon_actualMultiplicationTime;
     long double collisionTime, cheon_walkCntTime;
-    long teske_walkCntTime, teske_miscellaneousTime, teske_actualMultiplicationTime, teske_gammaTime;
+    long double teske_walkCntTime, teske_miscellaneousTime, teske_actualMultiplicationTime, teske_gammaTime;
     discreteLogGF2E(ZZ p, ZZ n, long r, long l, GF2E g, GF2E h, GF2X irredPoly, long t, ZZ orderOfG);
     void printParameters();
     void generateMultipliers();
@@ -78,6 +82,7 @@ public:
     int cheonDL();
     int cheonDL2();
     int cheonDL3();
+    int cheonDL_Mat();
 
     inline long double getTimeByCheon() {
         this->timeByCheon = this->cheon_gammaTime + this->innerProductTime + this->tableLookUpTime + this->cheon_miscellaneousTime + this->cheon_actualMultiplicationTime;
