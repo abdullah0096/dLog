@@ -803,13 +803,13 @@ int discreteLogGF2::teske2() {
 
         ZZ index;
         for (long i = 0; i < this->n; ++i) {
-            index += power2_ZZ(i) * conv<ZZ>(coeff(nodes[nodesCnt - 1], i));
+            index += power2_ZZ(i) * conv<ZZ>(coeff(nodes[0], i));
         }
         int gammaOfY0 = conv<int>(index) % this->r;
         if (gammaOfY0 < 0)
             gammaOfY0 += r;
 
-        nodes[nodesCnt] = (nodes[nodesCnt - 1] * M->groupElement[gammaOfY0]) % irredPoly;
+        nodes[0] = (nodes[0] * M->groupElement[gammaOfY0]) % irredPoly;
 
         //        S[nodesCnt] = S[nodesCnt - 1] + M->alpha[gammaOfY0];
         //        T[nodesCnt] = T[nodesCnt - 1] + M->beta[gammaOfY0];
@@ -835,7 +835,7 @@ int discreteLogGF2::teske2() {
         //        }
 
         whileLoopCnt++;
-        if (whileLoopCnt == constants::nodeLength) {
+        if (whileLoopCnt >= numberOfIterations) {
             if (verbos)
                 cout << "\n Teske Breaking after :: " << whileLoopCnt << " iterations...\n";
             break;

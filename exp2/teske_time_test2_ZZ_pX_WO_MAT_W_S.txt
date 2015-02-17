@@ -1,7 +1,0 @@
-Number of Iterations :: 10
-Number of Iterations of Walk :: 10
-
-r 	p^n 	Time Teske 	
-8	2^31	0.0007749 Sec
-8	2^61	0.0027794 Sec
-8	2^89	0.0056242 Sec

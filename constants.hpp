@@ -54,6 +54,6 @@ public:
     /**
      * numberOfIterations_10_2 : 10000
      */
-    static const long long int numberOfIterations_10_2 = 100;
+    static const long long int numberOfIterations_10_2 = 10000;
 };
 #endif	/* CONSTANTS_HPP */

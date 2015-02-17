@@ -25,8 +25,8 @@
 using namespace NTL;
 using namespace std;
 
-long numberOfIterations = 10;
-long numberOfIput = 3;
+long numberOfIterations = 100;
+long numberOfIput = 6;
 
 void ZZ_pX_W_MAT_W_S() {
     long double time = 0.0;
@@ -97,7 +97,7 @@ void ZZ_pX_W_MAT_W_S() {
         DLP->~discreteLog();
 
         ++whileLoopCnt;
-        if (whileLoopCnt >= 3) {
+        if (whileLoopCnt >= numberOfIput) {
             fin.close();
             cheon.close();
             teske.close();
@@ -182,7 +182,7 @@ void ZZ_pX_W_MAT_WO_S() {
         DLP->~discreteLog();
 
         ++whileLoopCnt;
-        if (whileLoopCnt >= 3) {
+        if (whileLoopCnt >= numberOfIput) {
             fin.close();
             cheon.close();
             teske.close();
@@ -263,7 +263,7 @@ void ZZ_pX_WO_MAT_W_S() {
         DLP->~discreteLog();
 
         ++whileLoopCnt;
-        if (whileLoopCnt >= 3) {
+        if (whileLoopCnt >= numberOfIput) {
             fin.close();
             cheon.close();
             teske.close();
@@ -346,7 +346,7 @@ void ZZ_pX_WO_MAT_WO_S() {
         DLP->~discreteLog();
 
         ++whileLoopCnt;
-        if (whileLoopCnt >= 3) {
+        if (whileLoopCnt >= numberOfIput) {
             fin.close();
             cheon.close();
             teske.close();
@@ -371,8 +371,8 @@ void GF2X_W_MAT_W_S() {
         cout << "\n ERROR in Main reading File in.txt...\n";
         exit(1);
     }
-    ofstream cheon("cheon_time_test2_GF2X_W_MAT_W_S.txt");
-    ofstream teske("teske_time_test2_GF2X_W_MAT_W_S.txt");
+    ofstream cheon("exp2/cheon_time_test2_GF2X_W_MAT_W_S.txt");
+    ofstream teske("exp2/teske_time_test2_GF2X_W_MAT_W_S.txt");
 
     while (!fin.eof()) {
         long r, l, t;
@@ -432,7 +432,7 @@ void GF2X_W_MAT_W_S() {
         DLP->~discreteLogGF2();
 
         ++whileLoopCnt;
-        if (whileLoopCnt >= 3) {
+        if (whileLoopCnt >= numberOfIput) {
             fin.close();
             cheon.close();
             teske.close();
@@ -452,8 +452,8 @@ void GF2X_W_MAT_WO_S() {
         cout << "\n ERROR in Main reading File in.txt...\n";
         exit(1);
     }
-    ofstream cheon("cheon_time_test2_GF2X_W_MAT_WO_S.txt");
-    ofstream teske("teske_time_test2_GF2X_W_MAT_WO_S.txt");
+    ofstream cheon("exp2/cheon_time_test2_GF2X_W_MAT_WO_S.txt");
+    ofstream teske("exp2/teske_time_test2_GF2X_W_MAT_WO_S.txt");
 
     while (!fin.eof()) {
         long r, l, t;
@@ -520,7 +520,7 @@ void GF2X_W_MAT_WO_S() {
         DLP->~discreteLogGF2();
 
         ++whileLoopCnt;
-        if (whileLoopCnt >= 3) {
+        if (whileLoopCnt >= numberOfIput) {
             fin.close();
             cheon.close();
             teske.close();
@@ -540,8 +540,8 @@ void GF2X_WO_MAT_W_S() {
         cout << "\n ERROR in Main reading File in.txt...\n";
         exit(1);
     }
-    ofstream cheon("cheon_time_test2_GF2X_WO_MAT_W_S.txt");
-    ofstream teske("teske_time_test2_GF2X_WO_MAT_W_S.txt");
+    ofstream cheon("exp2/cheon_time_test2_GF2X_WO_MAT_W_S.txt");
+    ofstream teske("exp2/teske_time_test2_GF2X_WO_MAT_W_S.txt");
 
     while (!fin.eof()) {
         long r, l, t;
@@ -601,7 +601,7 @@ void GF2X_WO_MAT_W_S() {
         DLP->~discreteLogGF2();
 
         ++whileLoopCnt;
-        if (whileLoopCnt >= 3) {
+        if (whileLoopCnt >= numberOfIput) {
             fin.close();
             cheon.close();
             teske.close();
@@ -621,8 +621,8 @@ void GF2X_WO_MAT_WO_S() {
         cout << "\n ERROR in Main reading File in.txt...\n";
         exit(1);
     }
-    ofstream cheon("cheon_time_test2_GF2X_WO_MAT_WO_S.txt");
-    ofstream teske("teske_time_test2_GF2X_WO_MAT_WO_S.txt");
+    ofstream cheon("exp2/cheon_time_test2_GF2X_WO_MAT_WO_S.txt");
+    ofstream teske("exp2/teske_time_test2_GF2X_WO_MAT_WO_S.txt");
 
     while (!fin.eof()) {
         long r, l, t;
@@ -689,7 +689,7 @@ void GF2X_WO_MAT_WO_S() {
         DLP->~discreteLogGF2();
 
         ++whileLoopCnt;
-        if (whileLoopCnt >= 3) {
+        if (whileLoopCnt >= numberOfIput) {
             fin.close();
             cheon.close();
             teske.close();
@@ -714,20 +714,26 @@ void GF2E_W_MAT_W_S() {
         cout << "\n ERROR in Main reading File in.txt...\n";
         exit(1);
     }
-    ofstream cheon("cheon_time_test1_GF2E.txt");
-    ofstream teske("teske_time_test1_GF2E.txt");
+    ofstream cheon("exp2/cheon_time_test2_GF2E_W_MAT_W_S.txt");
+    ofstream teske("exp2/teske_time_test2_GF2E_W_MAT_W_S.txt");
 
     while (!fin.eof()) {
         long r, l, t;
         ZZ p, n, orderOfG;
-        GF2E g, h;
+
         GF2X irrdPoly;
+
         fin >> p >> n >> r >> orderOfG >> l >>t;
 
         cout << "\n p :: " << p << "\t n :: " << n << "\t r :: " << r << "\t orderOfG :: " << orderOfG
                 << "\t l :: " << l << "\t t ::" << t << "\t";
         ZZ_p::init(p);
-        fin >> g >> h>>irrdPoly;
+        fin>>irrdPoly;
+        GF2E::init(irrdPoly);
+        GF2E g, h;
+        fin >> g >> h;
+
+
         cout << "\n g :: " << g << "\t h :: " << h << "\t irrdPoly :: " << irrdPoly << endl;
 
         long double cheonTime = 0;
@@ -736,7 +742,7 @@ void GF2E_W_MAT_W_S() {
         DLP = new discreteLogGF2E(p, n, r, l, g, h, irrdPoly, t, orderOfG);
 
         for (int i = 0; i < numberOfIterations; ++i) {
-            DLP->cheonDL2();
+            DLP->cheonDL_Mat();
             cheonTime += DLP->getTimeByCheon();
         }
 
@@ -746,7 +752,6 @@ void GF2E_W_MAT_W_S() {
             cheon << "Number of Iterations of Walk :: " << DLP->getNumberOfIterations() << endl;
             cheon << "\nr l  t p^n \tTime Cheon \tTable Generation Time \t Gamma Time \tInner Prod Time \tTable Look-Up Time \tMiscellaneous Time \t Actual Multiplication" << endl;
         }
-        //        cheon << std::setprecision(5);
 
         cheon << std::fixed;
         cheon << r << " " << l << " " << trunc(log2(r)) << " 2^" << n << "\t" << cheonTime << " Sec\t   " << DLP->getTableGenerationTime() << " Sec\t\t "
@@ -773,7 +778,7 @@ void GF2E_W_MAT_W_S() {
         DLP->~discreteLogGF2E();
 
         ++whileLoopCnt;
-        if (whileLoopCnt >= 3) {
+        if (whileLoopCnt >= numberOfIput) {
             fin.close();
             cheon.close();
             teske.close();
@@ -793,20 +798,31 @@ void GF2E_W_MAT_WO_S() {
         cout << "\n ERROR in Main reading File in.txt...\n";
         exit(1);
     }
-    ofstream cheon("cheon_time_test1_GF2E.txt");
-    ofstream teske("teske_time_test1_GF2E.txt");
+    ofstream cheon("exp2/cheon_time_test2_GF2E_W_MAT_WO_S.txt");
+    ofstream teske("exp2/teske_time_test2_GF2E_W_MAT_WO_S.txt");
 
     while (!fin.eof()) {
         long r, l, t;
         ZZ p, n, orderOfG;
-        GF2E g, h;
         GF2X irrdPoly;
+
         fin >> p >> n >> r >> orderOfG >> l >>t;
+
+        ZZ_p::init(p);
+
+        ZZ_pX id2;
+        BuildIrred(id2, conv<long>(n));
+        stringstream out;
+        out << id2;
+        fin >>irrdPoly;
+        irrdPoly.zero();
+        out>>irrdPoly;
+        GF2E::init(irrdPoly);
+        GF2E g, h;
+        fin >> g >> h;
 
         cout << "\n p :: " << p << "\t n :: " << n << "\t r :: " << r << "\t orderOfG :: " << orderOfG
                 << "\t l :: " << l << "\t t ::" << t << "\t";
-        ZZ_p::init(p);
-        fin >> g >> h>>irrdPoly;
         cout << "\n g :: " << g << "\t h :: " << h << "\t irrdPoly :: " << irrdPoly << endl;
 
         long double cheonTime = 0;
@@ -815,7 +831,7 @@ void GF2E_W_MAT_WO_S() {
         DLP = new discreteLogGF2E(p, n, r, l, g, h, irrdPoly, t, orderOfG);
 
         for (int i = 0; i < numberOfIterations; ++i) {
-            DLP->cheonDL2();
+            DLP->cheonDL_Mat();
             cheonTime += DLP->getTimeByCheon();
         }
 
@@ -852,7 +868,7 @@ void GF2E_W_MAT_WO_S() {
         DLP->~discreteLogGF2E();
 
         ++whileLoopCnt;
-        if (whileLoopCnt >= 3) {
+        if (whileLoopCnt >= numberOfIput) {
             fin.close();
             cheon.close();
             teske.close();
@@ -872,20 +888,25 @@ void GF2E_WO_MAT_W_S() {
         cout << "\n ERROR in Main reading File in.txt...\n";
         exit(1);
     }
-    ofstream cheon("cheon_time_test1_GF2E.txt");
-    ofstream teske("teske_time_test1_GF2E.txt");
+    ofstream cheon("exp2/cheon_time_test2_GF2E_WO_MAT_W_S.txt");
+    ofstream teske("exp2/teske_time_test2_GF2E_WO_MAT_W_S.txt");
 
     while (!fin.eof()) {
         long r, l, t;
         ZZ p, n, orderOfG;
-        GF2E g, h;
         GF2X irrdPoly;
         fin >> p >> n >> r >> orderOfG >> l >>t;
 
+        ZZ_p::init(p);
+
+        fin>>irrdPoly;
+        GF2E::init(irrdPoly);
+
+        GF2E g, h;
+        fin >> g >> h;
+
         cout << "\n p :: " << p << "\t n :: " << n << "\t r :: " << r << "\t orderOfG :: " << orderOfG
                 << "\t l :: " << l << "\t t ::" << t << "\t";
-        ZZ_p::init(p);
-        fin >> g >> h>>irrdPoly;
         cout << "\n g :: " << g << "\t h :: " << h << "\t irrdPoly :: " << irrdPoly << endl;
 
         long double cheonTime = 0;
@@ -931,7 +952,7 @@ void GF2E_WO_MAT_W_S() {
         DLP->~discreteLogGF2E();
 
         ++whileLoopCnt;
-        if (whileLoopCnt >= 3) {
+        if (whileLoopCnt >= numberOfIput) {
             fin.close();
             cheon.close();
             teske.close();
@@ -951,20 +972,31 @@ void GF2E_WO_MAT_WO_S() {
         cout << "\n ERROR in Main reading File in.txt...\n";
         exit(1);
     }
-    ofstream cheon("cheon_time_test1_GF2E.txt");
-    ofstream teske("teske_time_test1_GF2E.txt");
+    ofstream cheon("exp2/cheon_time_test2_GF2E_WO_MAT_WO_S.txt");
+    ofstream teske("exp2/teske_time_test2_GF2E_WO_MAT_WO_S.txt");
 
     while (!fin.eof()) {
         long r, l, t;
         ZZ p, n, orderOfG;
-        GF2E g, h;
         GF2X irrdPoly;
+
         fin >> p >> n >> r >> orderOfG >> l >>t;
+
+        ZZ_p::init(p);
+
+        ZZ_pX id2;
+        BuildIrred(id2, conv<long>(n));
+        stringstream out;
+        out << id2;
+        fin >>irrdPoly;
+        irrdPoly.zero();
+        out>>irrdPoly;
+        GF2E::init(irrdPoly);
+        GF2E g, h;
+        fin >> g >> h;
 
         cout << "\n p :: " << p << "\t n :: " << n << "\t r :: " << r << "\t orderOfG :: " << orderOfG
                 << "\t l :: " << l << "\t t ::" << t << "\t";
-        ZZ_p::init(p);
-        fin >> g >> h>>irrdPoly;
         cout << "\n g :: " << g << "\t h :: " << h << "\t irrdPoly :: " << irrdPoly << endl;
 
         long double cheonTime = 0;
@@ -1010,7 +1042,7 @@ void GF2E_WO_MAT_WO_S() {
         DLP->~discreteLogGF2E();
 
         ++whileLoopCnt;
-        if (whileLoopCnt >= 3) {
+        if (whileLoopCnt >= numberOfIput) {
             fin.close();
             cheon.close();
             teske.close();
@@ -1024,18 +1056,18 @@ void GF2E_WO_MAT_WO_S() {
 
 int main(int argc, char** argv) {
 
-    //    ZZ_pX_W_MAT_W_S();
-    //    cout << "\n\n\n\t\t ZZ_pX_W_MAT_W_S() ... [DONE]";
-    //    cout << "\n------------------------------------------------------------------\n\n\n";
-    //    ZZ_pX_W_MAT_WO_S();
-    //    cout << "\n\n\n\t\t ZZ_pX_W_MAT_WO_S() ... [DONE]";
-    //    cout << "\n------------------------------------------------------------------\n\n\n";
-    //    ZZ_pX_WO_MAT_W_S();
-    //    cout << "\n\n\n\t\t ZZ_pX_WO_MAT_W_S() ... [DONE]";
-    //    cout << "\n------------------------------------------------------------------\n\n\n";
-    //    ZZ_pX_WO_MAT_WO_S();
-    //    cout << "\n\n\n\t\t ZZ_pX_WO_MAT_WO_S() ... [DONE]";
-    //    cout << "\n------------------------------------------------------------------\n\n\n";
+    ZZ_pX_W_MAT_W_S();
+    cout << "\n\n\n\t\t ZZ_pX_W_MAT_W_S() ... [DONE]";
+    cout << "\n------------------------------------------------------------------\n\n\n";
+    ZZ_pX_W_MAT_WO_S();
+    cout << "\n\n\n\t\t ZZ_pX_W_MAT_WO_S() ... [DONE]";
+    cout << "\n------------------------------------------------------------------\n\n\n";
+    ZZ_pX_WO_MAT_W_S();
+    cout << "\n\n\n\t\t ZZ_pX_WO_MAT_W_S() ... [DONE]";
+    cout << "\n------------------------------------------------------------------\n\n\n";
+    ZZ_pX_WO_MAT_WO_S();
+    cout << "\n\n\n\t\t ZZ_pX_WO_MAT_WO_S() ... [DONE]";
+    cout << "\n------------------------------------------------------------------\n\n\n";
 
     //--------------------------------------------------------------------------
     //--------------------------------------------------------------------------
@@ -1053,9 +1085,23 @@ int main(int argc, char** argv) {
     GF2X_WO_MAT_WO_S();
     cout << "\n\n\n\t\t GF2X_WO_MAT_WO_S() ... [DONE]";
     cout << "\n------------------------------------------------------------------\n\n\n";
+    ;
+    //--------------------------------------------------------------------------
+    //--------------------------------------------------------------------------
+    //--------------------------------------------------------------------------
 
-
-
+    GF2E_W_MAT_W_S();
+    cout << "\n\n\n\t\t GF2X_W_MAT_W_S() ... [DONE]";
+    cout << "\n------------------------------------------------------------------\n\n\n";
+    GF2E_W_MAT_WO_S();
+    cout << "\n\n\n\t\t GF2X_W_MAT_WO_S() ... [DONE]";
+    cout << "\n------------------------------------------------------------------\n\n\n";
+    GF2E_WO_MAT_W_S();
+    cout << "\n\n\n\t\t GF2X_WO_MAT_W_S() ... [DONE]";
+    cout << "\n------------------------------------------------------------------\n\n\n";
+    GF2E_WO_MAT_WO_S();
+    cout << "\n\n\n\t\t GF2X_WO_MAT_WO_S() ... [DONE]";
+    cout << "\n------------------------------------------------------------------\n\n\n";
 
     // <editor-fold defaultstate="collapsed" desc="GF2 Code ">
     //    long r, l, t;
@@ -1071,6 +1117,9 @@ int main(int argc, char** argv) {
     //    }
     //    cout << "\n Reading Input from in.txt\n";
     //
+    //    long r, l, t;
+    //    ZZ p, n, orderOfG;
+    //    GF2X irrdPoly;
     //    fin >> p >> n >> r >> orderOfG >> l >>t;
     //    ZZ_p::init(p);
     //
