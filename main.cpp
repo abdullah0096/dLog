@@ -26,7 +26,7 @@ using namespace NTL;
 using namespace std;
 
 long numberOfIterations = 100;
-long numberOfIput = 6;
+long numberOfIput = 2;
 
 void ZZ_pX_W_MAT_W_S() {
     long double time = 0.0;
@@ -915,7 +915,7 @@ void GF2E_WO_MAT_W_S() {
         DLP = new discreteLogGF2E(p, n, r, l, g, h, irrdPoly, t, orderOfG);
 
         for (int i = 0; i < numberOfIterations; ++i) {
-            DLP->cheonDL2();
+            DLP->cheonDL3();
             cheonTime += DLP->getTimeByCheon();
         }
 
@@ -1005,7 +1005,7 @@ void GF2E_WO_MAT_WO_S() {
         DLP = new discreteLogGF2E(p, n, r, l, g, h, irrdPoly, t, orderOfG);
 
         for (int i = 0; i < numberOfIterations; ++i) {
-            DLP->cheonDL2();
+            DLP->cheonDL3();
             cheonTime += DLP->getTimeByCheon();
         }
 
@@ -1068,11 +1068,11 @@ int main(int argc, char** argv) {
     ZZ_pX_WO_MAT_WO_S();
     cout << "\n\n\n\t\t ZZ_pX_WO_MAT_WO_S() ... [DONE]";
     cout << "\n------------------------------------------------------------------\n\n\n";
-
+    ;
     //--------------------------------------------------------------------------
     //--------------------------------------------------------------------------
     //--------------------------------------------------------------------------
-
+    ;
     GF2X_W_MAT_W_S();
     cout << "\n\n\n\t\t GF2X_W_MAT_W_S() ... [DONE]";
     cout << "\n------------------------------------------------------------------\n\n\n";
@@ -1089,20 +1089,20 @@ int main(int argc, char** argv) {
     //--------------------------------------------------------------------------
     //--------------------------------------------------------------------------
     //--------------------------------------------------------------------------
-
+    ;
     GF2E_W_MAT_W_S();
-    cout << "\n\n\n\t\t GF2X_W_MAT_W_S() ... [DONE]";
+    cout << "\n\n\n\t\t GF2E_W_MAT_W_S() ... [DONE]";
     cout << "\n------------------------------------------------------------------\n\n\n";
     GF2E_W_MAT_WO_S();
-    cout << "\n\n\n\t\t GF2X_W_MAT_WO_S() ... [DONE]";
+    cout << "\n\n\n\t\t GF2E_W_MAT_WO_S() ... [DONE]";
     cout << "\n------------------------------------------------------------------\n\n\n";
     GF2E_WO_MAT_W_S();
-    cout << "\n\n\n\t\t GF2X_WO_MAT_W_S() ... [DONE]";
+    cout << "\n\n\n\t\t GF2E_WO_MAT_W_S() ... [DONE]";
     cout << "\n------------------------------------------------------------------\n\n\n";
     GF2E_WO_MAT_WO_S();
-    cout << "\n\n\n\t\t GF2X_WO_MAT_WO_S() ... [DONE]";
+    cout << "\n\n\n\t\t GF2E_WO_MAT_WO_S() ... [DONE]";
     cout << "\n------------------------------------------------------------------\n\n\n";
-
+    ;
     // <editor-fold defaultstate="collapsed" desc="GF2 Code ">
     //    long r, l, t;
     //    ZZ p, n, orderOfG;

@@ -60,6 +60,9 @@ private:
     GF2E temp1, temp2, temp3, temp4, temp5;
     long double timeByTeske, timeByCheon;
 
+    bool verbos;
+    bool isTableMlGenerated;
+
 public:
     long double tableGenerationTime, cheon_gammaTime, innerProductTime, tableLookUpTime, cheon_miscellaneousTime, cheon_actualMultiplicationTime;
     long double collisionTime, cheon_walkCntTime;
