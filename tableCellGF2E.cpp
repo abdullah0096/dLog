@@ -1,6 +1,5 @@
 #include "tableCellGF2E.hpp"
 
-
 tableCellGF2E::tableCellGF2E() {
     this->t = 0;
     this->p = 1;

@@ -25,8 +25,8 @@
 using namespace NTL;
 using namespace std;
 
-long numberOfIterations = 100;
-long numberOfIput = 2;
+long numberOfIterations = 10;
+long numberOfIput = 1;
 
 void ZZ_pX_W_MAT_W_S() {
     long double time = 0.0;
@@ -1054,37 +1054,36 @@ void GF2E_WO_MAT_WO_S() {
     fin.close();
 }
 
-int main(int argc, char** argv) {
-
-    ZZ_pX_W_MAT_W_S();
-    cout << "\n\n\n\t\t ZZ_pX_W_MAT_W_S() ... [DONE]";
-    cout << "\n------------------------------------------------------------------\n\n\n";
-    ZZ_pX_W_MAT_WO_S();
-    cout << "\n\n\n\t\t ZZ_pX_W_MAT_WO_S() ... [DONE]";
-    cout << "\n------------------------------------------------------------------\n\n\n";
-    ZZ_pX_WO_MAT_W_S();
-    cout << "\n\n\n\t\t ZZ_pX_WO_MAT_W_S() ... [DONE]";
-    cout << "\n------------------------------------------------------------------\n\n\n";
-    ZZ_pX_WO_MAT_WO_S();
-    cout << "\n\n\n\t\t ZZ_pX_WO_MAT_WO_S() ... [DONE]";
-    cout << "\n------------------------------------------------------------------\n\n\n";
+void exp1() {
+    //    ZZ_pX_W_MAT_W_S();
+    //    cout << "\n\n\n\t\t ZZ_pX_W_MAT_W_S() ... [DONE]";
+    //    cout << "\n------------------------------------------------------------------\n\n\n";
+    //    ZZ_pX_W_MAT_WO_S();
+    //    cout << "\n\n\n\t\t ZZ_pX_W_MAT_WO_S() ... [DONE]";
+    //    cout << "\n------------------------------------------------------------------\n\n\n";
+    //    ZZ_pX_WO_MAT_W_S();
+    //    cout << "\n\n\n\t\t ZZ_pX_WO_MAT_W_S() ... [DONE]";
+    //    cout << "\n------------------------------------------------------------------\n\n\n";
+    //    ZZ_pX_WO_MAT_WO_S();
+    //    cout << "\n\n\n\t\t ZZ_pX_WO_MAT_WO_S() ... [DONE]";
+    //    cout << "\n------------------------------------------------------------------\n\n\n";
     ;
     //--------------------------------------------------------------------------
     //--------------------------------------------------------------------------
     //--------------------------------------------------------------------------
     ;
-    GF2X_W_MAT_W_S();
-    cout << "\n\n\n\t\t GF2X_W_MAT_W_S() ... [DONE]";
-    cout << "\n------------------------------------------------------------------\n\n\n";
-    GF2X_W_MAT_WO_S();
-    cout << "\n\n\n\t\t GF2X_W_MAT_WO_S() ... [DONE]";
-    cout << "\n------------------------------------------------------------------\n\n\n";
-    GF2X_WO_MAT_W_S();
-    cout << "\n\n\n\t\t GF2X_WO_MAT_W_S() ... [DONE]";
-    cout << "\n------------------------------------------------------------------\n\n\n";
-    GF2X_WO_MAT_WO_S();
-    cout << "\n\n\n\t\t GF2X_WO_MAT_WO_S() ... [DONE]";
-    cout << "\n------------------------------------------------------------------\n\n\n";
+    //    GF2X_W_MAT_W_S();
+    //    cout << "\n\n\n\t\t GF2X_W_MAT_W_S() ... [DONE]";
+    //    cout << "\n------------------------------------------------------------------\n\n\n";
+    //    GF2X_W_MAT_WO_S();
+    //    cout << "\n\n\n\t\t GF2X_W_MAT_WO_S() ... [DONE]";
+    //    cout << "\n------------------------------------------------------------------\n\n\n";
+    //    GF2X_WO_MAT_W_S();
+    //    cout << "\n\n\n\t\t GF2X_WO_MAT_W_S() ... [DONE]";
+    //    cout << "\n------------------------------------------------------------------\n\n\n";
+    //    GF2X_WO_MAT_WO_S();
+    //    cout << "\n\n\n\t\t GF2X_WO_MAT_WO_S() ... [DONE]";
+    //    cout << "\n------------------------------------------------------------------\n\n\n";
     ;
     //--------------------------------------------------------------------------
     //--------------------------------------------------------------------------
@@ -1096,73 +1095,91 @@ int main(int argc, char** argv) {
     GF2E_W_MAT_WO_S();
     cout << "\n\n\n\t\t GF2E_W_MAT_WO_S() ... [DONE]";
     cout << "\n------------------------------------------------------------------\n\n\n";
-    GF2E_WO_MAT_W_S();
-    cout << "\n\n\n\t\t GF2E_WO_MAT_W_S() ... [DONE]";
+    //    GF2E_WO_MAT_W_S();
+    //    cout << "\n\n\n\t\t GF2E_WO_MAT_W_S() ... [DONE]";
     cout << "\n------------------------------------------------------------------\n\n\n";
-    GF2E_WO_MAT_WO_S();
-    cout << "\n\n\n\t\t GF2E_WO_MAT_WO_S() ... [DONE]";
-    cout << "\n------------------------------------------------------------------\n\n\n";
+    //    GF2E_WO_MAT_WO_S();
+    //    cout << "\n\n\n\t\t GF2E_WO_MAT_WO_S() ... [DONE]";
+    //    cout << "\n------------------------------------------------------------------\n\n\n";
     ;
-    // <editor-fold defaultstate="collapsed" desc="GF2 Code ">
+}
+
+void generatePoly() {
+
+    ZZ p;
+    p = 2;
+    ZZ_p::init(p);
+
+    ZZ_pX id2;
+    BuildIrred(id2, conv<long>(1024));
+    cout << id2;
+}
+
+int main(int argc, char** argv) {
+
+
+    // <editor-fold defaultstate="collapsed" desc="GF2 Code">
+    ;
     //    long r, l, t;
     //    ZZ p, n, orderOfG;
     //    GF2X irrdPoly;
-    //
-    //    long numberOfIterations = 1;
-    //
-    //    ifstream fin("in.txt");
-    //    if (!fin) {
-    //        cout << "\n ERROR in Main reading File in.txt...\n";
-    //        exit(1);
-    //    }
-    //    cout << "\n Reading Input from in.txt\n";
-    //
-    //    long r, l, t;
-    //    ZZ p, n, orderOfG;
-    //    GF2X irrdPoly;
-    //    fin >> p >> n >> r >> orderOfG >> l >>t;
-    //    ZZ_p::init(p);
-    //
-    //    ZZ_pX id2;
+
+    long numberOfIterations = 1;
+
+    ifstream fin("in.txt");
+    if (!fin) {
+        cout << "\n ERROR in Main reading File in.txt...\n";
+        exit(1);
+    }
+    cout << "\n Reading Input from in.txt\n";
+
+    long r, l, t;
+    ZZ p, n, orderOfG;
+    GF2X irrdPoly;
+    fin >> p >> n >> r >> orderOfG >> l >>t;
+    ZZ_p::init(p);
+
+    ZZ_pX id2;
     //    BuildIrred(id2, conv<long>(n));
-    //    stringstream out;
-    //    out << id2;
-    //    fin >>irrdPoly;
+    stringstream out;
+    out << id2;
+    fin >>irrdPoly;
     //    out>>irrdPoly;
-    //
-    //    GF2E::init(irrdPoly);
-    //    GF2E g, h;
-    //
-    //    fin >> g >> h;
-    //
-    //    long double time = 0;
-    //
-    //    discreteLogGF2E DLP(p, n, r, l, g, h, irrdPoly, t, orderOfG);
-    //    DLP.printParameters();
-    //    DLP.cheonDL3();
-    //    cout << "\n Time :: " << DLP.getTimeByCheon() << endl;
-    //    cout << "\n Cheon Time :: " << DLP.getTimeByCheon() << " Seconds." << endl;
-    //    cout << "\nr l  t p^n \tTime Cheon \tTable Generation Time \t Gamma Time \tInner Prod Time \tTable Look-Up Time \tMiscellaneous Time \t Actual Multiplication" << endl;
-    //    cout << r << " " << l << " " << trunc(log2(r)) << " 2^" << n << "\t" << DLP.getTimeByCheon()
-    //            << " Sec\t   " << DLP.getTableGenerationTime() << " Sec\t\t "
-    //            << DLP.cheon_gammaTime / numberOfIterations << " Sec\t " << DLP.innerProductTime / numberOfIterations
-    //            << " Sec\t\t " << DLP.tableLookUpTime / numberOfIterations << " Sec\t\t"
-    //            << DLP.cheon_miscellaneousTime / numberOfIterations << " Sec\t\t " << DLP.cheon_actualMultiplicationTime / numberOfIterations << endl;
-    //    cout << r << " " << l << " " << trunc(log2(r)) << " 2^" << n << "\t" << DLP.getTimeByCheon()
-    //            << " Sec\t   " << DLP.getTableGenerationTime() << " Sec\t\t "
-    //            << ((DLP.cheon_gammaTime / numberOfIterations) / DLP.getTimeByCheon()) * 100 << " %  \t " << ((DLP.innerProductTime / numberOfIterations) / DLP.getTimeByCheon()) * 100
-    //            << " %  \t\t " << ((DLP.tableLookUpTime / numberOfIterations) / DLP.getTimeByCheon()) * 100 << " %   \t\t"
-    //            << ((DLP.cheon_miscellaneousTime / numberOfIterations) / DLP.getTimeByCheon()) * 100 << " %   \t\t " << ((DLP.cheon_actualMultiplicationTime / numberOfIterations) / DLP.getTimeByCheon()) * 100 << " %" << endl;
-    //
-    //    cout << "\n Collision Time :: " << DLP.collisionTime << endl;
-    //    cout << "\n Walk Cnt Time :: " << DLP.cheon_walkCntTime << endl;
-    //    cout << "\n-------------------------------------------------\n";
-    //
-    //    DLP.teske2();
-    //
-    //    cout << "\n Teske Time :: " << DLP.getTimeByTeske() << " Seconds." << endl;
-    //    cout << "\n Gamma Time :: " << DLP.teske_gammaTime << "\t ( " << (DLP.teske_gammaTime / DLP.getTimeByTeske()) * 100 << " % )" << endl;
-    //    cout << "\n Actual Mul :: " << DLP.teske_actualMultiplicationTime << "\t ( " << (DLP.teske_actualMultiplicationTime / DLP.getTimeByTeske())*100 << " % )" << endl;
+
+    GF2E::init(irrdPoly);
+    GF2E g, h;
+    cout << "\n irrd :: " << irrdPoly << endl;
+
+    fin >> g >> h;
+
+    long double time = 0;
+
+    discreteLogGF2E DLP(p, n, r, l, g, h, irrdPoly, t, orderOfG);
+    DLP.printParameters();
+    DLP.cheonDL2();
+    cout << "\n Time :: " << DLP.getTimeByCheon() << endl;
+    cout << "\n Cheon Time :: " << DLP.getTimeByCheon() << " Seconds." << endl;
+    cout << "\nr l  t p^n \tTime Cheon \tTable Generation Time \t Gamma Time \tInner Prod Time \tTable Look-Up Time \tMiscellaneous Time \t Actual Multiplication" << endl;
+    cout << r << " " << l << " " << trunc(log2(r)) << " 2^" << n << "\t" << DLP.getTimeByCheon()
+            << " Sec\t   " << DLP.getTableGenerationTime() << " Sec\t\t "
+            << DLP.cheon_gammaTime / numberOfIterations << " Sec\t " << DLP.innerProductTime / numberOfIterations
+            << " Sec\t\t " << DLP.tableLookUpTime / numberOfIterations << " Sec\t\t"
+            << DLP.cheon_miscellaneousTime / numberOfIterations << " Sec\t\t " << DLP.cheon_actualMultiplicationTime / numberOfIterations << endl;
+    cout << r << " " << l << " " << trunc(log2(r)) << " 2^" << n << "\t" << DLP.getTimeByCheon()
+            << " Sec\t   " << DLP.getTableGenerationTime() << " Sec\t\t "
+            << ((DLP.cheon_gammaTime / numberOfIterations) / DLP.getTimeByCheon()) * 100 << " %  \t " << ((DLP.innerProductTime / numberOfIterations) / DLP.getTimeByCheon()) * 100
+            << " %  \t\t " << ((DLP.tableLookUpTime / numberOfIterations) / DLP.getTimeByCheon()) * 100 << " %   \t\t"
+            << ((DLP.cheon_miscellaneousTime / numberOfIterations) / DLP.getTimeByCheon()) * 100 << " %   \t\t " << ((DLP.cheon_actualMultiplicationTime / numberOfIterations) / DLP.getTimeByCheon()) * 100 << " %" << endl;
+
+    cout << "\n Collision Time :: " << DLP.collisionTime << endl;
+    cout << "\n Walk Cnt Time :: " << DLP.cheon_walkCntTime << endl;
+    cout << "\n-------------------------------------------------\n";
+
+    DLP.teske2_gamma();
+
+    cout << "\n Teske Time :: " << DLP.getTimeByTeske() << " Seconds." << endl;
+    cout << "\n Gamma Time :: " << DLP.teske_gammaTime << "\t ( " << (DLP.teske_gammaTime / DLP.getTimeByTeske()) * 100 << " % )" << endl;
+    cout << "\n Actual Mul :: " << DLP.teske_actualMultiplicationTime << "\t ( " << (DLP.teske_actualMultiplicationTime / DLP.getTimeByTeske())*100 << " % )" << endl;
 
     // </editor-fold>
     return 0;

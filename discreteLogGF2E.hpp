@@ -82,14 +82,16 @@ public:
     int teske();
     int teske2();
     int teske3();
+    int teske2_gamma();
 
     int cheonDL();
     int cheonDL2();
     int cheonDL3();
     int cheonDL_Mat();
+    int cheonDL_Mat_WOCD();
 
     inline long double getTimeByCheon() {
-        this->timeByCheon = this->cheon_gammaTime + this->innerProductTime + this->tableLookUpTime + this->cheon_miscellaneousTime + this->cheon_actualMultiplicationTime;
+        //        this->timeByCheon = this->cheon_gammaTime + this->innerProductTime + this->tableLookUpTime + this->cheon_miscellaneousTime + this->cheon_actualMultiplicationTime;
         return this->timeByCheon;
     }
 
